@@ -1,13 +1,16 @@
 import { Text, View } from "react-native";
 import "./global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@clerk/clerk-expo";
+import { Redirect } from "expo-router";
 
-export default function Index() {
-  return (
-    <SafeAreaView className="flex flex-row bg-white">
-      <Text className="text-3xl font-bold text-blue-500">
-        Welcome to Vitron!
-      </Text>
-    </SafeAreaView>
-  );
+const Index = () => {
+  // const { isSignedIn } = useAuth();
+
+  // if (isSignedIn) {
+  //   return <Redirect href={"./(root)/(tabs)/home"} />
+  // }
+  return <Redirect href="./welcome" />;
 }
+
+export default Index;
