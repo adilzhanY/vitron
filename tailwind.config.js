@@ -12,7 +12,8 @@ module.exports = {
                 benzinMedium: ["Benzin-Medium", "sans-serif"],
                 benzinSemiBold: ["Benzin-Semibold", "sans-serif"],
             },
+          
     },
   },
   plugins: [],
-}
+};

@@ -25,7 +25,7 @@ const Onboarding = () => {
       {/* Skip button */}
       <TouchableOpacity
         onPress={() => {
-          router.replace('./(auth)/sign-up')
+          router.replace('./sign-up')
         }}
         className="w-full flex justify-end items-end p-5 z-10"
       >
