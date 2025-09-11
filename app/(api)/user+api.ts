@@ -88,3 +88,38 @@ export async function PATCH(request: Request) {
     return Response.json({ error: "An internal server error occurred" }, { status: 500 });
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const { searchParams } = new URL(request.url);
+    const clerkId = searchParams.get('clerkId');
+
+    if (!clerkId) {
+      return Response.json({ error: "ClerkId is required" }, { status: 400 },)
+    }
+
+    const user = await sql`
+      SELECT
+        name,
+        weight,
+        height,
+        weight_goal,
+        daily_calorie_goal,
+        goal
+      FROM users
+      WHERE clerk_id = ${clerkId}
+    `;
+
+    if (user.length === 0) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Return the first user found
+    return Response.json({ data: user[0] }, { status: 200 })
+
+  } catch (error) {
+    console.error("Error in GET /api/user:", error);
+    return Response.json({ error: "An internal server error occurred" }, { status: 500 });
+  }
+}

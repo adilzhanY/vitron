@@ -11,3 +11,7 @@ export function isNeonDbError(error: unknown): error is NeonDbError {
     'detail' in error
   );
 }
+
+export function calculateDailyCalories() {
+  
+}
