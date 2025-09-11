@@ -3,8 +3,9 @@ import './global.css';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
 import { tokenCache } from "@clerk/clerk-expo/token-cache"
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { fetchAPI } from "@/lib/fetch";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -18,7 +19,8 @@ function InitialLayout() {
     "Benzin-Medium": require("../assets/font/Benzin/Benzin-Medium.ttf"),
     "Benzin-Semibold": require("../assets/font/Benzin/Benzin-Semibold.ttf"),
   });
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn, userId } = useAuth();
+  const [measurementsFilled, setMeasurementsFilled] = useState<boolean | null>(null);
   const segments = useSegments();
   const router = useRouter();
 
@@ -32,18 +34,46 @@ function InitialLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      if (userId) {
+        try {
+          const data = await fetchAPI(`/(api)/user-status?clerkId=${userId}`)
+          // const data = await res.json();
+          setMeasurementsFilled(data.measurements_filled);
+
+        } catch (error) {
+          console.error("Failed to fetch user status", error);
+          setMeasurementsFilled(false);
+
+        }
+      } else if (isLoaded) {
+        setMeasurementsFilled(false);
+      }
+    };
+
+    if (isLoaded) {
+      checkUserStatus();
+    }
+  }, [isLoaded, userId]);
 
   useEffect(() => {
     if (!isLoaded) return;
 
     const inAuthGroup = segments[0] === "(auth)";
+    const inAppGroup = segments[0] === "(root)";
 
-    if (isSignedIn && inAuthGroup) {
-      router.replace("/(root)/(tabs)/home");
+    if (isSignedIn && !measurementsFilled) {
+      // User is signed in but hasn't filled measurements, force to measurements screen
+      router.replace('/(auth)/measurements');
+    } else if (isSignedIn && measurementsFilled && !inAppGroup) {
+      // User is fully onboarded, send to home
+      router.replace('/(root)/(tabs)/home');
     } else if (!isSignedIn && !inAuthGroup) {
-      router.replace("/welcome");
+      // User is not signed in and not in auth group, send to sign-in
+      router.replace('/(auth)/sign-in');
     }
-  }, [isSignedIn, isLoaded, segments]);
+  }, [isSignedIn, isLoaded, segments, measurementsFilled]);
 
   if (!loaded || !isLoaded) {
     return (

@@ -61,6 +61,8 @@ export default function SignUpScreen() {
 
         await setActive({ session: completeSignUp.createdSessionId })
         setVerification({ ...verification, state: 'success' })
+        setShowSuccessModal(true);
+        router.replace("./(auth)/measurements");
       } else {
         setVerification({
           ...verification,
@@ -140,7 +142,7 @@ export default function SignUpScreen() {
 
         {/* Verification Modal */}
         <ReactNativeModal
-          isVisible={verification.state === 'pending'}
+          isVisible={verification.state === 'pending' || (verification.state === 'success' && !showSuccessModal)}
           onModalHide={() => {
             if (verification.state === 'success') setShowSuccessModal(true)
           }}
@@ -185,8 +187,8 @@ export default function SignUpScreen() {
               You have successfully verified your account.
             </Text>
             <CustomButton
-              title="Browse Home"
-              onPress={() => router.push(`/(root)/(tabs)/home`)}
+              title="Continue"
+              onPress={() => router.push(`/(auth)/measurements`)}
               className="mt-5"
             />
           </View>

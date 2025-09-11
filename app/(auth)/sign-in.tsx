@@ -1,16 +1,18 @@
-import { useSignIn } from '@clerk/clerk-expo'
+import { useSignIn, useUser } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 import { Alert, Image, Text, View, Platform } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { icons, images } from '@/constants'
 import InputField from '@/components/shared/InputField'
 import CustomButton from '@/components/shared/CustomButton'
 import OAuth from '@/components/auth/OAuth'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { fetchAPI } from '@/lib/fetch'
 
 export default function SignInPage() {
   const { signIn, setActive, isLoaded } = useSignIn()
+  const { user } = useUser();
   const router = useRouter()
   const insets = useSafeAreaInsets()
 
@@ -18,6 +20,29 @@ export default function SignInPage() {
     email: '',
     password: '',
   })
+
+  useEffect(() => {
+    if (user) {
+      checkUserMeasurements();
+    }
+  }, [user]);
+
+  const checkUserMeasurements = async () => {
+    if (!user) return;
+    try {
+      const response = await fetchAPI(`/(api)/user-status?clerkId=${user.id}`);
+      const data = await response.json();
+      if (data.measurementsFilled) {
+        router.replace('/(root)/(tabs)/home');
+      } else {
+        router.replace('/(auth)/measurements');
+      }
+    } catch (error) {
+      console.log(error);
+      // Default to home if there's an error
+      router.replace('/(root)/(tabs)/home');
+    }
+  };
 
   const onSignInPress = useCallback(async () => {
     if (!isLoaded) return
@@ -30,7 +55,7 @@ export default function SignInPage() {
 
       if (signInAttempt.status === 'complete') {
         await setActive({ session: signInAttempt.createdSessionId })
-        router.replace('/(root)/(tabs)/home')
+        // The useEffect will handle the redirect
       } else {
         console.log(JSON.stringify(signInAttempt, null, 2))
         Alert.alert('Error', 'Log in failed. Please try again.')
