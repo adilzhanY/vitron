@@ -19,7 +19,7 @@ const Measurements = () => {
     weight: '',
     height: '',
     age: '',
-    target: 'lost weight' as Goal,
+    goal: 'lost weight' as Goal,
     targetWeight: '',
     dailyCalorieGoal: '',
   });
@@ -54,6 +54,7 @@ const Measurements = () => {
             height: heightInCm,
             weightGoal: targetWeightInKg,
             dailyCalorieGoal: userMeasurements.dailyCalorieGoal ? parseInt(userMeasurements.dailyCalorieGoal) : null,
+            goal: userMeasurements.goal,
           }),
         });
 
@@ -154,8 +155,8 @@ const Measurements = () => {
             {(['lose weight', 'gain weight', 'be fit'] as Goal[]).map((option) => (
               <TouchableOpacity
                 key={option}
-                onPress={() => setUserMeasurements({ ...userMeasurements, target: option })}
-                className={`p-3 mx-2 rounded-lg ${userMeasurements.target === option ? 'bg-[#B957FF]' : 'bg-gray-700'}`}
+                onPress={() => setUserMeasurements({ ...userMeasurements, goal: option })}
+                className={`p-3 mx-2 rounded-lg ${userMeasurements.goal === option ? 'bg-[#B957FF]' : 'bg-gray-700'}`}
               >
                 <Text className="text-white font-benzin">{option}</Text>
               </TouchableOpacity>

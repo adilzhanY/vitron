@@ -55,10 +55,10 @@ function InitialLayout() {
     if (isLoaded) {
       checkUserStatus();
     }
-  }, [isLoaded, userId]);
+  }, [isLoaded, userId, segments]);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || measurementsFilled === null) return;
 
     const inAuthGroup = segments[0] === "(auth)";
     const inAppGroup = segments[0] === "(root)";
@@ -75,7 +75,7 @@ function InitialLayout() {
     }
   }, [isSignedIn, isLoaded, segments, measurementsFilled]);
 
-  if (!loaded || !isLoaded) {
+  if (!loaded || !isLoaded || measurementsFilled === null) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#0286FF" />
