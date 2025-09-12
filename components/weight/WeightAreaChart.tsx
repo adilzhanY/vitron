@@ -138,7 +138,7 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
       <ScrollView
         ref={scrollViewRef}
         horizontal
-        showsHorizontalScrollIndicator={false}
+        // showsHorizontalScrollIndicator={false}
         style={{ height: chartHeight + padding.top + padding.bottom, width: containerWidth }}
         contentContainerStyle={{ width: chartWidth }}
       // onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: false })}
@@ -167,14 +167,14 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
                   stroke="#3A3A5A"
                   strokeWidth="0.5"
                 />
-                <SvgText
+                {/* <SvgText
                   x={chartWidth - padding.right + 4}
                   y={y + 4}
                   fill="gray"
                   fontSize="12"
                 >
                   {label}
-                </SvgText>
+                </SvgText> */}
               </G>
             );
           })}
