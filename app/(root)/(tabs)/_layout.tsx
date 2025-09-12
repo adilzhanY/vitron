@@ -44,6 +44,14 @@ const Layout = () => {
           // tabBarIcon: ({ focused }) => <TabIcon focused={focused} source={icons.home} />
         }}
       />
+      <Tabs.Screen
+        name="weight"
+        options={{
+          title: "Weight",
+          headerShown: false,
+          // tabBarIcon: ({ focused }) => <TabIcon focused={focused} source={icons.home} />
+        }}
+      />
       {/* <Tabs.Screen
         name="rides"
         options={{

@@ -19,3 +19,10 @@ declare interface InputFieldProps extends TextInputProps {
   iconStyle?: string;
   className?: string;
 }
+
+type RadialChartProps = {
+  startWeight: number;
+  goalWeight: number;
+  checkpoints: number;
+  entries: number[]; // weight entries (last days)
+};
