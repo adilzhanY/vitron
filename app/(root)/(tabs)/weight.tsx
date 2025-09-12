@@ -1,12 +1,10 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useMemo } from 'react';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
-import Svg, { Circle, G, Line } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '@/components/shared/CustomButton';
-import { RadialChartProps } from '@/types/type';
 import RadialChart from '@/components/weight/RadialChart';
-// import { styled } from 'nativewind';
+
 
 
 const Weight = () => {
@@ -48,12 +46,18 @@ const Weight = () => {
         {/* Start & Goal */}
         <View className="flex-row justify-between mx-4 mb-6">
           <View>
-            <Text className="text-gray-400 text-base font-benzinExtraBold">Start</Text>
+            <View className='flex-row'>
+              <Text className="text-gray-400 text-base font-benzinExtraBold">Start</Text>
+              <FontAwesome5 name="rocket" size={16} color="#05f545" style={{ marginLeft: 4 }} />
+            </View>
             <Text className="text-white text-xl font-benzinExtraBold">{startWeight} kg</Text>
             <Text className="text-gray-400 text-sm font-benzinExtraBold">1 Sept 2025</Text>
           </View>
           <View className="items-end">
-            <Text className="text-gray-400 text-base font-benzinExtraBold">Goal</Text>
+            <View className='flex-row'>
+              <Text className="text-gray-400 text-base font-benzinExtraBold">Goal</Text>
+              <FontAwesome5 name="trophy" size={16} color="#e1f505" style={{ marginLeft: 4 }} />
+            </View>
             <Text className="text-white text-xl font-benzinExtraBold">{goalWeight} kg</Text>
             <Text className="text-purple-400 text-sm font-benzinExtraBold">Set a Date</Text>
           </View>

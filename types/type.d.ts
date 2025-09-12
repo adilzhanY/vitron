@@ -25,4 +25,5 @@ type RadialChartProps = {
   goalWeight: number;
   checkpoints: number;
   entries: number[]; // weight entries (last days)
+  onNextCheckpointCalculated?: (weight: number) => void;
 };

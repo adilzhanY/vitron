@@ -12,8 +12,6 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-
-
 CREATE TABLE weights (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -21,7 +19,6 @@ CREATE TABLE weights (
     logged_at TIMESTAMP DEFAULT NOW(), -- when weight was recorded
     UNIQUE (user_id, DATE(logged_at)), -- ensures only one entry per day
 );
-
 CREATE TYPE body_part AS ENUM (
   'bust',
   'calf',
