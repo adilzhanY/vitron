@@ -27,3 +27,15 @@ type RadialChartProps = {
   entries: number[]; // weight entries (last days)
   onNextCheckpointCalculated?: (weight: number) => void;
 };
+
+declare interface WeightAreaChartProps {
+  entries: WeightEntry[];
+  setScrollEnabled?: (enabled: boolean) => void;
+}
+
+type WeightEntry = {
+  date: string;
+  weight: number;
+}
+
+

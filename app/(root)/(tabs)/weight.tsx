@@ -4,6 +4,9 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '@/components/shared/CustomButton';
 import RadialChart from '@/components/weight/RadialChart';
+import { WeightEntry } from '@/types/type';
+import { DUMMY_WEIGHT_ENTRIES } from '@/constants';
+import WeightAreaChart from '@/components/weight/WeightAreaChart';
 
 
 
@@ -19,12 +22,15 @@ const Weight = () => {
   // Example: currently at 76 → near 2nd checkpoint.
   const entries = [79.5, 78.8, 77.6, 76.8, 72, 71];
   const currentWeight = entries[entries.length - 1];
+  const [chartentries, setChartEntries] = useState<WeightEntry[]>(DUMMY_WEIGHT_ENTRIES)
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
 
   const [nextCheckpointWeight, setNextCheckpointWeight] = useState<number>(0);
 
   return (
     <SafeAreaView className="flex-1 bg-black">
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={{ padding: 16 }} scrollEnabled={scrollEnabled}>
         {/* Header */}
         <View className="flex-row justify-between items-center mb-6">
           {/* <TouchableOpacity className="bg-[#3A3A5A] p-2.5 rounded-full">
@@ -90,9 +96,11 @@ const Weight = () => {
         <CustomButton title="Track Weight" onPress={() => { }} />
         {/* Entries */}
         <View className='flex flex-col mt-5'>
-          <Text className='text-2xl font-benzinExtraBold text-white'>
-            Weight Progress
-          </Text>
+          <WeightAreaChart
+            entries={chartentries}
+            setScrollEnabled={setScrollEnabled}
+          />
+          <View className='h-[500px]'></View>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -11,8 +11,8 @@ const RadialChart = ({
   onNextCheckpointCalculated
 }: RadialChartProps) => {
   const radius = 90;
-  const strokeWidth = 12;
-  const checkpointRadius = 10;
+  const strokeWidth = 8;
+  const checkpointRadius = 12;
   const size = (radius + checkpointRadius) * 2 + strokeWidth;
 
   // Progress calculation
