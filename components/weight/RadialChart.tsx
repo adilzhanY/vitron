@@ -1,9 +1,15 @@
 import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { RadialChartProps } from '@/types/type';
 import Svg, { Circle, G, Line } from 'react-native-svg';
 
-const RadialChart = ({ startWeight, goalWeight, checkpoints, entries }: RadialChartProps) => {
+const RadialChart = ({
+  startWeight,
+  goalWeight,
+  checkpoints,
+  entries,
+  onNextCheckpointCalculated
+}: RadialChartProps) => {
   const radius = 90;
   const strokeWidth = 12;
   const checkpointRadius = 10;
@@ -25,6 +31,15 @@ const RadialChart = ({ startWeight, goalWeight, checkpoints, entries }: RadialCh
     const angle = startAngle + checkpointProgress * 360; // CCW
     return { angle, weight: checkpointWeight };
   });
+
+  useEffect(() => {
+    if (onNextCheckpointCalculated) {
+      const nextCheckpoint = checkpointAngles.find(cp => currentWeight > cp.weight);
+      // If all checkpoints are done, the next goal is the final goalWeight
+      const nextWeight = nextCheckpoint ? nextCheckpoint.weight : goalWeight;
+      onNextCheckpointCalculated(nextWeight);
+    }
+  }, [currentWeight, checkpointAngles, goalWeight])
 
   // Helper
   const polarToCartesian = (angleDeg: number) => {
