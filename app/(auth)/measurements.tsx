@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import CustomButton from '@/components/shared/CustomButton';
@@ -16,6 +16,7 @@ const Measurements = () => {
   const swiperRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeasurements, setUserMeasurements] = useState({
+    gender: '',
     weight: '',
     height: '',
     age: '',
@@ -25,9 +26,74 @@ const Measurements = () => {
   });
   const [weightUnit, setWeightUnit] = useState('kg');
   const [heightUnit, setHeightUnit] = useState('cm');
+  const [calculatedCalories, setCalculatedCalories] = useState<number | null>(null);
 
   const totalSlides = 6;
   const isLastSlide = activeIndex === totalSlides - 1;
+
+  const finalGoal = useMemo(() => {
+    const weightInKg =
+      weightUnit === 'lb'
+        ? parseFloat(userMeasurements.weight) * 0.453592
+        : parseFloat(userMeasurements.weight);
+    const targetWeightInKg = userMeasurements.targetWeight
+      ? weightUnit === 'lb'
+        ? parseFloat(userMeasurements.targetWeight) * 0.453592
+        : parseFloat(userMeasurements.targetWeight)
+      : weightInKg; // If no target, assume current weight for 'be fit'
+
+    if (targetWeightInKg > weightInKg) return "gain weight";
+    if (targetWeightInKg < weightInKg) return "lose weight";
+    return "be fit";
+  }, [userMeasurements.weight, userMeasurements.targetWeight, weightUnit]);
+
+  const handleIndexChanged = (index: number) => {
+    setActiveIndex(index);
+    if (index === totalSlides - 1) { // When on the calorie slide
+      calculateAndSetCalories();
+    }
+  };
+
+  const calculateAndSetCalories = () => {
+    const { gender, weight, height, age } = userMeasurements;
+    if (!gender || !weight || !height || !age) {
+      return; // Not enough data
+    }
+
+    const weightInKg = weightUnit === 'lb' ? parseFloat(weight) * 0.453592 : parseFloat(weight);
+    const heightInCm = heightUnit === 'ft' ? parseFloat(height) * 30.48 : parseFloat(height);
+    const ageNum = parseInt(age);
+
+    // Calculate BMR using Mifflin-St Jeor equation
+    let bmr;
+    if (gender === 'Male') {
+      bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * ageNum + 5;
+    } else { // Female
+      bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * ageNum - 161;
+    }
+
+    // Estimate TDEE (Total Daily Energy Expenditure) assuming a sedentary lifestyle (BMR * 1.2)
+    const tdee = bmr * 1.2;
+
+    // Adjust for goal
+    let finalCalories;
+    switch (finalGoal) {
+      case 'lose weight':
+        finalCalories = tdee - 500; // Deficit for weight loss
+        break;
+      case 'gain weight':
+        finalCalories = tdee + 500; // Surplus for weight gain
+        break;
+      case 'be fit':
+      default:
+        finalCalories = tdee; // Maintenance
+        break;
+    }
+
+    const roundedCalories = Math.round(finalCalories / 10) * 10;
+    setCalculatedCalories(roundedCalories);
+    setUserMeasurements(prev => ({ ...prev, dailyCalorieGoal: roundedCalories.toString() }));
+  };
 
   const handleNext = async () => {
     if (isLastSlide) {
@@ -44,17 +110,19 @@ const Measurements = () => {
           ? weightUnit === 'lb'
             ? parseFloat(userMeasurements.targetWeight) * 0.453592
             : parseFloat(userMeasurements.targetWeight)
-          : null;
+          : weightInKg;
+
 
         await fetchAPI('/(api)/user', {
           method: 'PATCH',
           body: JSON.stringify({
             clerkId: user?.id,
+            gender: userMeasurements.gender,
             weight: weightInKg,
             height: heightInCm,
             weightGoal: targetWeightInKg,
             dailyCalorieGoal: userMeasurements.dailyCalorieGoal ? parseInt(userMeasurements.dailyCalorieGoal) : null,
-            goal: userMeasurements.goal,
+            goal: finalGoal,
           }),
         });
 
@@ -92,9 +160,24 @@ const Measurements = () => {
         activeDot={
           <View className="w-[32px] h-[4px] mx-1 bg-[#B957FF] rounded-full" />
         }
-        onIndexChanged={(index: number) => setActiveIndex(index)}
+        onIndexChanged={handleIndexChanged}
         scrollEnabled={false}
       >
+        {/* Gender */}
+        <View key="gender-slide" className={slideContainerStyle}>
+          <Text className={titleStyle}>What is your gender?</Text>
+          <View className="flex-row mt-5">
+            {(['Male', 'Female']).map((option) => (
+              <TouchableOpacity
+                key={option}
+                onPress={() => setUserMeasurements({ ...userMeasurements, gender: option })}
+                className={`p-3 mx-2 rounded-lg ${userMeasurements.gender === option ? 'bg-[#B957FF]' : 'bg-gray-700'}`}
+              >
+                <Text className="text-white font-benzin">{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
         {/* Slide 1: Weight */}
         <View key="weight-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your weight?</Text>
@@ -148,7 +231,7 @@ const Measurements = () => {
           </View>
         </View>
 
-        {/* Slide 4: Goal */}
+        {/* Slide 4: Goal
         <View key="goal-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your goal?</Text>
           <View className="flex-row mt-5">
@@ -162,11 +245,13 @@ const Measurements = () => {
               </TouchableOpacity>
             ))}
           </View>
-        </View>
+        </View> */}
 
         {/* Slide 5: Target Weight */}
         <View key="target-weight-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your target weight?</Text>
+
+          {/* Weight input */}
           <View className={inputContainerStyle}>
             <TextInput
               className={textInputStyle}
@@ -174,12 +259,24 @@ const Measurements = () => {
               placeholderTextColor="#858585"
               keyboardType="numeric"
               value={userMeasurements.targetWeight}
-              onChangeText={(text) => setUserMeasurements({ ...userMeasurements, targetWeight: text })}
+              onChangeText={(text) =>
+                setUserMeasurements({ ...userMeasurements, targetWeight: text })
+              }
             />
             <View className={unitContainerStyle}>
               <Text className="text-white font-benzin p-3">{weightUnit}</Text>
             </View>
           </View>
+
+          {/* "Be fit" button */}
+          <TouchableOpacity
+            className="mt-4 bg-purple-600 rounded-xl p-4"
+            onPress={() => setUserMeasurements({ ...userMeasurements, targetWeight: userMeasurements.weight })}
+          >
+            <Text className="text-white text-center font-benzinBold">
+              I just wanna be fit!
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Slide 6: Daily Calorie Goal */}
@@ -187,6 +284,11 @@ const Measurements = () => {
           <Text className={titleStyle}>Your daily calorie goal</Text>
 
           {/* Calculated number here*/}
+          {calculatedCalories && (
+            <Text className="text-gray-300 text-center mt-4 font-benzin px-4">
+              Based on your data, we suggest a goal of {calculatedCalories} kcal per day. You can adjust it below.
+            </Text>
+          )}
 
           <View className={inputContainerStyle}>
             <TextInput

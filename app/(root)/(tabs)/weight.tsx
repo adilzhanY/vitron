@@ -1,68 +1,105 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Modal } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '@/components/shared/CustomButton';
 import RadialChart from '@/components/weight/RadialChart';
 import { WeightEntry } from '@/types/type';
-import { DUMMY_WEIGHT_ENTRIES } from '@/constants';
+import { DUMMY_WEIGHT_ENTRIES, icons } from '@/constants';
 import WeightAreaChart from '@/components/weight/WeightAreaChart';
 import { useUser } from '@clerk/clerk-expo';
 import { fetchAPI } from '@/lib/fetch';
 import { format, parseISO } from 'date-fns';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import InputField from '@/components/shared/InputField';
 
-
-
+interface UserData {
+  goal: 'lose weight' | 'gain weight' | 'be fit';
+  weight_goal: number;
+}
 
 const Weight = () => {
   const { user: clerkUser } = useUser();
   const [weightData, setWeightData] = useState<WeightEntry[]>([]);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const entries = [79.5, 78.8, 77.6, 76.8, 72, 71];
+  // const entries = [79.5, 78.8, 77.6, 76.8, 72, 71];
   // const currentWeight = entries[entries.length - 1];
-  const [chartentries, setChartEntries] = useState<WeightEntry[]>(DUMMY_WEIGHT_ENTRIES)
+  // const [chartentries, setChartEntries] = useState<WeightEntry[]>(DUMMY_WEIGHT_ENTRIES)
 
 
   const [nextCheckpointWeight, setNextCheckpointWeight] = useState<number>(0);
   // Change these values to test
   // const startWeight = 80;
   // const goalWeight = 70;
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [newGoalWeight, setNewGoalWeight] = useState("");
+  const [newCheckpoints, setNewCheckpoints] = useState('9');
 
-  useEffect(() => {
-    const fetchWeightData = async () => {
-      if (!clerkUser) return;
-      try {
-        setLoading(true);
-        const response = await fetchAPI(`/weights?clerkId=${clerkUser.id}`, {
-          method: "GET",
-        });
-        const formattedData = response.data.map((entry: any) => ({
-          weight: parseFloat(entry.weight),
-          date: entry.logged_at,
-        }));
-        setWeightData(formattedData);
-      } catch (error) {
-        console.error("Failed to fetch weight data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchWeightData();
-
+  const fetchAllData = useCallback(async () => {
+    if (!clerkUser) return;
+    try {
+      setLoading(true);
+      const [weightResponse, userResponse] = await Promise.all([
+        fetchAPI(`/weights?clerkId=${clerkUser.id}`),
+        fetchAPI(`/user?clerkId=${clerkUser.id}`)
+      ]);
+      const formattedData = weightResponse.data.map((entry: any) => ({
+        weight: parseFloat(entry.weight),
+        date: entry.logged_at,
+      }));
+      setWeightData(formattedData);
+      setUserData(userResponse.data);
+    } catch (error) {
+      console.error("Failed to fetch weight data:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [clerkUser]);
 
-  const { startWeight, goalWeight, currentWeight, radialChartEntries } = useMemo(() => {
-    if (weightData.length === 0) {
-      return { startWeight: 0, goalWeight: 0, currentWeight: 0, radialChartEntries: [] };
+  useFocusEffect(
+    useCallback(() => {
+      fetchAllData();
+    }, [fetchAllData])
+  );
+
+  const handleSetNewGoal = async () => {
+    if (!newGoalWeight || !newCheckpoints || !clerkUser) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
     }
-    const goal = 60.0;
-    const start = weightData[0].weight;
-    const current = weightData[weightData.length - 1].weight;
+    try {
+      await fetchAPI('/weight-goals', {
+        method: 'POST',
+        body: JSON.stringify({
+          clerkId: clerkUser.id,
+          targetWeight: parseFloat(newGoalWeight),
+          checkpoints: parseInt(newCheckpoints, 10),
+        }),
+      });
+
+      Alert.alert('Success', 'Your new goal has been set!');
+      setModalVisible(false);
+      setNewGoalWeight('');
+      setNewCheckpoints('9');
+      await fetchAllData(); // Refresh all data on the screen
+    } catch (error) {
+      console.error('Failed to set new goal:', error);
+      Alert.alert('Error', 'Could not set new goal. Please try again.');
+    }
+  };
+
+  const { startWeight, goalWeight, currentWeight, radialChartEntries, userGoal } = useMemo(() => {
+    if (weightData.length === 0 || !userData) {
+      return { startWeight: 0, goalWeight: 0, currentWeight: 0, radialChartEntries: [], userGoal: 'be fit' as const };
+    }
+    const goal = userData.weight_goal || weightData[0].weight;
+    const start = weightData[weightData.length - 1].weight;
+    const current = weightData[0].weight;
     const entriesForRadial = weightData.map(e => e.weight);
 
-    return { startWeight: start, goalWeight: goal, currentWeight: current, radialChartEntries: entriesForRadial };
-  }, [weightData]);
+    return { startWeight: start, goalWeight: goal, currentWeight: current, radialChartEntries: entriesForRadial, userGoal: userData.goal };
+  }, [weightData, userData]);
 
   if (loading) {
     return (
@@ -116,7 +153,7 @@ const Weight = () => {
               <FontAwesome5 name="flag-checkered" size={16} color="#ffffff" style={{ marginLeft: 4 }} />
             </View>
             <Text className="text-white text-xl font-benzinBold">
-              {nextCheckpointWeight.toFixed(1)} kg
+              {parseFloat(String(nextCheckpointWeight || 0)).toFixed(1)} kg
             </Text>
           </View>
         </View>
@@ -125,8 +162,10 @@ const Weight = () => {
           startWeight={startWeight}
           goalWeight={goalWeight}
           checkpoints={checkpoints}
-          entries={entries}
+          entries={radialChartEntries}
+          goal={userGoal}
           onNextCheckpointCalculated={setNextCheckpointWeight}
+          onSetNewGoal={() => setModalVisible(true)}
         />
 
         {/* Start & Goal */}
@@ -151,10 +190,47 @@ const Weight = () => {
 
         {/* Track button */}
         <CustomButton title="Track Weight" onPress={handleTrackWeight} />
+        {/* Weight Streak */}
+        {/* Weight Streak */}
+        <View className="flex-row gap-2 px-2 mt-4">
+          {/* Active Streak */}
+          <View className="flex-1 bg-black border border-yellow-400 rounded-2xl p-4 shadow">
+            <Text className="text-yellow-400 text-sm font-benzinExtraBold">
+              Active Streak
+            </Text>
+            <View className="flex-row items-center">
+              <Text className="text-white text-3xl font-benzinBold mt-2">
+                5
+              </Text>
+              <FontAwesome5 name="fire" size={24} color="#facc15" style={{ marginLeft: 4 }} />
+            </View>
+            <Text className="text-gray-300 text-sm mt-1 font-benzinBold">
+              days in a row
+            </Text>
+          </View>
+
+          {/* Longest Streak */}
+          <View className="flex-1 bg-black border border-yellow-400 rounded-2xl p-4 shadow">
+            <Text className="text-yellow-400 text-sm font-benzinExtraBold">
+              Longest Streak
+            </Text>
+            <View className="flex-row items-center">
+              <Text className="text-white text-3xl font-benzinBold mt-2">
+                12
+              </Text>
+              <FontAwesome5 name="star" size={24} solid color="#fde047" style={{ marginLeft: 4 }} />
+            </View>
+            <Text className="text-gray-300 text-sm mt-1 font-benzinBold">
+              best record
+            </Text>
+          </View>
+        </View>
+
+
         {/* Entries */}
         <View className='flex flex-col mt-5'>
           <WeightAreaChart
-            entries={chartentries}
+            entries={weightData}
           />
         </View>
 
@@ -170,6 +246,41 @@ const Weight = () => {
         </View>
         <View className='h-[500px]'></View>
       </ScrollView>
+      {/* New Goal Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/80">
+          <View className="w-11/12 bg-[#1C1C1E] rounded-2xl p-6">
+            <Text className="text-white text-2xl font-benzinBold mb-4">Set a New Goal</Text>
+
+            <InputField
+              label="New Goal Weight (kg)"
+              value={newGoalWeight}
+              onChangeText={setNewGoalWeight}
+              keyboardType="numeric"
+              placeholder="e.g., 75.5"
+            />
+            <View className='h-4' />
+            <InputField
+              label="Number of Checkpoints"
+              value={newCheckpoints}
+              onChangeText={setNewCheckpoints}
+              keyboardType="numeric"
+              placeholder="e.g., 9"
+            />
+
+            <View className="flex-row mt-6">
+              <CustomButton title="Cancel" onPress={() => setModalVisible(false)} className="flex-1 bg-gray-600 mr-2" />
+              <CustomButton title="Save Goal" onPress={handleSetNewGoal} className="flex-1 ml-2" />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };

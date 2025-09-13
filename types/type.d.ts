@@ -20,12 +20,16 @@ declare interface InputFieldProps extends TextInputProps {
   className?: string;
 }
 
+type UserGoal = 'lose weight' | 'gain weight' | 'be fit';
+
 type RadialChartProps = {
   startWeight: number;
   goalWeight: number;
   checkpoints: number;
   entries: number[]; // weight entries (last days)
+  goal: UserGoal;
   onNextCheckpointCalculated?: (weight: number) => void;
+  onSetNewGoal;
 };
 
 declare interface WeightAreaChartProps {
@@ -37,6 +41,7 @@ type WeightEntry = {
   date: string;
   weight: number;
 }
+
 
 
 

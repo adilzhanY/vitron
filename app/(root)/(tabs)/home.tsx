@@ -9,6 +9,7 @@ import { fetchAPI } from '@/lib/fetch'
 
 interface UserData {
   name: string;
+  gender: string;
   weight: string;
   height: string;
   weight_goal: string;
@@ -57,6 +58,7 @@ const Home = () => {
 
         {userData ? (
           <View className="space-y-2 items-center">
+            <Text className='text-white text-xl font-benzin'>You are: {userData.gender}</Text>
             <Text className="text-white text-xl font-benzin">Your Goal: {userData.goal}</Text>
             <Text className="text-white text-xl font-benzin">Daily Calories: {userData.daily_calorie_goal} kcal</Text>
             <Text className="text-white text-xl font-benzin">Current Weight: {userData.weight} kg</Text>

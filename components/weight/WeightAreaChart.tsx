@@ -29,23 +29,25 @@ const createSplinePath = (points: { x: number; y: number }[]) => {
   return pathParts.join(' ');
 };
 
-const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) => {
+const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
   const [activeTab, setActiveTab] = useState('Weeks');
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(entries.length - 1);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const tabs = ['Days', 'Weeks', 'Months'];
+  const sortedEntries = [...entries].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // const tabs = ['Days', 'Weeks', 'Months'];
 
   // Chart dimensions
   const { width: screenWidth } = Dimensions.get('window');
   const containerWidth = screenWidth - 32;
   const chartHeight = 200;
   const padding = { top: 20, right: 20, bottom: 20, left: 20 };
-  const pointSpacing = 50; // Horizontal spacing between points
-  const chartWidth = pointSpacing * (entries.length - 1) + padding.left + padding.right
+  const pointSpacing = 20; // Horizontal spacing between points
+  const chartWidth = pointSpacing * (sortedEntries.length - 1) + padding.left + padding.right
 
   // Data processing
-  if (entries.length < 2) {
+  if (sortedEntries.length < 2) {
     return (
       <View style={{ height: chartHeight + padding.top + padding.bottom }}>
         <Text className="text-white text-center">Not enough data to display chart.</Text>
@@ -53,7 +55,7 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
     );
   }
 
-  const weights = entries.map(e => e.weight);
+  const weights = sortedEntries.map(e => e.weight);
   const minWeight = Math.min(...weights);
   const maxWeight = Math.max(...weights);
   const weightRange = maxWeight - minWeight === 0 ? 1 : maxWeight - minWeight;
@@ -68,12 +70,12 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
 
   // Map data points to SVG coordinates
   const getCoords = (entry: WeightEntry, index: number) => {
-    const x = padding.left + (index / (entries.length - 1)) * (chartWidth - padding.left - padding.right);
+    const x = padding.left + (index / (sortedEntries.length - 1)) * (chartWidth - padding.left - padding.right);
     const y = (chartHeight + padding.top) - ((entry.weight - minWeight) / weightRange) * chartHeight;
     return { x, y };
   };
 
-  const points = entries.map(getCoords);
+  const points = sortedEntries.map(getCoords);
 
   // Create SVG path for the line
   // const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
@@ -83,10 +85,10 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
   const areaPath = `${linePath} L ${points[points.length - 1].x},${chartHeight + padding.top} L ${points[0].x},${chartHeight + padding.top} Z`;
 
   const selectedPoint = selectedPointIndex !== null ? points[selectedPointIndex] : null;
-  const selectedEntry = selectedPointIndex !== null ? entries[selectedPointIndex] : null;
+  const selectedEntry = selectedPointIndex !== null ? sortedEntries[selectedPointIndex] : null;
 
-  const xAxisLabels = entries.reduce((acc, entry, index) => {
-    const showNthLabel = entries.length > 15 ? 3 : 1;
+  const xAxisLabels = sortedEntries.reduce((acc, entry, index) => {
+    const showNthLabel = sortedEntries.length > 15 ? 3 : 1;
     if (index % showNthLabel === 0) {
       acc.push({
         label: format(parseISO(entry.date), 'dd/MM'),
@@ -108,7 +110,7 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
       </View>
 
       {/* Tabs */}
-      <View className="flex-row bg-dark-blue-light rounded-full p-1 mb-4">
+      {/* <View className="flex-row bg-dark-blue-light rounded-full p-1 mb-4">
         {tabs.map(tab => (
           <Pressable
             key={tab}
@@ -118,7 +120,7 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
             <Text className="text-white text-center font-benzinMedium">{tab}</Text>
           </Pressable>
         ))}
-      </View>
+      </View> */}
       {/* Tooltip */}
       <View className="h-12 items-center justify-center">
         {selectedEntry && (
@@ -199,12 +201,35 @@ const WeightAreaChart = ({ entries, setScrollEnabled }: WeightAreaChartProps) =>
           {/* Line Path */}
           <Path d={linePath} stroke="#A855F7" strokeWidth="2" fill="none" />
 
-          {/* Selected Point Circle */}
+          {/* All data points (inactive gray dots) */}
+          {points.map((point, index) => (
+            <Circle
+              key={`dot-${index}`}
+              cx={point.x}
+              cy={point.y}
+              r="4"
+              fill="#9CA3AF" // Gray color for inactive dots
+            />
+          ))}
+
+          {/* Selected Point, Vertical Line, and Active Dot */}
           {selectedPoint && (
-            <>
+            <G>
+              {/* Vertical Indicator Line */}
+              <Line
+                x1={selectedPoint.x}
+                y1={padding.top}
+                x2={selectedPoint.x}
+                y2={chartHeight + padding.top}
+                stroke="#A855F7"
+                strokeWidth="1"
+                strokeDasharray="3 3"
+              />
+
+              {/* Active Dot (drawn on top of the gray one) */}
               <Circle cx={selectedPoint.x} cy={selectedPoint.y} r="6" fill="#A855F7" />
               <Circle cx={selectedPoint.x} cy={selectedPoint.y} r="4" fill="white" />
-            </>
+            </G>
           )}
 
           {/* Invisible touch points */}

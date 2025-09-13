@@ -3,6 +3,7 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     clerk_id VARCHAR(50) UNIQUE NOT NULL,
+    gender VARCHAR(50) CHECK (gender IN ('male', 'female')),
     weight DECIMAL(5,2),
     height DECIMAL(5,2),
     weight_goal DECIMAL(5,2),
@@ -38,17 +39,22 @@ CREATE TYPE body_part AS ENUM (
 CREATE TABLE measurements (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    body_part body_part NOT NULL,           -- enum instead of free text
-    value DECIMAL(5,2) NOT NULL,            -- in cm
+    body_part body_part NOT NULL,  -- enum
+    value DECIMAL(5,2) NOT NULL,   -- in cm
     logged_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE (user_id, body_part, DATE(logged_at)) -- one log per body part per day
+    logged_date DATE GENERATED ALWAYS AS (DATE(logged_at)) STORED,
+    UNIQUE (user_id, body_part, logged_date)
 );
+
 
 CREATE TABLE weight_goals (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    checkpoints INT DEFAULT 0,
+    start_weight DECIMAL(5,2) NOT NULL,
     target_weight DECIMAL(5,2) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
+    end_date DATE,
     achieved BOOLEAN DEFAULT FALSE
 );
 
