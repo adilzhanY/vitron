@@ -6,7 +6,6 @@ import CustomButton from '@/components/shared/CustomButton'
 import { useUser } from '@clerk/clerk-expo'
 import { fetchAPI } from '@/lib/fetch'
 import { FontAwesome5 } from '@expo/vector-icons'
-import { useNavigation } from "@react-navigation/native";
 
 const TrackWeight = () => {
   const router = useRouter();

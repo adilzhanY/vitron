@@ -29,7 +29,7 @@ type RadialChartProps = {
   entries: number[]; // weight entries (last days)
   goal: UserGoal;
   onNextCheckpointCalculated?: (weight: number) => void;
-  onSetNewGoal;
+  onSetNewGoal: () => void;
 };
 
 declare interface WeightAreaChartProps {

@@ -19,7 +19,7 @@ const RadialChart = ({
   const size = (radius + checkpointRadius) * 2 + strokeWidth;
 
   // Progress calculation
-  const currentWeight = entries.length > 0 ? entries[0] : startWeight;
+  const currentWeight = entries.length > 0 ? entries[entries.length - 1] : startWeight;
   let totalChangeNeeded = 0;
   let changeAchieved = 0;
 
@@ -37,12 +37,21 @@ const RadialChart = ({
   const startAngle = 270;
 
   // Checkpoints
+  // 10 totalChangeNeeded / 5 checkpoints = 2 perCheckpoint
   const perCheckpoint = totalChangeNeeded / checkpoints;
   const checkpointAngles = [...Array(checkpoints)].map((_, i) => {
     const checkpointWeight = goal === 'lose weight'
+      // 80 - (0 + 1) * 2 = 78
+      // 80 - (1 + 1) * 2 = 76
       ? startWeight - (i + 1) * perCheckpoint
+      // 80 + (0 + 1) * 2 = 82
+      // 80 + (1 + 1) * 2 = 84
       : startWeight + (i + 1) * perCheckpoint;
+    // ((0 + 1) * 2) / 10 = 0.2 (20% progress)
+    // ((1 + 1) * 2) / 10 = 0.4 (40% progress)
     const checkpointProgress = ((i + 1) * perCheckpoint) / totalChangeNeeded;
+    // 270 + 0.2 * 360 = 342 - First checkpoint position on circle
+    // 270 + 0.4 * 360 = 414 - Second checkpoint position on circle
     const angle = startAngle + checkpointProgress * 360; // CCW
     return { angle, weight: checkpointWeight };
   });
@@ -58,11 +67,25 @@ const RadialChart = ({
     } else if (onNextCheckpointCalculated) {
       onNextCheckpointCalculated(currentWeight); // For 'be fit', next checkpoint is current weight
     }
-  }, [currentWeight, checkpointAngles, goalWeight, goal])
+  }, [currentWeight, checkpointAngles, checkpoints, goalWeight, goal])
 
   // Helper
   const polarToCartesian = (angleDeg: number) => {
+    // Angle is 90
+    // (90 * PI) / 180 = PI/2
+    // Angle is 180
+    // (190 * PI) / 180 = PI
     const angleRad = (angleDeg * Math.PI) / 180;
+    // Angle = 0 (right side)
+      // cos(0) = 1, sin(0) = 0
+      // cx = 100 + 50 * 1 = 150
+      // cy = 100 + 50 * 0 = 100
+      // Point = (150, 100) -> right edge
+    // Angle = 90 (bottom side)
+      // cos(90) = 0, sin(90) = 1
+      // cx = 100 + 50*0 = 100
+      // cy = 100 + 50*1 = 150
+      // Point = (100, 150) -> bottom edge
     const cx = size / 2 + radius * Math.cos(angleRad);
     const cy = size / 2 + radius * Math.sin(angleRad);
     return { x: cx, y: cy };

@@ -16,6 +16,8 @@ import InputField from '@/components/shared/InputField';
 interface UserData {
   goal: 'lose weight' | 'gain weight' | 'be fit';
   weight_goal: number;
+  start_weight: number;
+  checkpoints: number;
 }
 
 const Weight = () => {
@@ -23,15 +25,7 @@ const Weight = () => {
   const [weightData, setWeightData] = useState<WeightEntry[]>([]);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  // const entries = [79.5, 78.8, 77.6, 76.8, 72, 71];
-  // const currentWeight = entries[entries.length - 1];
-  // const [chartentries, setChartEntries] = useState<WeightEntry[]>(DUMMY_WEIGHT_ENTRIES)
-
-
   const [nextCheckpointWeight, setNextCheckpointWeight] = useState<number>(0);
-  // Change these values to test
-  // const startWeight = 80;
-  // const goalWeight = 70;
   const [isModalVisible, setModalVisible] = useState(false);
   const [newGoalWeight, setNewGoalWeight] = useState("");
   const [newCheckpoints, setNewCheckpoints] = useState('9');
@@ -63,42 +57,22 @@ const Weight = () => {
     }, [fetchAllData])
   );
 
-  const handleSetNewGoal = async () => {
-    if (!newGoalWeight || !newCheckpoints || !clerkUser) {
-      Alert.alert('Error', 'Please fill in all fields.');
-      return;
-    }
-    try {
-      await fetchAPI('/weight-goals', {
-        method: 'POST',
-        body: JSON.stringify({
-          clerkId: clerkUser.id,
-          targetWeight: parseFloat(newGoalWeight),
-          checkpoints: parseInt(newCheckpoints, 10),
-        }),
-      });
 
-      Alert.alert('Success', 'Your new goal has been set!');
-      setModalVisible(false);
-      setNewGoalWeight('');
-      setNewCheckpoints('9');
-      await fetchAllData(); // Refresh all data on the screen
-    } catch (error) {
-      console.error('Failed to set new goal:', error);
-      Alert.alert('Error', 'Could not set new goal. Please try again.');
-    }
-  };
-
-  const { startWeight, goalWeight, currentWeight, radialChartEntries, userGoal } = useMemo(() => {
+  const { startWeight, goalWeight, currentWeight, radialChartEntries, userGoal, checkpoints } = useMemo(() => {
     if (weightData.length === 0 || !userData) {
-      return { startWeight: 0, goalWeight: 0, currentWeight: 0, radialChartEntries: [], userGoal: 'be fit' as const };
+      return { startWeight: 0, goalWeight: 0, currentWeight: 0, radialChartEntries: [], userGoal: 'be fit' as const, checkpoints: 0 };
     }
-    const goal = userData.weight_goal || weightData[0].weight;
-    const start = weightData[weightData.length - 1].weight;
-    const current = weightData[0].weight;
-    const entriesForRadial = weightData.map(e => e.weight);
+    const mostRecentWeight = weightData[0].weight;
+    const oldestWeight = weightData[weightData.length - 1].weight;
 
-    return { startWeight: start, goalWeight: goal, currentWeight: current, radialChartEntries: entriesForRadial, userGoal: userData.goal };
+    // Use start_weight from the current goal, or fall back to the user's first-ever weight entry
+    const start = userData.start_weight || oldestWeight;
+    const goal = userData.weight_goal || mostRecentWeight;
+    const chkpts = userData.checkpoints || 9;
+
+    const entriesForRadial = weightData.map(e => e.weight).reverse();
+
+    return { startWeight: start, goalWeight: goal, currentWeight: mostRecentWeight, radialChartEntries: entriesForRadial, userGoal: userData.goal, checkpoints: chkpts };
   }, [weightData, userData]);
 
   if (loading) {
@@ -118,10 +92,12 @@ const Weight = () => {
     )
   }
 
-  const checkpoints = 9;
 
   const handleTrackWeight = () => {
     router.push('/track-weight');
+  }
+  const handleSetGoal = () => {
+    router.push('/set-goal');
   }
 
 
@@ -184,13 +160,12 @@ const Weight = () => {
               <FontAwesome5 name="trophy" size={16} color="#ffffff" style={{ marginLeft: 4 }} />
             </View>
             <Text className="text-white text-xl font-benzinExtraBold">{goalWeight} kg</Text>
-            <Text className="text-purple-400 text-sm font-benzinExtraBold">Set a Date</Text>
+            <CustomButton title='Set goal' onPress={handleSetGoal} />
           </View>
         </View>
 
         {/* Track button */}
         <CustomButton title="Track Weight" onPress={handleTrackWeight} />
-        {/* Weight Streak */}
         {/* Weight Streak */}
         <View className="flex-row gap-2 px-2 mt-4">
           {/* Active Streak */}

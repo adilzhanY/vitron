@@ -93,36 +93,50 @@ export async function PATCH(request: Request) {
 
 export async function GET(request: Request) {
   try {
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    const sql = neon(process.env.DATABASE_URL!);
     const { searchParams } = new URL(request.url);
     const clerkId = searchParams.get('clerkId');
 
     if (!clerkId) {
-      return Response.json({ error: "ClerkId is required" }, { status: 400 },)
+      return new Response(JSON.stringify({ error: "clerkId is required" }), { status: 400 });
     }
 
-    const user = await sql`
-      SELECT
-        name,
-        gender,
-        weight,
-        height,
-        weight_goal,
-        daily_calorie_goal,
-        goal
-      FROM users
-      WHERE clerk_id = ${clerkId}
-    `;
+    // Fetch user data and their latest weight goal in one go
+    const userQuery = await sql`
+            SELECT
+                u.id,
+                u.name,
+                u.email,
+                u.clerk_id,
+                u.weight,
+                u.height,
+                u.weight_goal,
+                u.daily_calorie_goal,
+                u.measurements_filled,
+                u.goal,
+                wg.start_weight,
+                wg.checkpoints
+            FROM users u
+            LEFT JOIN (
+                SELECT
+                    user_id,
+                    start_weight,
+                    checkpoints,
+                    ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY created_at DESC) as rn
+                FROM weight_goals
+            ) wg ON u.id = wg.user_id AND wg.rn = 1
+            WHERE u.clerk_id = ${clerkId}
+        `;
 
-    if (user.length === 0) {
-      return Response.json({ error: "User not found" }, { status: 404 });
+    if (userQuery.length === 0) {
+      return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
     }
 
-    // Return the first user found
-    return Response.json({ data: user[0] }, { status: 200 })
+    return new Response(JSON.stringify({ data: userQuery[0] }), { status: 200 });
 
   } catch (error) {
     console.error("Error in GET /api/user:", error);
-    return Response.json({ error: "An internal server error occurred" }, { status: 500 });
+    return new Response(JSON.stringify({ error: "An internal server error occurred" }), { status: 500 });
   }
 }
+
