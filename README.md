@@ -6,7 +6,6 @@
     height="256" 
     style="border-radius: 50%;" 
   />
-</div>
 
 # Vitron
 
