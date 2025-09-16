@@ -1,7 +1,12 @@
 <div align="center">
-
-<img width="256" height="256" alt="vitronlogo" src="https://github.com/user-attachments/assets/a54c9b1a-0a77-4c30-a63f-202f5d88b04c" />
-<br/>
+  <img 
+    src="https://github.com/user-attachments/assets/a54c9b1a-0a77-4c30-a63f-202f5d88b04c" 
+    alt="vitronlogo" 
+    width="256" 
+    height="256" 
+    style="border-radius: 50%;" 
+  />
+</div>
 
 # Vitron
 
