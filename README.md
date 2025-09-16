@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="512" height="512" alt="vitronlogo" src="https://github.com/user-attachments/assets/a54c9b1a-0a77-4c30-a63f-202f5d88b04c" />
+<img width="256" height="256" alt="vitronlogo" src="https://github.com/user-attachments/assets/a54c9b1a-0a77-4c30-a63f-202f5d88b04c" />
 <br/>
 
 # Vitron
