@@ -1,6 +1,6 @@
 <div align="center">
 
-/home/qantr/vscode_projects/vitron/assets/images/vitronlogo.png
+<img width="1024" height="1024" alt="vitronlogo" src="https://github.com/user-attachments/assets/a54c9b1a-0a77-4c30-a63f-202f5d88b04c" />
 <br/>
 
 # Vitron
