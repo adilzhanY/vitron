@@ -250,7 +250,7 @@ const Weight = () => {
 
             <View className="flex-row mt-6">
               <CustomButton title="Cancel" onPress={() => setModalVisible(false)} className="flex-1 bg-gray-600 mr-2" />
-              <CustomButton title="Save Goal" onPress={handleSetNewGoal} className="flex-1 ml-2" />
+              <CustomButton title="Save Goal" onPress={handleSetGoal} className="flex-1 ml-2" />
             </View>
           </View>
         </View>

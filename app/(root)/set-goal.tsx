@@ -32,6 +32,7 @@ const SetGoal = () => {
       Alert.alert('Success', 'Your new goal has been set!');
       setNewGoalWeight('');
       setNewCheckpoints('');
+      setNewStartWeight('');
       // await fetchAllData(); // Refresh all data on the screen
     } catch (error) {
       console.error('Failed to set new goal:', error);

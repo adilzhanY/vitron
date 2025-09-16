@@ -3,9 +3,9 @@ import { neon } from '@neondatabase/serverless';
 export async function POST(request: Request) {
   try {
     const sql = neon(process.env.DATABASE_URL!);
-    const { clerkId, targetWeight, checkpoints } = await request.json();
+    const { clerkId, startWeight, targetWeight, dailyCalorieGoal, checkpoints } = await request.json();
 
-    if (!clerkId || !targetWeight || !checkpoints) {
+    if (!clerkId || !targetWeight || !checkpoints || !startWeight) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -45,8 +45,23 @@ export async function POST(request: Request) {
 
     // 3. Create the new weight goal
     await sql`
-            INSERT INTO weight_goals (user_id, start_weight, target_weight, checkpoints, created_at)
-            VALUES (${userId}, ${currentWeight}, ${targetWeight}, ${checkpoints}, NOW())
+            INSERT INTO weight_goals
+                (
+                  user_id,
+                  start_weight,
+                  target_weight,
+                  daily_calorie_goal,
+                  checkpoints,
+                  created_at
+                )
+            VALUES (
+              ${userId},
+              ${currentWeight},
+              ${targetWeight},
+              ${dailyCalorieGoal},
+              ${checkpoints},
+              NOW()
+            )
         `;
 
     // 4. Determine the new goal type

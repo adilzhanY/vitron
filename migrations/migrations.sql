@@ -4,10 +4,11 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     clerk_id VARCHAR(50) UNIQUE NOT NULL,
     gender VARCHAR(50) CHECK (gender IN ('male', 'female')),
+    initial_weight DECIMAL(5,2),
     weight DECIMAL(5,2),
     height DECIMAL(5,2),
-    weight_goal DECIMAL(5,2),
-    daily_calorie_goal INT,
+    -- weight_goal DECIMAL(5,2),
+    -- daily_calorie_goal INT,
     measurements_filled BOOLEAN DEFAULT FALSE,
     goal VARCHAR(20) CHECK (goal IN ('lose weight', 'gain weight', 'be fit')),
     created_at TIMESTAMP DEFAULT NOW()
@@ -53,6 +54,7 @@ CREATE TABLE weight_goals (
     checkpoints INT DEFAULT 0,
     start_weight DECIMAL(5,2) NOT NULL,
     target_weight DECIMAL(5,2) NOT NULL,
+    daily_calorie_goal INT,
     created_at TIMESTAMP DEFAULT NOW(),
     end_date DATE,
     achieved BOOLEAN DEFAULT FALSE
