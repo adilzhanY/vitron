@@ -1,11 +1,11 @@
 <div align="center">
 
-<!-- Leave this space for your app icon -->
+/home/qantr/vscode_projects/vitron/assets/images/vitronlogo.png
 <br/>
 
 # Vitron
 
-A comprehensive fitness and wellness tracker designed to help you monitor your weight, nutrition, and physical activity. Vitron is your personal companion for a healthier lifestyle, built as a bachelor thesis project to explore modern mobile development with React Native and Expo.
+A comprehensive fitness and wellness tracker designed to help you monitor your weight, nutrition, and physical activity. Vitron is your personal companion for a healthier lifestyle, built as a bachelor thesis project to explore modern mobile development with React Native and Expo.t
 
 ![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react)
 ![Expo](https://img.shields.io/badge/Expo-54-000020?logo=expo)
