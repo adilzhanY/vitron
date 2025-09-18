@@ -12,7 +12,7 @@ const Swiper: any = SwiperModule?.default ?? SwiperModule;
 type Goal = 'lose weight' | 'gain weight' | 'be fit'
 
 const Measurements = () => {
-  const { user } = useUser();
+  const { user: clerkUser } = useUser();
   const swiperRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeasurements, setUserMeasurements] = useState({
@@ -23,7 +23,7 @@ const Measurements = () => {
     goal: 'lose weight' as Goal,
     targetWeight: '',
     dailyCalorieGoal: '',
-    checkpoints: '',
+    checkpoints: '9',
   });
   const [weightUnit, setWeightUnit] = useState('kg');
   const [heightUnit, setHeightUnit] = useState('cm');
@@ -117,26 +117,42 @@ const Measurements = () => {
         await fetchAPI('/(api)/user', {
           method: 'PATCH',
           body: JSON.stringify({
-            clerkId: user?.id,
+            clerkId: clerkUser?.id,
             gender: userMeasurements.gender,
-            initial_weight: weightInKg,
+            weight: weightInKg,
             height: heightInCm,
-            weightGoal: targetWeightInKg,
+            // weightGoal: targetWeightInKg,
             // dailyCalorieGoal: userMeasurements.dailyCalorieGoal ? parseInt(userMeasurements.dailyCalorieGoal) : null,
             goal: finalGoal,
           }),
         });
-        await fetchAPI('(api)/weight-goals', {
-          method: 'POST',
-          body: JSON.stringify({
-            clerkId: user?.id,
-            startWeight: userMeasurements.initialWeight,
-            target_weight: userMeasurements.targetWeight,
-            checkpoints: userMeasurements.checkpoints,
-            dailyCalorieGoal: userMeasurements.dailyCalorieGoal,
-          }),
-        });
-
+        try {
+          await fetchAPI('/(api)/first-weight-goal', {
+            method: 'POST',
+            body: JSON.stringify({
+              clerkId: clerkUser?.id,
+              startWeight: weightInKg,
+              targetWeight: targetWeightInKg,
+              checkpoints: userMeasurements.checkpoints,
+              dailyCalorieGoal: userMeasurements.dailyCalorieGoal ? parseInt(userMeasurements.dailyCalorieGoal) : null,
+            }),
+          });
+          console.log("Success, weight goal saved");
+        } catch (error) {
+          console.error("Failed to save weight:", error);
+        }
+        try {
+          await fetchAPI('/(api)/weights', {
+            method: 'POST',
+            body: JSON.stringify({
+              clerkId: clerkUser?.id,
+              weight: weightInKg,
+            }),
+          });
+          console.log("Success, weight saved");
+        } catch (error) {
+          console.error("Failed to save weight:", error);
+        }
         router.replace('/(root)/(tabs)/home');
       } catch (error) {
         console.log(error);
@@ -181,8 +197,8 @@ const Measurements = () => {
             {(['Male', 'Female']).map((option) => (
               <TouchableOpacity
                 key={option}
-                onPress={() => setUserMeasurements({ ...userMeasurements, gender: option })}
-                className={`p-3 mx-2 rounded-lg ${userMeasurements.gender === option ? 'bg-[#B957FF]' : 'bg-gray-700'}`}
+                onPress={() => setUserMeasurements({ ...userMeasurements, gender: option.toLowerCase() })}
+                className={`p-3 mx-2 rounded-lg ${userMeasurements.gender === option.toLowerCase() ? 'bg-[#B957FF]' : 'bg-gray-700'}`}
               >
                 <Text className="text-white font-benzin">{option}</Text>
               </TouchableOpacity>

@@ -10,7 +10,6 @@ const Profile = () => {
     <SafeAreaView className='flex-1 bg-black'>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <SignOutButton />
-
       </ScrollView>
     </SafeAreaView>
   )

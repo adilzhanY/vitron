@@ -9,11 +9,11 @@ export async function POST(request: Request) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      )
     }
 
     // 1. Get user ID and current weight
-    const userResult = await sql`SELECT id, weight FROM users WHERE clerk_id = ${clerkId}`;
+    const userResult = await sql`SELECT id, initial_weight FROM users WHERE clerk_id = ${clerkId}`;
     if (userResult.length === 0) {
       return new Response(
         JSON.stringify({ error: 'User not found' }),
@@ -85,5 +85,72 @@ export async function POST(request: Request) {
       JSON.stringify({ error: 'Internal Server Error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
+  }
+}
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const clerkId = searchParams.get('clerkId');
+
+  if (!clerkId) {
+    return Response.json({ error: 'Clerk ID is required' }, { status: 400 });
+  }
+
+  const sql = neon(process.env.DATABASE_URL!);
+
+  try {
+    // Find the user by clerkId
+    const userResult = await sql
+      `SELECT id FROM users WHERE clerk_id = ${clerkId}`;
+
+    if (userResult.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'User not found' }),
+        { status: 404, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const user = userResult[0];
+    const userId = user.id;
+
+    // Find the latest active weight goal for the user
+    const goalResult = await sql`
+      SELECT start_weight, target_weight, checkpoints 
+      FROM weight_goals 
+      WHERE user_id = ${userId} AND achieved = FALSE 
+      ORDER BY created_at DESC 
+      LIMIT 1`;
+
+    if (goalResult.length === 0) {
+      return Response.json({ error: 'No active weight goal found' }, { status: 404 });
+    }
+    const goal = goalResult[0];
+
+    // // Find the user's most recent weight entry
+    // const currentWeightResult = await sql`
+    //   SELECT weight 
+    //   FROM weights 
+    //   WHERE user_id = ${userId} 
+    //   ORDER BY logged_at DESC 
+    //   LIMIT 1`;
+
+    // const currentWeight = currentWeightResult.length > 0
+    //   ? parseFloat(currentWeightResult[0].weight)
+    //   : parseFloat(goal.start_weight);
+
+    // // Calculate progress
+    const start = parseFloat(goal.start_weight);
+    const target = parseFloat(goal.target_weight);
+
+
+    return Response.json({
+      startWeight: start,
+      targetWeight: target,
+      // currentWeight: currentWeight,
+      checkpoints: goal.checkpoints,
+    });
+
+  } catch (error) {
+    console.error('Failed to fetch weight goal:', error);
+    return Response.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

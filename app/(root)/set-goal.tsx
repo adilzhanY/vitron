@@ -24,19 +24,19 @@ const SetGoal = () => {
         method: 'POST',
         body: JSON.stringify({
           clerkId: clerkUser.id,
+          newStartWeight: newStartWeight,
           targetWeight: parseFloat(newGoalWeight),
           checkpoints: parseInt(newCheckpoints, 10),
+          // dailyCalorieGoal
         }),
       });
-
-      Alert.alert('Success', 'Your new goal has been set!');
+      console.log("Success, weight goal saved");
       setNewGoalWeight('');
       setNewCheckpoints('');
       setNewStartWeight('');
       // await fetchAllData(); // Refresh all data on the screen
     } catch (error) {
       console.error('Failed to set new goal:', error);
-      Alert.alert('Error', 'Could not set new goal. Please try again.');
     }
   };
 

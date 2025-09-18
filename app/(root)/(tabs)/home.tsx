@@ -10,10 +10,8 @@ import { fetchAPI } from '@/lib/fetch'
 interface UserData {
   name: string;
   gender: string;
-  weight: string;
+  initial_weight: string;
   height: string;
-  weight_goal: string;
-  daily_calorie_goal: number;
   goal: string;
 }
 
@@ -54,15 +52,11 @@ const Home = () => {
         Welcome, {userData?.name?.split(" ")[0]}
       </Text>
       <View className="flex-1 justify-center items-center px-4">
-
-
         {userData ? (
           <View className="space-y-2 items-center">
             <Text className='text-white text-xl font-benzin'>You are: {userData.gender}</Text>
             <Text className="text-white text-xl font-benzin">Your Goal: {userData.goal}</Text>
-            <Text className="text-white text-xl font-benzin">Daily Calories: {userData.daily_calorie_goal} kcal</Text>
-            <Text className="text-white text-xl font-benzin">Current Weight: {userData.weight} kg</Text>
-            <Text className="text-white text-xl font-benzin">Target Weight: {userData.weight_goal || 'Not set'} kg</Text>
+            <Text className="text-white text-xl font-benzin">Current Weight: {userData.initial_weight} kg</Text>
           </View>
         ) : (
           <Text className="text-white mt-5">Could not load user data.</Text>

@@ -131,27 +131,3 @@ export const data = {
   onboarding,
 };
 
-export const DUMMY_WEIGHT_ENTRIES = [
-  { date: '2025-08-15', weight: 85.0 },
-  { date: '2025-08-16', weight: 84.8 },
-  { date: '2025-08-17', weight: 85.1 },
-  { date: '2025-08-18', weight: 84.9 },
-  { date: '2025-08-20', weight: 84.5 },
-  { date: '2025-08-22', weight: 84.6 },
-  { date: '2025-08-23', weight: 84.2 },
-  { date: '2025-08-24', weight: 84.0 },
-  { date: '2025-08-25', weight: 83.9 },
-  { date: '2025-08-27', weight: 84.1 },
-  { date: '2025-08-28', weight: 83.8 },
-  { date: '2025-08-30', weight: 83.5 },
-  { date: '2025-08-31', weight: 83.6 },
-  { date: '2025-09-01', weight: 83.2 },
-  { date: '2025-09-02', weight: 83.3 },
-  { date: '2025-09-04', weight: 83.0 },
-  { date: '2025-09-05', weight: 83.1 },
-  { date: '2025-09-06', weight: 82.8 },
-  { date: '2025-09-08', weight: 82.9 },
-  { date: '2025-09-10', weight: 83.1 },
-  { date: '2025-09-12', weight: 83.4 },
-];
-

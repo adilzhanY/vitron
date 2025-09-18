@@ -5,13 +5,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '@/components/shared/CustomButton';
 import RadialChart from '@/components/weight/RadialChart';
 import { WeightEntry } from '@/types/type';
-import { DUMMY_WEIGHT_ENTRIES, icons } from '@/constants';
 import WeightAreaChart from '@/components/weight/WeightAreaChart';
 import { useUser } from '@clerk/clerk-expo';
 import { fetchAPI } from '@/lib/fetch';
 import { format, parseISO } from 'date-fns';
 import { router, useFocusEffect } from 'expo-router';
 import InputField from '@/components/shared/InputField';
+
+interface WeightGoalData {
+  startWeight: number;
+  targetWeight: number;
+  // currentWeight: number;
+  checkpoints: number;
+}
 
 interface UserData {
   goal: 'lose weight' | 'gain weight' | 'be fit';
@@ -22,8 +28,11 @@ interface UserData {
 
 const Weight = () => {
   const { user: clerkUser } = useUser();
+
   const [weightData, setWeightData] = useState<WeightEntry[]>([]);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [weightGoalData, setWeightGoalData] = useState<WeightGoalData | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [nextCheckpointWeight, setNextCheckpointWeight] = useState<number>(0);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -34,9 +43,10 @@ const Weight = () => {
     if (!clerkUser) return;
     try {
       setLoading(true);
-      const [weightResponse, userResponse] = await Promise.all([
+      const [weightResponse, userResponse, weightGoalResponse] = await Promise.all([
         fetchAPI(`/weights?clerkId=${clerkUser.id}`),
-        fetchAPI(`/user?clerkId=${clerkUser.id}`)
+        fetchAPI(`/user?clerkId=${clerkUser.id}`),
+        fetchAPI(`/weight-goals?clerkId=${clerkUser.id}`)
       ]);
       const formattedData = weightResponse.data.map((entry: any) => ({
         weight: parseFloat(entry.weight),
@@ -44,6 +54,7 @@ const Weight = () => {
       }));
       setWeightData(formattedData);
       setUserData(userResponse.data);
+      setWeightGoalData(weightGoalResponse.data);
     } catch (error) {
       console.error("Failed to fetch weight data:", error);
     } finally {
@@ -68,7 +79,7 @@ const Weight = () => {
     // Use start_weight from the current goal, or fall back to the user's first-ever weight entry
     const start = userData.start_weight || oldestWeight;
     const goal = userData.weight_goal || mostRecentWeight;
-    const chkpts = userData.checkpoints || 9;
+    const chkpts = weightGoalData.checkpoints || 9;
 
     const entriesForRadial = weightData.map(e => e.weight).reverse();
 
@@ -159,7 +170,7 @@ const Weight = () => {
               <Text className="text-gray-400 text-base font-benzinExtraBold">Goal</Text>
               <FontAwesome5 name="trophy" size={16} color="#ffffff" style={{ marginLeft: 4 }} />
             </View>
-            <Text className="text-white text-xl font-benzinExtraBold">{goalWeight} kg</Text>
+            <Text className="text-white text-xl font-benzinExtraBold">{newGoalWeight} kg</Text>
             <CustomButton title='Set goal' onPress={handleSetGoal} />
           </View>
         </View>

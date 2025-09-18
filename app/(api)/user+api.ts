@@ -70,10 +70,8 @@ export async function PATCH(request: Request) {
       UPDATE users
       SET
         gender = ${gender},
-        weight = ${weight},
+        initial_weight = ${weight},
         height = ${height},
-        weight_goal = ${weightGoal},
-        daily_calorie_goal = ${dailyCalorieGoal},
         goal = ${goal},
         measurements_filled = TRUE
       WHERE clerk_id = ${clerkId}
@@ -108,10 +106,8 @@ export async function GET(request: Request) {
                 u.name,
                 u.email,
                 u.clerk_id,
-                u.weight,
+                u.initial_weight,
                 u.height,
-                u.weight_goal,
-                u.daily_calorie_goal,
                 u.measurements_filled,
                 u.goal,
                 wg.start_weight,
