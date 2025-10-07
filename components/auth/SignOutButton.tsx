@@ -7,7 +7,7 @@ export const SignOutButton = () => {
   const { signOut } = useClerk()
   const handleSignOut = async () => {
     try {
-      await signOut()
+      await signOut() 
       // Redirect to your desired page
       Linking.openURL(Linking.createURL('/'))
     } catch (err) {
@@ -18,7 +18,7 @@ export const SignOutButton = () => {
   }
   return (
     <TouchableOpacity onPress={handleSignOut}>
-      <Text className='text-white text-2xl border-white border'>Sign out</Text>
+      <Text className='text-black text-2xl border-black border'>Sign out</Text>
     </TouchableOpacity>
   )
 }

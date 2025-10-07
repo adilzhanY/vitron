@@ -10,6 +10,9 @@ import { ReactNativeModal } from 'react-native-modal'
 import { fetchAPI } from '@/lib/fetch'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+// import Logo from '';
+
+
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp()
@@ -80,7 +83,7 @@ export default function SignUpScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-black" edges={['top', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-white" edges={['top', 'bottom']}>
       <KeyboardAwareScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -90,12 +93,12 @@ export default function SignUpScreen() {
         extraScrollHeight={Platform.OS === 'ios' ? 60 : 80}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-1 bg-black items-center">
+        <View className="flex-1 bg-white items-center">
           <Image
-            source={images.vitronlogo}
-            className="z-0 w-[200px] h-[200px] mb-10"
-          />
-          <Text className="text-2xl text-white font-benzinSemiBold absolute bottom-5 left-5">
+            source={icons.applogo}
+            className="z-0 w-[200px] h-[200px] mb-20"
+          /> 
+          <Text className="text-2xl text-black font-benzinSemiBold absolute bottom-5 left-5">
             Create Your Account
           </Text>
         </View>
@@ -128,7 +131,7 @@ export default function SignUpScreen() {
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
 
-          <CustomButton title="Sign Up" onPress={onSignUpPress} className="mt-6" />
+          <CustomButton title="Sign Up" onPress={onSignUpPress} className="mt-6 w-full" />
 
           <OAuth />
 
@@ -136,7 +139,7 @@ export default function SignUpScreen() {
             href="/sign-in"
             className="text-lg text-center text-gray-500 mt-10 font-benzinBold"
           >
-            Already have an account? <Text className="text-white">Log In</Text>
+            Already have an account? <Text className="text-black">Log In</Text>
           </Link>
         </View>
 

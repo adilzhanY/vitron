@@ -5,6 +5,7 @@ import { Tabs } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 // import { icons } from '@/constants'
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import {colors} from '@/constants';
 
 const TabIcon = ({ source, focused }: { source: ImageSourcePropType, focused: boolean }) => (
   <View className="flex flex-row justify-center items-center rounded-full w-12 h-12">
@@ -19,7 +20,7 @@ const Layout = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#333333' }}>
       <Tabs initialRouteName='home' screenOptions={{
-        tabBarActiveTintColor: "white",
+        tabBarActiveTintColor: "white", 
         tabBarInactiveTintColor: "white",
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -51,7 +52,7 @@ const Layout = () => {
               <FontAwesome5
                 name="home"
                 size={25}
-                color={focused ? '#c084fc' : '#8E8E93'}
+                color={focused ? colors.primary : '#8E8E93'}
               />
             ),
           }}
@@ -65,7 +66,7 @@ const Layout = () => {
               <FontAwesome5
                 name="weight"
                 size={25}
-                color={focused ? '#c084fc' : '#8E8E93'}
+                color={focused ? colors.primary : '#8E8E93'}
               />
             ),
           }}
@@ -79,7 +80,7 @@ const Layout = () => {
               <FontAwesome5
                 name="running"
                 size={25}
-                color={focused ? '#c084fc' : '#8E8E93'}
+                color={focused ? colors.primary : '#8E8E93'}
               />
             ),
           }}
@@ -93,7 +94,7 @@ const Layout = () => {
               <FontAwesome5
                 name="utensils"
                 size={25}
-                color={focused ? '#c084fc' : '#8E8E93'}
+                color={focused ? colors.primary : '#8E8E93'}
               />
             ),
           }}
@@ -107,7 +108,7 @@ const Layout = () => {
               <FontAwesome5
                 name="user"
                 size={25}
-                color={focused ? '#c084fc' : '#8E8E93'}
+                color={focused ? colors.primary : '#8E8E93'}
               />
             ),
           }}

@@ -35,6 +35,8 @@ import onboarding4 from "../assets/images/onboarding4.png";
 import onboarding5 from "../assets/images/onboarding5.png";
 import onboarding6 from "../assets/images/onboarding6.png";
 import vitronlogo from '../assets/images/vitronlogo.png';
+import logo from '../assets/icons/logo.svg';
+import applogo from '../assets/icons/applogo.png';
 // import signUpCar from "@/assets/images/signup-car.png";
 
 export const images = {
@@ -79,6 +81,8 @@ export const icons = {
   star,
   target,
   to,
+  logo,
+  applogo,
 };
 
 export const onboarding = [
@@ -130,4 +134,10 @@ export const onboarding = [
 export const data = {
   onboarding,
 };
+
+export const colors = {
+  primary: '#2eff66',
+  black: '#000000',
+  white: '#FFFFFF',
+}
 

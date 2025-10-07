@@ -20,7 +20,7 @@ const Onboarding = () => {
 
 
   return (
-    <SafeAreaView className="flex h-full items-center justify-between bg-black relative overflow-hidden">
+    <SafeAreaView className="flex h-full items-center justify-between bg-white relative overflow-hidden">
 
       {/* Skip button */}
       <TouchableOpacity
@@ -56,7 +56,7 @@ const Onboarding = () => {
                 resizeMode="contain"
               />
               <View className="flex flex-row items-center justify-center w-full mt-10">
-                <Text className="text-white text-3xl font-benzinBold mx-10 text-center">
+                <Text className="text-black text-3xl font-benzinBold mx-10 text-center">
                   {item.title}
                 </Text>
               </View>
@@ -80,7 +80,8 @@ const Onboarding = () => {
             ? router.replace('./sign-up')
             : swiperRef.current?.scrollBy(1)
         }
-        className="w-6/12 mt-10 mb-10 z-10"
+        className="mt-10 mb-10 z-10"
+        shadowVariant="m"
       />
     </SafeAreaView>
   )

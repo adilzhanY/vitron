@@ -17,7 +17,7 @@ const InputField = ({
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <TouchableWithoutFeedback>
         <View className='my-2 w-full'>
-          <Text className={`text-lg font-benzinBold mb-3 text-white ${labelStyle}`}>
+          <Text className={`text-lg font-benzinBold mb-3 text-black ${labelStyle}`}>
             {label}
           </Text>
           <View className={`flex flex-row justify-start items-center relative bg-neutral-100 rounded-full border border-neutral-100 focus:border-primary-500 ${containerStyle}`}

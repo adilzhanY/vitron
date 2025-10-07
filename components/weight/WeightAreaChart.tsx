@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Svg, { Path, Circle, Defs, LinearGradient, Stop, Text as SvgText, Line, G } from 'react-native-svg';
 import { format, parseISO } from 'date-fns';
 import { WeightAreaChartProps, WeightEntry } from '@/types/type';
+import {colors} from '@/constants';
 
 
 const createSplinePath = (points: { x: number; y: number }[]) => {
@@ -105,8 +106,8 @@ const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
     <View>
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-white text-xl font-benzinBold">Weight Progress</Text>
-        <FontAwesome name="search" size={20} color="white" />
+        <Text className="text-black text-xl font-benzinBold">Weight Progress</Text>
+        <FontAwesome name="search" size={20} color="black" />
       </View>
 
       {/* Tabs */}
@@ -125,7 +126,7 @@ const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
       <View className="h-12 items-center justify-center">
         {selectedEntry && (
           <View>
-            <Text className="text-white text-2xl font-benzinBold text-center">
+            <Text className="text-black text-2xl font-benzinBold text-center">
               {selectedEntry.weight.toFixed(1)} kg
             </Text>
             <Text className="text-gray-400 text-sm font-benzinMedium text-center">
@@ -151,8 +152,8 @@ const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
         <Svg width={chartWidth} height={chartHeight + padding.top + padding.bottom}>
           <Defs>
             <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#A855F7" stopOpacity="0.4" />
-              <Stop offset="1" stopColor="#A855F7" stopOpacity="0" />
+              <Stop offset="0" stopColor={colors.primary} stopOpacity="0.4" />
+              <Stop offset="1" stopColor={colors.primary} stopOpacity="0" />
             </LinearGradient>
           </Defs>
 
@@ -199,7 +200,7 @@ const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
           <Path d={areaPath} fill="url(#grad)" />
 
           {/* Line Path */}
-          <Path d={linePath} stroke="#A855F7" strokeWidth="2" fill="none" />
+          <Path d={linePath} stroke={colors.primary} strokeWidth="2" fill="none" />
 
           {/* All data points (inactive gray dots) */}
           {points.map((point, index) => (
@@ -221,13 +222,13 @@ const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
                 y1={padding.top}
                 x2={selectedPoint.x}
                 y2={chartHeight + padding.top}
-                stroke="#A855F7"
+                stroke={colors.primary}
                 strokeWidth="1"
                 strokeDasharray="3 3"
               />
 
               {/* Active Dot (drawn on top of the gray one) */}
-              <Circle cx={selectedPoint.x} cy={selectedPoint.y} r="6" fill="#A855F7" />
+              <Circle cx={selectedPoint.x} cy={selectedPoint.y} r="6" fill={colors.primary} />
               <Circle cx={selectedPoint.x} cy={selectedPoint.y} r="4" fill="white" />
             </G>
           )}

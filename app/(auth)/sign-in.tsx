@@ -67,7 +67,7 @@ export default function SignInPage() {
   }, [isLoaded, form])
 
   return (
-    <SafeAreaView className="flex-1 bg-black" edges={['top', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-white" edges={['top', 'bottom']}>
       <KeyboardAwareScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -77,12 +77,12 @@ export default function SignInPage() {
         extraScrollHeight={Platform.OS === 'ios' ? 60 : 80}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-1 bg-black items-center">
+        <View className="flex-1 bg-white items-center">
           <Image
-            source={images.vitronlogo}
+            source={icons.applogo}
             className="z-0 w-[200px] h-[200px] mb-10"
           />
-          <Text className="text-2xl text-white font-benzinSemiBold absolute bottom-5 left-5">
+          <Text className="text-2xl text-black font-benzinSemiBold absolute bottom-5 left-5">
             Welcome 👋
           </Text>
         </View>
@@ -108,7 +108,7 @@ export default function SignInPage() {
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
 
-          <CustomButton title="Sign In" onPress={onSignInPress} className="mt-6" />
+          <CustomButton title="Sign In" onPress={onSignInPress} className="mt-6 w-full" />
 
           <OAuth />
 
@@ -116,7 +116,7 @@ export default function SignInPage() {
             href="/sign-up"
             className="text-lg text-center text-gray-500 mt-10 font-benzinBold"
           >
-            Don't have an account? <Text className="text-white">Sign Up</Text>
+            Don't have an account? <Text className="text-black">Sign Up</Text>
           </Link>
         </View>
       </KeyboardAwareScrollView>

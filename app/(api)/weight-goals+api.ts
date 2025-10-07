@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     }
 
     // 1. Get user ID and current weight
-    const userResult = await sql`SELECT id, initial_weight FROM users WHERE clerk_id = ${clerkId}`;
+    const userResult = await sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
     if (userResult.length === 0) {
       return new Response(
         JSON.stringify({ error: 'User not found' }),
@@ -22,7 +22,9 @@ export async function POST(request: Request) {
     }
     const user = userResult[0];
     const userId = user.id;
-    const currentWeight = user.weight;
+    //
+    // const userWeight = await sql`SELECT `
+    // const currentWeight = user.weight;
 
     // 2. Mark the latest active goal as achieved
     // Note: Neon serverless driver doesn't support multiple statements in one query.
@@ -43,6 +45,9 @@ export async function POST(request: Request) {
             `;
     }
 
+    console.log({ userId, startWeight, targetWeight, dailyCalorieGoal, checkpoints });
+
+
     // 3. Create the new weight goal
     await sql`
             INSERT INTO weight_goals
@@ -56,7 +61,7 @@ export async function POST(request: Request) {
                 )
             VALUES (
               ${userId},
-              ${currentWeight},
+              ${startWeight},
               ${targetWeight},
               ${dailyCalorieGoal},
               ${checkpoints},
@@ -64,16 +69,16 @@ export async function POST(request: Request) {
             )
         `;
 
-    // 4. Determine the new goal type
-    const newGoalType = parseFloat(targetWeight) < parseFloat(currentWeight) ? 'lose weight' : 'gain weight';
-
-    // 5. Update the user's main goal and target weight
-    await sql`
-            UPDATE users
-            SET weight_goal = ${targetWeight}, goal = ${newGoalType}
-            WHERE id = ${userId}
-        `;
-
+    // // 4. Determine the new goal type
+    // const newGoalType = parseFloat(targetWeight) < parseFloat(currentWeight) ? 'lose weight' : 'gain weight';
+    //
+    // // 5. Update the user's main goal and target weight
+    // await sql`
+    //         UPDATE users
+    //         SET weight_goal = ${targetWeight}, goal = ${newGoalType}
+    //         WHERE id = ${userId}
+    //     `;
+    //
     return new Response(
       JSON.stringify({ message: 'New weight goal created successfully' }),
       { status: 201, headers: { 'Content-Type': 'application/json' } }

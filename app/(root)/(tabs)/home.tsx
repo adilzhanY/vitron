@@ -6,7 +6,7 @@ import { useUser } from '@clerk/clerk-expo'
 import { images } from '@/constants'
 import { Link, router } from 'expo-router'
 import { fetchAPI } from '@/lib/fetch'
-
+import {colors} from '@/constants';
 interface UserData {
   name: string;
   gender: string;
@@ -41,25 +41,25 @@ const Home = () => {
 
   if (loading) {
     return (
-      <SafeAreaView className='bg-black flex-1 justify-center items-center'>
-        <ActivityIndicator size="large" color="#B957FF" />
+      <SafeAreaView className='bg-white flex-1 justify-center items-center'>
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     )
   }
   return (
-    <SafeAreaView className="bg-black flex-1">
-      <Text className="text-white text-3xl font-benzinBold mb-6">
+    <SafeAreaView className="bg-white flex-1">
+      <Text className="text-black text-3xl font-benzinBold mb-6">
         Welcome, {userData?.name?.split(" ")[0]}
       </Text>
       <View className="flex-1 justify-center items-center px-4">
         {userData ? (
           <View className="space-y-2 items-center">
-            <Text className='text-white text-xl font-benzin'>You are: {userData.gender}</Text>
-            <Text className="text-white text-xl font-benzin">Your Goal: {userData.goal}</Text>
-            <Text className="text-white text-xl font-benzin">Current Weight: {userData.initial_weight} kg</Text>
+            <Text className='text-black text-xl font-benzin'>You are: {userData.gender}</Text>
+            <Text className="text-black text-xl font-benzin">Your Goal: {userData.goal}</Text>
+            <Text className="text-black text-xl font-benzin">Current Weight: {userData.initial_weight} kg</Text>
           </View>
         ) : (
-          <Text className="text-white mt-5">Could not load user data.</Text>
+          <Text className="text-black mt-5">Could not load user data.</Text>
         )}
       </View>
     </SafeAreaView>

@@ -13,14 +13,14 @@ const getBgVariantStyle = (variant: ButtonProps["bgVariant"]) => {
     case "outline":
       return "bg-transparent border-neutral-300 border-[0.5px]";
     default:
-      return "bg-[#B957FF]";
+      return "bg-[#2eff66]";
   }
 };
 
 const getTextVariantStyle = (variant: ButtonProps["textVariant"]) => {
   switch (variant) {
     case "primary":
-      return "text-white";
+      return "text-black";
     case "secondary":
       return "text-gray-100";
     case "danger":
@@ -32,20 +32,34 @@ const getTextVariantStyle = (variant: ButtonProps["textVariant"]) => {
   }
 };
 
+// New function to get the custom shadow style
+const getShadowStyle = (variant: ButtonProps["shadowVariant"]) => {
+    switch (variant) {
+        case "s":
+            return "shadow-s-custom"; // Uses the custom small shadow
+        case "m":
+            return "shadow-m-custom"; // Uses the custom medium shadow
+        case "none":
+        default:
+            return "shadow-none"; // No shadow
+    }
+}
+
 const CustomButton = ({
   onPress,
   title,
   bgVariant = "primary",
   textVariant = "default",
+  shadowVariant = "m",
   IconLeft,
   IconRight,
   className,
   ...props
-}: ButtonProps) => {
+}: ButtonProps & {shadowVariant?: 's' | 'm' | 'none'}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`w-full rounded-full p-3 flex flex-row justify-center items-center shadow-md shadow-neutral-400/70 ${getBgVariantStyle(bgVariant)} ${className}`}
+      className={`w-[300px] rounded-full p-3 flex flex-row justify-center items-center shadow-sm shadow-black/30 ${getBgVariantStyle(bgVariant)} ${getShadowStyle(shadowVariant)} ${className}`}
       {...props}
     >
       {IconLeft && <IconLeft />}

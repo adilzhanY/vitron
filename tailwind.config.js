@@ -5,6 +5,15 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      colors: {
+        primary: '#2eff66'
+      },
+      boxShadow: {
+        's-custom': 'inset 0 1px 2px #ffffff30, 0 1px 2px #00000036, 0 2px 4px #00000015',
+        'm-custom': 'ins et 0 1px 2px #ffffff50, 0 2px 4px #00000036, 0 4px 8px #00000015',
+      },
+      
+  
       fontFamily: {
                 benzin: ["Benzin-Regular", "sans-serif"],
                 benzinBold: ["Benzin-Bold", "sans-serif"],
