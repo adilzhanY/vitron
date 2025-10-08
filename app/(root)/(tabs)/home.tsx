@@ -54,9 +54,10 @@ const Home = () => {
       <View className="flex-1 justify-center items-center px-4">
         {userData ? (
           <View className="space-y-2 items-center">
+            <Text className='text-black text-xl font-benzin'>Your height: {userData.height}</Text>
             <Text className='text-black text-xl font-benzin'>You are: {userData.gender}</Text>
             <Text className="text-black text-xl font-benzin">Your Goal: {userData.goal}</Text>
-            <Text className="text-black text-xl font-benzin">Current Weight: {userData.initial_weight} kg</Text>
+            <Text className="text-black text-xl font-benzin">Your initial weight: {userData.initial_weight} kg</Text>
           </View>
         ) : (
           <Text className="text-black mt-5">Could not load user data.</Text>

@@ -19,7 +19,7 @@ export const estimateMaintenanceCalories = (weightKg: number): number => {
   return Math.round(weightKg * 30);
 };
 
-export const computeDailyCalorieGoal(
+export const computeDailyCalorieGoal = (
   goal: UserGoal,
   currentWeight: number,
   targetWeight: number

@@ -19,7 +19,7 @@ const normalizeWeightData = (rawData: any[]): WeightEntry[] => {
 const selectActiveWeightGoal = (rawGoals: any): any | null => {
   if (!rawGoals) return null;
 
-  if(Array.isArray(rawGoals) && rawGoals.length > 0) {
+  if (Array.isArray(rawGoals) && rawGoals.length > 0) {
     const sortedGoals = [...rawGoals].sort((a, b) => {
       const dateA = new Date(a.created_at ?? a.created_at ?? 0).getTime();
       const dateB = new Date(b.created_at ?? b.createdAt ?? 0).getTime();
@@ -29,7 +29,7 @@ const selectActiveWeightGoal = (rawGoals: any): any | null => {
     return sortedGoals.find(g => g.achieved === false) ?? sortedGoals[0];
   }
 
-  if(typeof rawGoals === 'object' && !Array.isArray(rawGoals)) {
+  if (typeof rawGoals === 'object' && !Array.isArray(rawGoals)) {
     return rawGoals;
   }
 
@@ -45,7 +45,7 @@ export const fetchWeightPageData = async (clerkId: string) => {
   ]);
 
   // 1. Process Weight data
-  const weightData = normalizeWeightData(weightGoalResponse?.data);
+  const weightData = normalizeWeightData(weightResponse?.data);
 
   // 2. Process User data
   const rawUser = userResponse?.data ?? {};
@@ -66,14 +66,14 @@ export const fetchWeightPageData = async (clerkId: string) => {
       checkpoints: parseInt(String(activeGoal.checkpoints ?? 9), 10),
     }
     : null;
-  return {weightData, userData, weightGoalData};
+  return { weightData, userData, weightGoalData };
 };
 
 // Saves a new weight goal for the user
 export const saveWeightGoal = async (payload: object) => {
   return await fetchAPI('/weight-goals', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
 };

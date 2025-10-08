@@ -20,9 +20,9 @@ declare interface InputFieldProps extends TextInputProps {
   className?: string;
 }
 
-type UserGoal = 'lose weight' | 'gain weight' | 'be fit';
+export type UserGoal = 'lose weight' | 'gain weight' | 'be fit';
 
-type RadialChartProps = {
+export type RadialChartProps = {
   startWeight: number;
   goalWeight: number;
   checkpoints: number;
@@ -32,16 +32,24 @@ type RadialChartProps = {
   onSetNewGoal: () => void;
 };
 
-declare interface WeightAreaChartProps {
+export interface WeightAreaChartProps {
   entries: WeightEntry[];
   setScrollEnabled?: (enabled: boolean) => void;
 }
 
-type WeightEntry = {
+export type WeightEntry = {
   date: string;
   weight: number;
 }
 
+// --- ADDED THESE TYPES ---
+export interface UserData {
+  goal: UserGoal;
+  heightCm?: number | null;
+}
 
-
-
+export interface WeightGoalData {
+  startWeight: number;
+  targetWeight: number;
+  checkpoints: number;
+}

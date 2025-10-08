@@ -20,11 +20,11 @@ export const useWeightData = () => {
     try {
       setLoading(true);
       setError(null);
-      const {weightData, userData, weightGoalData} = await fetchWeightPageData(clerkUser.id);
+      const { weightData, userData, weightGoalData } = await fetchWeightPageData(clerkUser.id);
       setWeightData(weightData);
       setUserData(userData);
       setWeightGoalData(weightGoalData);
-    } catch(err) {
+    } catch (err) {
       console.error('Failed to fetch weight data:', err);
       setError('Could not load your weight data. Please try again');
     } finally {
@@ -63,7 +63,7 @@ export const useWeightData = () => {
 
     // Calculate BMI
     const heightM = (userData.heightCm ?? 0) / 100;
-    const bmiValue = heightM > 0 ? (mostRecentWeight / (heightM * heightM)).toFixed(1)
+    const bmiValue = heightM > 0 ? (mostRecentWeight / (heightM * heightM)).toFixed(1) : '-';
 
     return {
       startWeight: start,

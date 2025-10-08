@@ -180,7 +180,7 @@ const RadialChart = ({
       <View className="items-center absolute top-[35%]">
         {isGoalAchieved ? (
           <>
-            <Text className="text-white text-sm font-benzinBold text-center px-4">
+            <Text className="text-black text-sm font-benzinBold text-center px-4">
               {'Congrats!\nYou achieved\nyour goal!'}
             </Text>
 
@@ -189,10 +189,10 @@ const RadialChart = ({
           </>
         ) : (
           <>
-            <Text className="text-purple-300 text-sm font-benzinMedium">
+            <Text className="text-black text-sm font-benzinMedium">
               {goal === 'be fit' ? 'Current Weight' : `Progress ${Math.round(progress * 100)}%`}
             </Text>
-            <Text className="text-white text-3xl font-benzinBold">
+            <Text className="text-black text-3xl font-benzinBold">
               {currentWeight.toFixed(1)} kg
             </Text>
           </>

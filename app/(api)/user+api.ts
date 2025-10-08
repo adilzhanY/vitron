@@ -104,6 +104,7 @@ export async function GET(request: Request) {
             SELECT
                 u.id,
                 u.name,
+                u.gender,
                 u.email,
                 u.clerk_id,
                 u.initial_weight,
