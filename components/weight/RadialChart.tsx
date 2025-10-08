@@ -185,7 +185,7 @@ const RadialChart = ({
             </Text>
 
             <View className='h-4' />
-            <CustomButton title="Set New Goal" onPress={onSetNewGoal} className='w-5' />
+            <CustomButton title="Set New Goal" onPress={onSetNewGoal} className='mt-20' />
           </>
         ) : (
           <>

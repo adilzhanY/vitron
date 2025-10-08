@@ -54,22 +54,25 @@ export const useWeightData = () => {
     }
 
     const mostRecentWeight = weightData[0].weight;
-    const oldestWeight = weightData.at(-1)?.weight ?? 0;
-    const oldestDate = weightData.at(-1)?.date;
-
-    const start = weightGoalData?.startWeight ?? oldestWeight;
-    const goal = weightGoalData?.targetWeight ?? mostRecentWeight;
+    const start = weightGoalData?.startWeight ?? 0;
+    const goal = weightGoalData?.targetWeight ?? 0;
     const chkpts = weightGoalData?.checkpoints ?? 9;
 
+    const goalStartEntry = weightData.find(entry =>
+      Math.abs(entry.weight - start) < 0.1
+    );
+    const startDateValue = goalStartEntry?.date ?? weightData.at(-1)?.date;
+
     // Calculate BMI
-    const heightM = (userData.heightCm ?? 0) / 100;
+    const heightCm = userData.heightCm ?? 0;
+    const heightM = heightCm / 100;
     const bmiValue = heightM > 0 ? (mostRecentWeight / (heightM * heightM)).toFixed(1) : '-';
 
     return {
       startWeight: start,
       goalWeight: goal,
       currentWeight: mostRecentWeight,
-      startDate: oldestDate ? format(parseISO(oldestDate), 'd MMM yyyy') : '-',
+      startDate: startDateValue ? format(parseISO(startDateValue), 'd MMM yyyy') : '-',
       bmi: bmiValue,
       radialChartEntries: [...weightData].reverse().map(e => e.weight),
       userGoal: userData.goal,

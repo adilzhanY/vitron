@@ -6,6 +6,7 @@ import CustomButton from '@/components/shared/CustomButton'
 import { useUser } from '@clerk/clerk-expo'
 import { fetchAPI } from '@/lib/fetch'
 import { FontAwesome5 } from '@expo/vector-icons'
+import { colors } from '@/constants'
 
 const TrackWeight = () => {
   const router = useRouter();
@@ -46,29 +47,29 @@ const TrackWeight = () => {
   };
 
   return (
-    <SafeAreaView className='bg-black flex-1'>
+    <SafeAreaView className='bg-white flex-1'>
       <Stack.Screen options={{
         headerShown: false
       }}
       />
 
-      <View className="bg-black px-4 py-3 border-b border-gray-800 flex-row items-center">
+      <View className="bg-white px-4 py-3 border-b border-gray-800 flex-row items-center">
         {/* Back button */}
         <TouchableOpacity onPress={() => router.push('/weight')} className="mr-4">
-          <FontAwesome5 name="arrow-left" size={20} color="#fff" />
+          <FontAwesome5 name="arrow-left" size={20} color="#000000" />
         </TouchableOpacity>
 
         {/* Title */}
-        <Text className="text-white text-xl font-benzinExtraBold">
+        <Text className="text-black text-xl font-benzinExtraBold">
           Track New Weight
         </Text>
       </View>
 
 
       <View className='p-4'>
-        <Text className='text-white text-lg font-benzinMedium mb-2'>Today's Weight (kg)</Text>
+        <Text className='text-black text-lg font-benzinMedium mb-2'>Today's Weight (kg)</Text>
         <TextInput
-          className='bg-dark-blue-light text-white text-xl p-4 rounded-lg font-benzinBold'
+          className='bg-dark-blue-light text-black text-xl p-4 border rounded-3xl font-benzinBold'
           placeholder='e.g. 83.4'
           placeholderTextColor="#6b7280"
           keyboardType='numeric'
@@ -78,7 +79,7 @@ const TrackWeight = () => {
 
         <View className='mt-8'>
           {loading ? (
-            <ActivityIndicator size="large" color="#B957FF" />
+            <ActivityIndicator size="large" color={colors.primary} />
           ) : (
             <CustomButton title="Save Weight" onPress={handleSave} />
           )}

@@ -37,6 +37,12 @@ const Weight = () => {
     user,
   } = useWeightData();
 
+  console.log("Goal weight:", goalWeight);
+  console.log("Current weight", currentWeight);
+  console.log("Start Date:", startDate);
+  console.log("Start weight:", startWeight);
+  console.log("Weight data:", weightData);
+
   const [nextCheckpointWeight, setNextCheckpointWeight] = useState<number>(0);
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -71,7 +77,7 @@ const Weight = () => {
 
   if (loading) {
     return (
-      <SafeAreaView className='bg-black flex-1 justify-center items-center'>
+      <SafeAreaView className='bg-white flex-1 justify-center items-center'>
         <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
