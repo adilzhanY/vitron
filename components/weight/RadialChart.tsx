@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
 import { RadialChartProps } from '@/types/type';
-import Svg, { Circle, G, Line } from 'react-native-svg';
+import Svg, { Circle, G, Line, Defs, Filter, FeDropShadow } from 'react-native-svg';
 import CustomButton from '../shared/CustomButton';
 
 const RadialChart = ({
@@ -13,7 +13,7 @@ const RadialChart = ({
   onNextCheckpointCalculated,
   onSetNewGoal,
 }: RadialChartProps) => {
-  const radius = 90;
+  const radius = 110;
   const strokeWidth = 8;
   const checkpointRadius = 12;
   const size = (radius + checkpointRadius) * 2 + strokeWidth;
@@ -77,15 +77,15 @@ const RadialChart = ({
     // (190 * PI) / 180 = PI
     const angleRad = (angleDeg * Math.PI) / 180;
     // Angle = 0 (right side)
-      // cos(0) = 1, sin(0) = 0
-      // cx = 100 + 50 * 1 = 150
-      // cy = 100 + 50 * 0 = 100
-      // Point = (150, 100) -> right edge
+    // cos(0) = 1, sin(0) = 0
+    // cx = 100 + 50 * 1 = 150
+    // cy = 100 + 50 * 0 = 100
+    // Point = (150, 100) -> right edge
     // Angle = 90 (bottom side)
-      // cos(90) = 0, sin(90) = 1
-      // cx = 100 + 50*0 = 100
-      // cy = 100 + 50*1 = 150
-      // Point = (100, 150) -> bottom edge
+    // cos(90) = 0, sin(90) = 1
+    // cx = 100 + 50*0 = 100
+    // cy = 100 + 50*1 = 150
+    // Point = (100, 150) -> bottom edge
     const cx = size / 2 + radius * Math.cos(angleRad);
     const cy = size / 2 + radius * Math.sin(angleRad);
     return { x: cx, y: cy };
@@ -94,6 +94,17 @@ const RadialChart = ({
   return (
     <View className="items-center my-6">
       <Svg width={size} height={size}>
+        <Defs>
+          <Filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <FeDropShadow
+              dx="0"
+              dy="2"
+              stdDeviation="2"
+              floodColor="#000000"
+              floodOpacity="0.3"
+            />
+          </Filter>
+        </Defs>
         <G
           rotation={0}
           originX={size / 2}
@@ -189,10 +200,10 @@ const RadialChart = ({
           </>
         ) : (
           <>
-            <Text className="text-black text-sm font-benzinMedium">
+            <Text className="text-black text-lg font-benzinMedium">
               {goal === 'be fit' ? 'Current Weight' : `Progress ${Math.round(progress * 100)}%`}
             </Text>
-            <Text className="text-black text-3xl font-benzinBold">
+            <Text className="text-black text-4xl font-benzinBold">
               {currentWeight.toFixed(1)} kg
             </Text>
           </>

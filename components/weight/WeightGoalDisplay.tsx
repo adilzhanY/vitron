@@ -25,7 +25,7 @@ const WeightGoalDisplay: React.FC<WeightGoalDisplayProps> = ({
           <Text className="text-gray-400 text-base font-benzinExtraBold">Start</Text>
           <FontAwesome5 name="rocket" size={16} color={colors.black} style={{marginLeft: 6}} />
         </View>
-        <Text className="text-black text-xl font-benzinExtraBold">{startWeight}</Text>
+        <Text className="text-black text-xl font-benzinExtraBold">{startWeight.toFixed(1)} kg</Text>
         <Text className="text-gray-400 text-sm font-benzinExtraBold">{startDate}</Text>
       </View>
 

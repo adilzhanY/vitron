@@ -31,6 +31,8 @@ const Weight = () => {
     startDate,
     bmi,
     radialChartEntries,
+    longestStreak,
+    activeStreak,
     userGoal,
     checkpoints,
     refetch,
@@ -122,7 +124,7 @@ const Weight = () => {
         </View>
 
         {/* TODO: Implement streak calculation logic in `useWeightData` */}
-        <WeightStreaks activeStreak={5} longestStreak={12} />
+        <WeightStreaks activeStreak={activeStreak} longestStreak={longestStreak} />
 
         <WeightAreaChart entries={weightData} />
 

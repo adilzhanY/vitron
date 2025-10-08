@@ -4,7 +4,7 @@ import { useUser } from '@clerk/clerk-expo';
 import { fetchWeightPageData } from '@/services/weightService';
 import { WeightEntry, UserData, WeightGoalData } from '@/types/type';
 import { format, parseISO } from 'date-fns';
-
+import { findStreaks } from '@/services/streakService';
 export const useWeightData = () => {
   const { user: clerkUser } = useUser();
   const [loading, setLoading] = useState(true);
@@ -67,7 +67,7 @@ export const useWeightData = () => {
     const heightCm = userData.heightCm ?? 0;
     const heightM = heightCm / 100;
     const bmiValue = heightM > 0 ? (mostRecentWeight / (heightM * heightM)).toFixed(1) : '-';
-
+    
     return {
       startWeight: start,
       goalWeight: goal,
@@ -80,11 +80,15 @@ export const useWeightData = () => {
     };
   }, [weightData, userData, weightGoalData]);
 
+  const streaks = useMemo(() => findStreaks(weightData, [weightData])); 
+
+
   return {
     loading,
     error,
     weightData, // The raw entries for the list/chart
     ...derivedData, // All the calculated values
+    ...streaks, // Streaks
     refetch: fetchData, // Expose a refetch function
     user: clerkUser,
     userGoal: userData?.goal ?? 'be fit'

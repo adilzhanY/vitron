@@ -105,7 +105,7 @@ const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
   return (
     <View>
       {/* Header */}
-      <View className="flex-row justify-between items-center mb-4">
+      <View className="flex-row justify-between items-center my-4">
         <Text className="text-black text-xl font-benzinBold">Weight Progress</Text>
         <FontAwesome name="search" size={20} color="black" />
       </View>
