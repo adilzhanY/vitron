@@ -9,6 +9,7 @@ import CustomButton from '@/components/shared/CustomButton';
 import PageHeader from '@/components/shared/PageHeader';
 import EmptyState from '@/components/shared/EmptyState';
 import FoodHeader from '@/components/food/FoodHeader';
+import FoodDateSelector from '@/components/food/FoodDateSelector';
 import MacroProgressBar from '@/components/food/MacroProgressBar';
 import { fetchAPI } from '@/lib/fetch';
 
@@ -92,11 +93,14 @@ const FoodTracker = () => {
     <SafeAreaView className="flex-1 bg-green-200">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         <PageHeader title="Track your food" />
+        <View>
+          <FoodDateSelector selectedDate={selectedDate} onDateChange={setSelectedDate} />
+
+        </View>
         
-        <View className="bg-white p-4 rounded-2xl">
+        <View style={{borderRadius: 50}} className="bg-white p-5">
+
           <FoodHeader
-            selectedDate={selectedDate}
-            onDateChange={setSelectedDate}
             totalCalories={foodTotals.calories}
           />
 
@@ -111,7 +115,7 @@ const FoodTracker = () => {
               label="Carbs"
               current={foodTotals.carbs}
               goal={userGoals.carbs}
-              color="bg-rose-500"
+              color="bg-green-500"
             />
             <MacroProgressBar
               label="Fat"
@@ -122,12 +126,14 @@ const FoodTracker = () => {
           </View>
           
           <View className="mt-4">
-            <CustomButton
+          </View>
+        </View>
+        <View className="h-[500px]"></View>
+                    <CustomButton
               title={'Create new meal'}
               onPress={handleCreateNewMeal}
             />
-          </View>
-        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
