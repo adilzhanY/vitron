@@ -58,31 +58,21 @@ CREATE TABLE weight_goals (
 );
 
 
-CREATE TABLE streaks (
+CREATE TYPE meal_type AS ENUM ('breakfast', 'lunch', 'dinner', 'snack');
+
+-- create table using the enum
+CREATE TABLE meals (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    type VARCHAR(50) NOT NULL CHECK (type IN ('weight', 'calories', 'activity')),
-    current_streak INT DEFAULT 0,
-    longest_streak INT DEFAULT 0,
-    updated_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE (user_id, type)
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    calories INT NOT NULL,
+    protein DECIMAL(6,2),
+    carbs DECIMAL(6,2),
+    fat DECIMAL(6,2),
+    meal_type meal_type NOT NULL,
+    logged_at TIMESTAMP DEFAULT NOW(),
+    is_saved BOOLEAN DEFAULT FALSE
 );
-
-
-
-
-
--- CREATE TABLE meals (
---     id SERIAL PRIMARY KEY,
---     user_id INT REFERENCES users(id) ON DELETE CASCADE,
---     name VARCHAR(255) NOT NULL, -- e.g. "Chicken Salad"
---     calories INT NOT NULL,
---     protein DECIMAL(6,2), -- optional macros
---     carbs DECIMAL(6,2),
---     fat DECIMAL(6,2),
---     logged_at TIMESTAMP DEFAULT NOW(),
---     is_saved BOOLEAN DEFAULT FALSE -- true if saved to "My Meals"
--- );
 
 -- CREATE TABLE saved_meals (
 --     id SERIAL PRIMARY KEY,

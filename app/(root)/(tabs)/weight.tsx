@@ -96,37 +96,39 @@ const Weight = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-green-200">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         <PageHeader title="Track Your Weight" actionText="All Entries" onActionPress={() => { /* Navigate to entries screen */ }} />
+        <View className="bg-white p-3 rounded-2xl"  >
+          <WeightStats bmi={bmi} nextCheckpoint={nextCheckpointWeight} />
 
-        <WeightStats bmi={bmi} nextCheckpoint={nextCheckpointWeight} />
+          <RadialChart
+            startWeight={startWeight}
+            goalWeight={goalWeight}
+            checkpoints={checkpoints}
+            entries={radialChartEntries}
+            goal={userGoal}
+            onNextCheckpointCalculated={setNextCheckpointWeight}
+            onSetNewGoal={() => setModalVisible(true)}
+          />
 
-        <RadialChart
-          startWeight={startWeight}
-          goalWeight={goalWeight}
-          checkpoints={checkpoints}
-          entries={radialChartEntries}
-          goal={userGoal}
-          onNextCheckpointCalculated={setNextCheckpointWeight}
-          onSetNewGoal={() => setModalVisible(true)}
-        />
+          <WeightGoalDisplay
+            startWeight={startWeight}
+            startDate={startDate}
+            goalWeight={goalWeight}
+            onSetGoal={() => setModalVisible(true)}
+          />
 
-        <WeightGoalDisplay
-          startWeight={startWeight}
-          startDate={startDate}
-          goalWeight={goalWeight}
-          onSetGoal={() => setModalVisible(true)}
-        />
-
-        <View className="my-4">
-          <CustomButton title="Track Weight" onPress={() => router.push('/track-weight')} />
+          <View className="my-4">
+            <CustomButton title="Track Weight" onPress={() => router.push('/track-weight')} />
+          </View>
         </View>
 
-        {/* TODO: Implement streak calculation logic in `useWeightData` */}
         <WeightStreaks activeStreak={activeStreak} longestStreak={longestStreak} />
 
-        <WeightAreaChart entries={weightData} />
+        <View className="bg-white p-3 rounded-2xl mt-3">
+          <WeightAreaChart entries={weightData} />
+        </View>
 
         <WeightEntriesList entries={weightData} />
       </ScrollView>

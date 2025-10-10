@@ -42,7 +42,6 @@ export type WeightEntry = {
   weight: number;
 }
 
-// --- ADDED THESE TYPES ---
 export interface UserData {
   goal: UserGoal;
   heightCm?: number | null;
@@ -53,3 +52,40 @@ export interface WeightGoalData {
   targetWeight: number;
   checkpoints: number;
 }
+
+export type FoodEntry = {
+  name: string;
+  cals: number;
+  mealType: MealType;
+  isSaved: bool | false;
+  date: string;
+  protein?: number | null;
+  carbs?: number | null;
+  fat?: number | null;
+}
+
+export interface FoodStatsProps {
+  entries: FoodEntry[];
+}
+
+type MealType = 
+  'breakfast' | 
+  'lunch' | 
+  'dinner' | 
+  'snack';
+
+interface FoodTotals {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+interface FoodUserGoals {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+
