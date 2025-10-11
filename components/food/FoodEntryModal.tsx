@@ -34,6 +34,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
   const [fat, setFat] = useState('');
+  const [mealType, setMealType] = useState('breakfast');
   const [isSaving, setIsSaving] = useState(false);
 
 

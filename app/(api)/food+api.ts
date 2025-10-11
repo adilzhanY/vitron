@@ -22,9 +22,9 @@ export async function GET(request: Request) {
 
     // Fetch food entry for a specific date
     const foods = await sql`
-      SELECT name, is_saved, calories, protein, carbs, fat, meal_type, logged_at
+      SELECT name, is_saved, calories, protein, carbs, fat, meal_type, entry_date
       FROM meals
-      WHERE user_id = ${userId} AND DATE(logged_at) = ${date}
+      WHERE user_id = ${userId} AND entry_date = ${date}::date;
     `;
 
     return Response.json({data: foods}, {status: 200});
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
-    const { clerkId, name, calories, protein, carbs, fat, mealType, isSaved} = await request.json();
+    const { clerkId, name, calories, protein, carbs, fat, mealType, isSaved, entryDate} = await request.json();
 
     if(!clerkId || calories == null) {
       return Response.json({error: "Missing required fields: clerkId, calories"}, {status: 400});
@@ -63,7 +63,8 @@ export async function POST(request: Request) {
         carbs, 
         fat, 
         meal_type,
-        is_saved
+        is_saved,
+        entry_date
       )
       VALUES (
         ${userId},
@@ -73,7 +74,8 @@ export async function POST(request: Request) {
         ${carbs},
         ${fat},
         ${mealType},
-        ${isSaved}
+        ${isSaved},
+        ${entryDate}::date
       )
       RETURNING *
     `;

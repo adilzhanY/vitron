@@ -65,6 +65,7 @@ const FoodTracker = () => {
     fat: number,
     mealType: MealType,
     isSaved: boolean,
+    entryDate: string,
     date: string,
   }) => {
     if (!clerkUser) return;
@@ -78,8 +79,9 @@ const FoodTracker = () => {
       fat: newMeal.fat,
       mealType: 'breakfast',
       isSaved: false,
-      date: selectedDate.toISOString(),
+      entryDate: selectedDate.toISOString().split('T')[0],
     };
+    console.log(payload);
     try {
       await fetchAPI('/food', {
         method: 'POST',
