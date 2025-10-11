@@ -3,12 +3,13 @@ import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 interface FoodHeaderProps {
+  onSetFoodEntry: () => void;
   totalCalories: number;
 }
 
 const DAILY_GOAL = 2300;
 
-const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories }) => {
+const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories, onSetFoodEntry }) => {
   const [showCaloriesLeft, setShowCaloriesLeft] = useState(false);
   const [containerWidth, setContainerWidth] = useState(160);
 
@@ -75,7 +76,7 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories }) => {
         </TouchableOpacity>
 
         {/* Button on top-right */}
-        <TouchableOpacity className="w-20 h-20 bg-green-400 rounded-full flex items-center justify-center">
+        <TouchableOpacity onPress={onSetFoodEntry} className="w-20 h-20 bg-green-400 rounded-full flex items-center justify-center">
           <FontAwesome5 name="plus" size={24} color="white" />
         </TouchableOpacity>
       </View>

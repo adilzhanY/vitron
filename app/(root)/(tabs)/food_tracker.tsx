@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser } from '@clerk/clerk-expo';
 import { colors } from '@/constants'; 
-import {FoodTotals, FoodUserGoals} from '@/types/type';
+import {FoodTotals, FoodUserGoals, MealType} from '@/types/type';
 
 import CustomButton from '@/components/shared/CustomButton';
 import PageHeader from '@/components/shared/PageHeader';
@@ -11,12 +11,14 @@ import EmptyState from '@/components/shared/EmptyState';
 import FoodHeader from '@/components/food/FoodHeader';
 import FoodDateSelector from '@/components/food/FoodDateSelector';
 import MacroProgressBar from '@/components/food/MacroProgressBar';
+import FoodEntryModal from '@/components/food/FoodEntryModal';
 import { fetchAPI } from '@/lib/fetch';
 
 const FoodTracker = () => {
   const { user: clerkUser } = useUser();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
   
   // State for food data and user goals
   const [foodTotals, setFoodTotals] = useState<FoodTotals>({ calories: 0, protein: 0, carbs: 0, fat: 0 });
@@ -55,14 +57,25 @@ const FoodTracker = () => {
     fetchFoodData(selectedDate);
   }, [selectedDate, fetchFoodData]);
 
-  const handleCreateNewMeal = async () => {
+  const handleCreateNewMeal = useCallback(async (newMeal: {
+    name: string,
+    calories: number,
+    protein: number,
+    carbs: number,
+    fat: number,
+    mealType: MealType,
+    isSaved: boolean,
+    date: string,
+  }) => {
+    if (!clerkUser) return;
+    
     const payload = {
       clerkId: clerkUser?.id,
-      name: 'Sandwich',
-      calories: 543,
-      protein: 30,
-      carbs: 90,
-      fat: 20,
+      name: newMeal.name,
+      calories: newMeal.calories,
+      protein: newMeal.protein,
+      carbs: newMeal.carbs,
+      fat: newMeal.fat,
       mealType: 'breakfast',
       isSaved: false,
       date: selectedDate.toISOString(),
@@ -79,7 +92,7 @@ const FoodTracker = () => {
     } catch (error) {
       console.error("Failed to save meal: ", error);
     }
-  };
+  }, [clerkUser, selectedDate, fetchFoodData]);
 
   if (loading) {
     return (
@@ -102,6 +115,7 @@ const FoodTracker = () => {
 
           <FoodHeader
             totalCalories={foodTotals.calories}
+            onSetFoodEntry={() => setModalVisible(true)}
           />
 
           <View className="mt-4">
@@ -135,6 +149,11 @@ const FoodTracker = () => {
             />
 
       </ScrollView>
+      <FoodEntryModal
+        visible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+        onSave={handleCreateNewMeal}
+      />
     </SafeAreaView>
   );
 };

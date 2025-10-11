@@ -99,7 +99,7 @@ const Weight = () => {
     <SafeAreaView className="flex-1 bg-green-200">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         <PageHeader title="Track Your Weight" actionText="All Entries" onActionPress={() => { /* Navigate to entries screen */ }} />
-        <View className="bg-white p-3 rounded-2xl"  >
+        <View className="bg-white p-3" style={{borderRadius:30}}>
           <WeightStats bmi={bmi} nextCheckpoint={nextCheckpointWeight} />
 
           <RadialChart
@@ -126,7 +126,7 @@ const Weight = () => {
 
         <WeightStreaks activeStreak={activeStreak} longestStreak={longestStreak} />
 
-        <View className="bg-white p-3 rounded-2xl mt-3">
+        <View className="bg-white p-3 mt-3" style={{borderRadius:30}}>
           <WeightAreaChart entries={weightData} />
         </View>
 
