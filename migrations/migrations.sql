@@ -8,7 +8,17 @@ CREATE TABLE users (
     height DECIMAL(5,2),
     measurements_filled BOOLEAN DEFAULT FALSE,
     goal VARCHAR(20) CHECK (goal IN ('lose weight', 'gain weight', 'be fit')),
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    activity_level activity_level_enum,
+    birthday DATE
+);
+
+CREATE TYPE activity_level_enum AS ENUM (
+    'sedentary',
+    'lightly active',
+    'moderately active',
+    'very active',
+    'extremely active'
 );
 
 CREATE TABLE weights (

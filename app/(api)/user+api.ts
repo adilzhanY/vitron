@@ -51,12 +51,14 @@ export async function PATCH(request: Request) {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const {
       clerkId,
+      age,
       gender,
       weight,
       height,
       weightGoal,
       dailyCalorieGoal,
-      goal
+      goal,
+      activityLevel
     } = await request.json();
 
     if (!clerkId) {
@@ -69,11 +71,13 @@ export async function PATCH(request: Request) {
     const response = await sql`
       UPDATE users
       SET
+        age = ${age},
         gender = ${gender},
         initial_weight = ${weight},
         height = ${height},
         goal = ${goal},
-        measurements_filled = TRUE
+        measurements_filled = TRUE,
+        activityLevel = ${activityLevel}
       WHERE clerk_id = ${clerkId}
       RETURNING id
     `;
@@ -102,27 +106,18 @@ export async function GET(request: Request) {
     // Fetch user data and their latest weight goal in one go
     const userQuery = await sql`
             SELECT
-                u.id,
-                u.name,
-                u.gender,
-                u.email,
-                u.clerk_id,
-                u.initial_weight,
-                u.height,
-                u.measurements_filled,
-                u.goal,
-                wg.start_weight,
-                wg.checkpoints
-            FROM users u
-            LEFT JOIN (
-                SELECT
-                    user_id,
-                    start_weight,
-                    checkpoints,
-                    ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY created_at DESC) as rn
-                FROM weight_goals
-            ) wg ON u.id = wg.user_id AND wg.rn = 1
-            WHERE u.clerk_id = ${clerkId}
+                id,
+                name,
+                gender,
+                email,
+                clerk_id,
+                initial_weight,
+                height,
+                measurements_filled,
+                goal,
+                activity_level
+            FROM users
+            WHERE clerk_id = ${clerkId}
         `;
 
     if (userQuery.length === 0) {
