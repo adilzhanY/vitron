@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import CustomButton from '@/components/shared/CustomButton';
@@ -16,11 +16,11 @@ type Goal = 'lose weight' | 'gain weight' | 'be fit';
 type ActivityLevel = 'sedentary' | 'lightly active' | 'moderately active' | 'very active' | 'extremely active';
 
 const activityOptions: { label: ActivityLevel; icon: string }[] = [
-  { label: 'sedentary', icon: 'couch' },
-  { label: 'lightly active', icon: 'walking' },
-  { label: 'moderately active', icon: 'running' },
-  { label: 'very active', icon: 'bicycle' },
-  { label: 'extremely active', icon: 'dumbbell' },
+  { label: 'Sedentary', icon: 'couch' },
+  { label: 'Lightly active', icon: 'walking' },
+  { label: 'Moderately active', icon: 'running' },
+  { label: 'Very active', icon: 'bicycle' },
+  { label: 'Extremely active', icon: 'dumbbell' },
 ];
 
 const Measurements = () => {
@@ -84,13 +84,13 @@ const Measurements = () => {
   const calculateAndSetCalories = () => {
     const { gender, initialWeight, height, birthday } = userMeasurements;
     if (!gender || !initialWeight || !height || !birthday) return;
-    
+
     const ageNum = calculateAge(birthday);
     if (ageNum < 8) return; // Don't calculate for children
 
     const weightInKg = weightUnit === 'lb' ? parseFloat(initialWeight) * 0.453592 : parseFloat(initialWeight);
     const heightInCm = heightUnit === 'ft' ? parseFloat(height) * 30.48 : parseFloat(height);
-    
+
     let bmr;
     if (gender === 'male') {
       bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * ageNum + 5;
@@ -154,7 +154,7 @@ const Measurements = () => {
             goal: finalGoal,
           }),
         });
-        
+
         try {
           await fetchAPI('/(api)/first-weight-goal', {
             method: 'POST',
@@ -194,12 +194,12 @@ const Measurements = () => {
     }
   };
 
-  const handleDateChange = ({ day, month, year }: { day: number; month: number; year: number }) => {
+  const handleDateChange = useCallback(({ day, month, year }: { day: number; month: number; year: number }) => {
     const formattedMonth = month.toString().padStart(2, '0');
     const formattedDay = day.toString().padStart(2, '0');
     const birthdayString = `${year}-${formattedMonth}-${formattedDay}`;
     setUserMeasurements(prev => ({ ...prev, birthday: birthdayString }));
-  };
+  }, []);
 
   const slideContainerStyle = "flex-1 items-center justify-center p-5 z-10";
   const titleStyle = "text-black text-3xl font-benzinBold mx-10 text-center";
@@ -234,7 +234,7 @@ const Measurements = () => {
               <TouchableOpacity
                 key={option}
                 onPress={() => setUserMeasurements({ ...userMeasurements, gender: option.toLowerCase() })}
-                className={`p-3 mx-2 rounded-lg ${userMeasurements.gender === option.toLowerCase() ? 'bg-[#B957FF]' : 'bg-gray-700'}`}
+                className={`p-3 mx-2 rounded-lg ${userMeasurements.gender === option.toLowerCase() ? 'bg-green-300' : 'bg-gray-700'}`}
               >
                 <Text className="text-white font-benzin">{option}</Text>
               </TouchableOpacity>
@@ -279,7 +279,7 @@ const Measurements = () => {
             </View>
           </View>
         </View>
-        
+
         {/* Slide 4: Birthday*/}
         <View key="birthday-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your date of birth?</Text>
@@ -289,18 +289,21 @@ const Measurements = () => {
         {/* Slide 5: Activity Level */}
         <View key="activity-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>Select your activity level</Text>
-          <View className="mt-5 w-full">
-            {activityOptions.map((option) => (
-              <TouchableOpacity
-                key={option.label}
-                onPress={() => setUserMeasurements({ ...userMeasurements, activityLevel: option.label })}
-                className={`flex-row items-center p-4 m-2 rounded-lg ${userMeasurements.activityLevel === option.label ? 'bg-[#B957FF]' : 'bg-gray-700'}`}
-              >
-                <FontAwesome5 name={option.icon} size={24} color='white' />
-                <Text className="text-white font-benzin text-xl ml-4">{option.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+<View className="mt-5 w-full">
+  {activityOptions.map((option) => (
+    <TouchableOpacity
+      key={option.label}
+      onPress={() => setUserMeasurements({ ...userMeasurements, activityLevel: option.label })}
+      className={`flex-row items-center p-4 m-2 rounded-2xl ${userMeasurements.activityLevel === option.label ? 'bg-green-300' : 'bg-gray-700'}`}
+    >
+      <View style={{ width: 30, alignItems: 'center' }}>
+        <FontAwesome5 name={option.icon} size={24} color="white" />
+      </View>
+      <Text className="text-white font-benzinBold text-xl ml-4">{option.label}</Text>
+    </TouchableOpacity>
+  ))}
+</View>
+
         </View>
 
         {/* Slide 6: Target Weight */}
