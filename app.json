@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "vitron",
+    "name": "Vitron",
     "slug": "vitron",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/vitronlogo.png",
+    "icon": "./assets/icons/applogo.png",
     "scheme": "uberreactnative",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/vitronlogo.png",
+        "foregroundImage": "./assets/icons/applogo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
@@ -21,7 +21,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/icons/applogo.png"
     },
     "plugins": [
       "expo-router",

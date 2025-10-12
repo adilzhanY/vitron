@@ -51,7 +51,7 @@ export async function PATCH(request: Request) {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const {
       clerkId,
-      age,
+      birthday,
       gender,
       weight,
       height,
@@ -71,13 +71,13 @@ export async function PATCH(request: Request) {
     const response = await sql`
       UPDATE users
       SET
-        age = ${age},
+        birthday = ${birthday},
         gender = ${gender},
         initial_weight = ${weight},
         height = ${height},
         goal = ${goal},
         measurements_filled = TRUE,
-        activityLevel = ${activityLevel}
+        activity_level = ${activityLevel}
       WHERE clerk_id = ${clerkId}
       RETURNING id
     `;
@@ -110,6 +110,7 @@ export async function GET(request: Request) {
                 name,
                 gender,
                 email,
+                birthday,
                 clerk_id,
                 initial_weight,
                 height,
