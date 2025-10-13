@@ -1,31 +1,29 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React, { useRef, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
-import { onboarding } from '@/constants'
-import CustomButton from '@/components/shared/CustomButton'
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur'
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import React, { useRef, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { onboarding } from "@/constants";
+import CustomButton from "@/components/shared/CustomButton";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 // Some CJS libraries can have default export interop issues on newer React Native / bundler versions.
 // We defensively resolve the component to avoid Swiper being undefined at runtime.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const SwiperModule = require('react-native-swiper')
-const Swiper: any = SwiperModule?.default ?? SwiperModule
+const SwiperModule = require("react-native-swiper");
+const Swiper: any = SwiperModule?.default ?? SwiperModule;
 
 const Onboarding = () => {
   // Using any here because the library doesn't ship proper TS types; avoids undefined generic issues.
-  const swiperRef = useRef<any>(null)
+  const swiperRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const isLastSlide = activeIndex === onboarding.length - 1;
 
-
   return (
     <SafeAreaView className="flex h-full items-center justify-between bg-white relative overflow-hidden">
-
       {/* Skip button */}
       <TouchableOpacity
         onPress={() => {
-          router.replace('./sign-up')
+          router.replace("./sign-up");
         }}
         className="w-full flex justify-end items-end p-5 z-10"
       >
@@ -41,7 +39,7 @@ const Onboarding = () => {
             <View className="w-[16px] h-[4px] mx-1 bg-[#E2E8F0] rounded-full" />
           }
           activeDot={
-            <View className="w-[32px] h-[4px] mx-1 bg-[#B957FF] rounded-full" />
+            <View className="w-[32px] h-[4px] mx-1 bg-green-300 rounded-full" />
           }
           onIndexChanged={(index: number) => setActiveIndex(index)}
         >
@@ -74,17 +72,17 @@ const Onboarding = () => {
 
       {/* CTA button */}
       <CustomButton
-        title={isLastSlide ? 'Get Started' : 'Next'}
+        title={isLastSlide ? "Get Started" : "Next"}
         onPress={() =>
           isLastSlide
-            ? router.replace('./sign-up')
+            ? router.replace("./sign-up")
             : swiperRef.current?.scrollBy(1)
         }
         className="mt-10 mb-10 z-10"
         shadowVariant="m"
       />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Onboarding
+export default Onboarding;

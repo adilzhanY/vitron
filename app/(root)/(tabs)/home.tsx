@@ -1,19 +1,43 @@
-import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { ScrollView } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { useUser } from '@clerk/clerk-expo'
-import { images } from '@/constants'
-import { Link, router } from 'expo-router'
-import { fetchAPI } from '@/lib/fetch'
-import {colors} from '@/constants';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useUser } from "@clerk/clerk-expo";
+import { images } from "@/constants";
+import { Link, router } from "expo-router";
+import { fetchAPI } from "@/lib/fetch";
+import { colors } from "@/constants";
 interface UserData {
   name: string;
+  activity_level: string;
+  birthday: string;
   gender: string;
   initial_weight: string;
   height: string;
   goal: string;
 }
+
+const calculateAge = (birthdayString: string): number => {
+  if (!birthdayString) return 0;
+  const birthDate = new Date(birthdayString);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+  return age;
+};
 
 const Home = () => {
   const { user: clerkUser } = useUser();
@@ -36,15 +60,14 @@ const Home = () => {
       }
     };
     fetchUserData();
-
   }, [clerkUser]);
 
   if (loading) {
     return (
-      <SafeAreaView className='bg-white flex-1 justify-center items-center'>
+      <SafeAreaView className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
-    )
+    );
   }
   return (
     <SafeAreaView className="bg-white flex-1">
@@ -54,10 +77,25 @@ const Home = () => {
       <View className="flex-1 justify-center items-center px-4">
         {userData ? (
           <View className="space-y-2 items-center">
-            <Text className='text-black text-xl font-benzin'>Your height: {userData.height}</Text>
-            <Text className='text-black text-xl font-benzin'>You are: {userData.gender}</Text>
-            <Text className="text-black text-xl font-benzin">Your Goal: {userData.goal}</Text>
-            <Text className="text-black text-xl font-benzin">Your initial weight: {userData.initial_weight} kg</Text>
+            <Text className="text-black text-xl font-benzin">
+              Your activity level: {userData.activity_level}
+            </Text>
+            <Text className="text-black text-xl font-benzin">
+              Your age:{" "}
+              {userData?.birthday ? calculateAge(userData.birthday) : "-"}
+            </Text>
+            <Text className="text-black text-xl font-benzin">
+              Your height: {userData.height}
+            </Text>
+            <Text className="text-black text-xl font-benzin">
+              You are: {userData.gender}
+            </Text>
+            <Text className="text-black text-xl font-benzin">
+              Your Goal: {userData.goal}
+            </Text>
+            <Text className="text-black text-xl font-benzin">
+              Your initial weight: {userData.initial_weight} kg
+            </Text>
           </View>
         ) : (
           <Text className="text-black mt-5">Could not load user data.</Text>
@@ -65,6 +103,6 @@ const Home = () => {
       </View>
     </SafeAreaView>
   );
-}
+};
 
-export default Home
+export default Home;
