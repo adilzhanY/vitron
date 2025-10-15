@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import React, { useRef, useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Animated, Easing } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 interface FoodHeaderProps {
   onSetFoodEntry: () => void;
@@ -9,7 +9,10 @@ interface FoodHeaderProps {
 
 const DAILY_GOAL = 2300;
 
-const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories, onSetFoodEntry }) => {
+const FoodHeader: React.FC<FoodHeaderProps> = ({
+  totalCalories,
+  onSetFoodEntry,
+}) => {
   const [showCaloriesLeft, setShowCaloriesLeft] = useState(false);
   const [containerWidth, setContainerWidth] = useState(160);
 
@@ -43,32 +46,50 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories, onSetFoodEntry }
             width: containerWidth,
             minWidth: 160,
             height: 40,
-            backgroundColor: '#E5E7EB',
+            backgroundColor: "#E5E7EB",
             borderRadius: 9999,
-            overflow: 'hidden',
+            overflow: "hidden",
           }}
         >
           <Animated.View
             style={{
-              position: 'absolute',
+              position: "absolute",
               left: 0,
               top: 0,
               width: knobWidth,
-              height: '100%',
+              height: "100%",
               borderRadius: 9999,
-              backgroundColor: '#34D399',
+              backgroundColor: "#34D399",
               transform: [{ translateX }],
             }}
           />
 
-          <View style={{ flex: 1, flexDirection: 'row' }}>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              <Text className="font-benzinBold"style={{ color: showCaloriesLeft ? '#6B7280' : '#FFFFFF' }}>
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                className="font-benzinBold"
+                style={{ color: showCaloriesLeft ? "#6B7280" : "#FFFFFF" }}
+              >
                 Taken
               </Text>
             </View>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              <Text className="font-benzinBold"style={{ color: showCaloriesLeft ? '#FFFFFF' : '#6B7280' }}>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                className="font-benzinBold"
+                style={{ color: showCaloriesLeft ? "#FFFFFF" : "#6B7280" }}
+              >
                 Left
               </Text>
             </View>
@@ -76,7 +97,10 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories, onSetFoodEntry }
         </TouchableOpacity>
 
         {/* Button on top-right */}
-        <TouchableOpacity onPress={onSetFoodEntry} className="w-20 h-20 bg-green-400 rounded-full flex items-center justify-center">
+        <TouchableOpacity
+          onPress={onSetFoodEntry}
+          className="w-20 h-20 bg-green-400 rounded-full flex items-center justify-center"
+        >
           <FontAwesome5 name="plus" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -85,7 +109,9 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories, onSetFoodEntry }
       <View className="flex flex-row w-full justify-start">
         <View className="flex flex-row justify-center items-center bg-white p-5 rounded-3xl">
           <Text className="text-4xl font-benzinBold text-black mr-2">
-            {showCaloriesLeft ? caloriesLeft.toFixed(0) : totalCalories.toFixed(0)}
+            {showCaloriesLeft
+              ? caloriesLeft.toFixed(0)
+              : totalCalories.toFixed(0)}
           </Text>
           <Text className="text-lg font-benzinBold text-gray-300">kcal</Text>
         </View>
@@ -95,4 +121,3 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({ totalCalories, onSetFoodEntry }
 };
 
 export default FoodHeader;
-

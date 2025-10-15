@@ -84,6 +84,20 @@ CREATE TABLE meals (
     is_saved BOOLEAN DEFAULT FALSE
 );
 
+CREATE TABLE meal_goals (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    calories_target INT NOT NULL,
+    protein_target DECIMAL(6,2),
+    carbs_target DECIMAL(6,2),
+    fat_target DECIMAL(6,2),
+    goal_date DATE NOT NULL,
+    related_weight_goal_id INT REFERENCES weight_goals(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+
 -- CREATE TABLE saved_meals (
 --     id SERIAL PRIMARY KEY,
 --     user_id INT REFERENCES users(id) ON DELETE CASCADE,
