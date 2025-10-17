@@ -295,6 +295,16 @@ const Measurements = () => {
     [],
   );
 
+  const handleTargetWeightChange = useCallback(
+    (weight: number, unit: "kg" | "lb") => {
+      setUserMeasurements((prev) => ({
+        ...prev,
+        targetWeight: weight.toString(),
+      }));
+    },
+    [],
+  );
+
   const handleActivityLevelChange = useCallback((level: ActivityLevel) => {
     setUserMeasurements((prev) => ({
       ...prev,
@@ -444,35 +454,17 @@ const Measurements = () => {
         {/* Slide 7: Target Weight */}
         <View key="target-weight-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your target weight?</Text>
-          <View className={inputContainerStyle}>
-            <TextInput
-              className={textInputStyle}
-              placeholder="70"
-              placeholderTextColor="#858585"
-              keyboardType="numeric"
-              value={userMeasurements.targetWeight}
-              onChangeText={(text) =>
-                setUserMeasurements((prev) => ({ ...prev, targetWeight: text }))
+          <View className="mt-8 w-full px-4">
+            <WeightPicker
+              onWeightChange={handleTargetWeightChange}
+              initialWeight={
+                userMeasurements.targetWeight
+                  ? parseFloat(userMeasurements.targetWeight)
+                  : undefined
               }
+              unitSystem={userMeasurements.unitSystem as "metric" | "imperial"}
             />
-
-            <View className={unitContainerStyle}>
-              <Text className="text-white font-benzin p-3">{weightUnit}</Text>
-            </View>
           </View>
-          <TouchableOpacity
-            className="mt-4 bg-green-300 rounded-xl p-4"
-            onPress={() =>
-              setUserMeasurements((prev) => ({
-                ...prev,
-                targetWeight: prev.initialWeight,
-              }))
-            }
-          >
-            <Text className="text-white text-center font-benzinBold">
-              I just wanna be fit!
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Slide 8: Daily Calorie Goal */}
