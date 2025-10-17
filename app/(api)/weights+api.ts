@@ -1,19 +1,20 @@
-import { isNeonDbError } from '@/lib/utils';
-import { neon } from '@neondatabase/serverless';
+import { isNeonDbError } from "@/lib/utils";
+import { neon } from "@neondatabase/serverless";
 
 // GET all weight entries for a user
 export async function GET(request: Request) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const { searchParams } = new URL(request.url);
-    const clerkId = searchParams.get('clerkId');
+    const clerkId = searchParams.get("clerkId");
 
     if (!clerkId) {
       return Response.json({ error: "clerkId is required" }, { status: 400 });
     }
 
     // First, get the internal user ID from the clerkId
-    const userResult = await sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
+    const userResult =
+      await sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
     if (userResult.length === 0) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
@@ -28,10 +29,12 @@ export async function GET(request: Request) {
     `;
 
     return Response.json({ data: weights }, { status: 200 });
-
   } catch (error) {
     console.error("Error in GET /api/weights:", error);
-    return Response.json({ error: "An internal server error occurred" }, { status: 500 });
+    return Response.json(
+      { error: "An internal server error occurred" },
+      { status: 500 },
+    );
   }
 }
 
@@ -42,11 +45,15 @@ export async function POST(request: Request) {
     const { clerkId, weight } = await request.json();
 
     if (!clerkId || !weight) {
-      return Response.json({ error: "Missing required fields: clerkId, weight" }, { status: 400 });
+      return Response.json(
+        { error: "Missing required fields: clerkId, weight" },
+        { status: 400 },
+      );
     }
 
     // Get the internal user ID from the clerkId
-    const userResult = await sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
+    const userResult =
+      await sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
     if (userResult.length === 0) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
@@ -63,9 +70,12 @@ export async function POST(request: Request) {
     `;
 
     return new Response(JSON.stringify({ data: response[0] }), { status: 201 });
-
   } catch (error) {
     console.error("Error in POST /api/weights:", error);
-    return Response.json({ error: "An internal server error occurred" }, { status: 500 });
+    return Response.json(
+      { error: "An internal server error occurred" },
+      { status: 500 },
+    );
   }
 }
+

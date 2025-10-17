@@ -97,6 +97,28 @@ CREATE TABLE meal_goals (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE daily_water_intake (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    date DATE NOT NULL,
+    total_consumed INT DEFAULT 0, -- in ml
+    daily_goal INT DEFAULT 2500,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+);
+
+CREATE TABLE exercises (
+    id SERIAL PRIMARY KEY,
+    exercise_id VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    gif_url VARCHAR(255),
+    target_muscles JSONB,
+    body_parts JSONB,
+    equipments JSONB,
+    secondary_muscles JSONB,
+    instructions JSONB
+);
+
 
 -- CREATE TABLE saved_meals (
 --     id SERIAL PRIMARY KEY,
