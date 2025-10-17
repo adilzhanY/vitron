@@ -1,7 +1,9 @@
-<div align="center">
+<div align="center">  
+  <img width="256" height="256" alt="applogo" src="https://github.com/user-attachments/assets/f9a9a708-95b9-4659-8939-995edff25134"
+/>
 
-  
-  <img width="256" height="256" alt="applogo" src="https://github.com/user-attachments/assets/f9a9a708-95b9-4659-8939-995edff25134" />
+<img width="1200" height="628" alt="vitron_poster_1" src="https://github.com/user-attachments/assets/063be313-5c41-4ff3-8641-7455a83e64ed" style="border-radius: 24px; margin-top: 16px;" />
+
 
 
 # Demo
