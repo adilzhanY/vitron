@@ -1,11 +1,11 @@
-import React, { useMemo, useState, useEffect, useCallback } from "react";
+import React, { memo, useMemo, useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Picker, { PickerItem } from "../shared/Picker";
 
 interface WeightPickerProps {
   onWeightChange: (weight: number, unit: "kg" | "lb") => void;
   initialWeight?: number;
-  unitSystem: "metric" | "imperial"; // Changed from initialUnit
+  unitSystem: "metric" | "imperial";
 }
 
 const ITEM_HEIGHT = 50;
@@ -16,31 +16,28 @@ type WeightUnit = "kg" | "lb";
 const WEIGHT_LIMITS = {
   kg: { min: 20, max: 250, step: 0.1 },
   lb: { min: 45, max: 550, step: 0.1 },
-};
+} as const;
 
-const WeightPicker: React.FC<WeightPickerProps> = ({
+const WeightPickerComponent: React.FC<WeightPickerProps> = ({
   onWeightChange,
   initialWeight,
   unitSystem,
 }) => {
-  // Determine unit based on unitSystem
   const unit: WeightUnit = unitSystem === "metric" ? "kg" : "lb";
 
-  // Store weight as integer and decimal separately for performance
   const [integerPart, setIntegerPart] = useState<number>(() => {
-    if (initialWeight) return Math.floor(initialWeight);
+    if (initialWeight !== undefined) return Math.floor(initialWeight);
     return WEIGHT_LIMITS[unit].min;
   });
 
   const [decimalPart, setDecimalPart] = useState<number>(() => {
-    if (initialWeight) return Math.round((initialWeight % 1) * 10);
+    if (initialWeight !== undefined)
+      return Math.round((initialWeight % 1) * 10);
     return 0;
   });
 
-  // Calculate current weight
   const weight = integerPart + decimalPart / 10;
 
-  // Generate integer data based on current unit (SMALL array!)
   const integerData: PickerItem<number>[] = useMemo(() => {
     const { min, max } = WEIGHT_LIMITS[unit];
     return Array.from({ length: max - min + 1 }, (_, i) => ({
@@ -49,17 +46,15 @@ const WeightPicker: React.FC<WeightPickerProps> = ({
     }));
   }, [unit]);
 
-  // Decimal data (0-9) - ALWAYS same!
   const decimalData: PickerItem<number>[] = useMemo(
     () =>
       Array.from({ length: 10 }, (_, i) => ({
         value: i,
         label: String(i),
       })),
-    []
+    [],
   );
 
-  // Update parent when values change
   useEffect(() => {
     onWeightChange(weight, unit);
   }, [weight, unit, onWeightChange]);
@@ -74,18 +69,15 @@ const WeightPicker: React.FC<WeightPickerProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Weight display */}
       <Text style={styles.weightDisplay}>
         {integerPart}.{decimalPart} {unit}
       </Text>
 
       <View style={styles.content}>
-        {/* Pickers section */}
         <View style={styles.pickersSection}>
-          {/* Integer picker */}
           <View style={styles.integerPickerColumn}>
             <Picker
-              key={unit} // Remount when unit changes
+              key={unit}
               data={integerData}
               selectedValue={integerPart}
               onValueChange={handleIntegerChange}
@@ -100,12 +92,10 @@ const WeightPicker: React.FC<WeightPickerProps> = ({
             />
           </View>
 
-          {/* Dot separator */}
           <View style={styles.dotContainer}>
             <Text style={styles.dot}>.</Text>
           </View>
 
-          {/* Decimal picker */}
           <View style={styles.decimalPickerColumn}>
             <Picker
               data={decimalData}
@@ -191,4 +181,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeightPicker;
+const arePropsEqual = (
+  prev: WeightPickerProps,
+  next: WeightPickerProps,
+) => {
+  return (
+    prev.unitSystem === next.unitSystem &&
+    prev.initialWeight === next.initialWeight &&
+    prev.onWeightChange === next.onWeightChange
+  );
+};
+
+export default memo(WeightPickerComponent, arePropsEqual);

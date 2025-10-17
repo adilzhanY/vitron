@@ -8,6 +8,7 @@ import { fetchAPI } from "@/lib/fetch";
 import { FontAwesome5 } from "@expo/vector-icons";
 import BirthdayPicker from "@/components/measurements/BirthdayPicker";
 import WeightPicker from "@/components/measurements/WeightPicker";
+import HeightPicker from "@/components/measurements/HeightPicker";
 
 const SwiperModule = require("react-native-swiper");
 const Swiper: any = SwiperModule?.default ?? SwiperModule;
@@ -20,34 +21,53 @@ type ActivityLevel =
   | "very active"
   | "extremely active";
 
-const activityOptions: { value: ActivityLevel; label: string; icon: string }[] =
-  [
-    {
-      label: "Sedentary",
-      icon: "couch",
-      value: "sedentary",
-    },
-    {
-      label: "Lightly active",
-      icon: "walking",
-      value: "sedentary",
-    },
-    {
-      label: "Moderately active",
-      icon: "running",
-      value: "sedentary",
-    },
-    {
-      label: "Very active",
-      icon: "bicycle",
-      value: "sedentary",
-    },
-    {
-      label: "Extremely active",
-      icon: "dumbbell",
-      value: "sedentary",
-    },
-  ];
+// Move constants outside component to prevent recreation on every render
+const ACTIVITY_OPTIONS: {
+  value: ActivityLevel;
+  label: string;
+  icon: string;
+}[] = [
+  {
+    label: "Sedentary",
+    icon: "couch",
+    value: "sedentary",
+  },
+  {
+    label: "Lightly active",
+    icon: "walking",
+    value: "lightly active",
+  },
+  {
+    label: "Moderately active",
+    icon: "running",
+    value: "moderately active",
+  },
+  {
+    label: "Very active",
+    icon: "bicycle",
+    value: "very active",
+  },
+  {
+    label: "Extremely active",
+    icon: "dumbbell",
+    value: "extremely active",
+  },
+];
+
+const UNIT_SYSTEM_OPTIONS = [
+  {
+    value: "metric" as const,
+    label: "Metric",
+    examples: "kg, cm, m",
+  },
+  {
+    value: "imperial" as const,
+    label: "Imperial",
+    examples: "lb, ft, in",
+  },
+] as const;
+
+const GENDER_OPTIONS = ["Male", "Female"] as const;
 
 const Measurements = () => {
   const { user: clerkUser } = useUser();
@@ -264,31 +284,47 @@ const Measurements = () => {
     [],
   );
 
+  const handleHeightChange = useCallback(
+    (height: number, unit: "cm" | "ft") => {
+      setUserMeasurements((prev) => ({
+        ...prev,
+        height: height.toString(),
+      }));
+      setHeightUnit(unit);
+    },
+    [],
+  );
+
+  const handleActivityLevelChange = useCallback((level: ActivityLevel) => {
+    setUserMeasurements((prev) => ({
+      ...prev,
+      activityLevel: level,
+    }));
+  }, []);
+
+  // Optimized unit system handler - batch all state updates
+  const handleUnitSystemChange = useCallback(
+    (newSystem: "metric" | "imperial") => {
+      const newWeightUnit = newSystem === "metric" ? "kg" : "lb";
+      const newHeightUnit = newSystem === "metric" ? "cm" : "ft";
+
+      // Batch all updates together using functional setState
+      setUserMeasurements((prev) => ({
+        ...prev,
+        unitSystem: newSystem,
+      }));
+      setWeightUnit(newWeightUnit);
+      setHeightUnit(newHeightUnit);
+    },
+    [],
+  );
+
   const slideContainerStyle = "flex-1 items-center justify-center p-5 z-10";
   const titleStyle = "text-black text-3xl font-benzinBold mx-10 text-center";
   const inputContainerStyle = "flex-row items-center mt-5";
   const textInputStyle =
     "text-white text-2xl font-benzinBold bg-gray-800 p-3 rounded-lg w-40 text-center";
   const unitContainerStyle = "flex-row ml-3";
-
-  const UnitButton = ({
-    currentUnit,
-    targetUnit,
-    onPress,
-    children,
-  }: {
-    currentUnit: string;
-    targetUnit: string;
-    onPress: () => void;
-    children: React.ReactNode;
-  }) => (
-    <TouchableOpacity
-      onPress={onPress}
-      className={`p-3 mx-1 rounded-lg ${currentUnit === targetUnit ? "bg-green-300" : "bg-gray-700"}`}
-    >
-      <Text className="text-white font-benzin">{children}</Text>
-    </TouchableOpacity>
-  );
 
   return (
     <SafeAreaView className="flex h-full items-center justify-between bg-white relative overflow-hidden">
@@ -308,14 +344,14 @@ const Measurements = () => {
         <View key="gender-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your gender?</Text>
           <View className="flex-row mt-5">
-            {["Male", "Female"].map((option) => (
+            {GENDER_OPTIONS.map((option) => (
               <TouchableOpacity
                 key={option}
                 onPress={() =>
-                  setUserMeasurements({
-                    ...userMeasurements,
+                  setUserMeasurements((prev) => ({
+                    ...prev,
                     gender: option.toLowerCase(),
-                  })
+                  }))
                 }
                 className={`p-3 mx-2 rounded-3xl ${userMeasurements.gender === option.toLowerCase() ? "bg-green-300" : "bg-gray-700"}`}
               >
@@ -329,34 +365,10 @@ const Measurements = () => {
         <View key="unit-system-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>Choose your unit system</Text>
           <View className="mt-5 w-full px-4">
-            {[
-              {
-                value: "metric",
-                label: "Metric",
-                examples: "kg, cm, m",
-              },
-              {
-                value: "imperial",
-                label: "Imperial",
-                examples: "lb, ft, in",
-              },
-            ].map((option) => (
+            {UNIT_SYSTEM_OPTIONS.map((option) => (
               <TouchableOpacity
                 key={option.value}
-                onPress={() => {
-                  setUserMeasurements({
-                    ...userMeasurements,
-                    unitSystem: option.value,
-                  });
-                  // Set default units based on system
-                  if (option.value === "metric") {
-                    setWeightUnit("kg");
-                    setHeightUnit("cm");
-                  } else {
-                    setWeightUnit("lb");
-                    setHeightUnit("ft");
-                  }
-                }}
+                onPress={() => handleUnitSystemChange(option.value)}
                 className={`p-4 mx-2 my-2 rounded-3xl ${userMeasurements.unitSystem === option.value ? "bg-green-300" : "bg-gray-700"}`}
               >
                 <Text className="text-white font-benzinBold text-lg text-center">
@@ -389,33 +401,16 @@ const Measurements = () => {
         {/* Slide 4: Height */}
         <View key="height-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your height?</Text>
-          <View className={inputContainerStyle}>
-            <TextInput
-              className={textInputStyle}
-              placeholder="0"
-              placeholderTextColor="#858585"
-              keyboardType="numeric"
-              value={userMeasurements.height}
-              onChangeText={(text) =>
-                setUserMeasurements({ ...userMeasurements, height: text })
+          <View className="mt-8 w-full px-4">
+            <HeightPicker
+              onHeightChange={handleHeightChange}
+              initialHeight={
+                userMeasurements.height
+                  ? parseFloat(userMeasurements.height)
+                  : undefined
               }
+              unitSystem={userMeasurements.unitSystem as "metric" | "imperial"}
             />
-            <View className={unitContainerStyle}>
-              <UnitButton
-                currentUnit={heightUnit}
-                targetUnit="cm"
-                onPress={() => setHeightUnit("cm")}
-              >
-                cm
-              </UnitButton>
-              <UnitButton
-                currentUnit={heightUnit}
-                targetUnit="ft"
-                onPress={() => setHeightUnit("ft")}
-              >
-                ft
-              </UnitButton>
-            </View>
           </View>
         </View>
 
@@ -429,16 +424,11 @@ const Measurements = () => {
         <View key="activity-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>Select your activity level</Text>
           <View className="mt-5 w-full">
-            {activityOptions.map((option) => (
+            {ACTIVITY_OPTIONS.map((option) => (
               <TouchableOpacity
                 key={option.label}
-                onPress={() =>
-                  setUserMeasurements({
-                    ...userMeasurements,
-                    activityLevel: option.label.toLowerCase() as ActivityLevel,
-                  })
-                }
-                className={`flex-row items-center p-4 m-2 rounded-2xl ${userMeasurements.activityLevel === option.label.toLowerCase() ? "bg-green-300" : "bg-gray-700"}`}
+                onPress={() => handleActivityLevelChange(option.value)}
+                className={`flex-row items-center p-4 m-2 rounded-2xl ${userMeasurements.activityLevel === option.value ? "bg-green-300" : "bg-gray-700"}`}
               >
                 <View style={{ width: 30, alignItems: "center" }}>
                   <FontAwesome5 name={option.icon} size={24} color="white" />
@@ -462,9 +452,10 @@ const Measurements = () => {
               keyboardType="numeric"
               value={userMeasurements.targetWeight}
               onChangeText={(text) =>
-                setUserMeasurements({ ...userMeasurements, targetWeight: text })
+                setUserMeasurements((prev) => ({ ...prev, targetWeight: text }))
               }
             />
+
             <View className={unitContainerStyle}>
               <Text className="text-white font-benzin p-3">{weightUnit}</Text>
             </View>
@@ -472,10 +463,10 @@ const Measurements = () => {
           <TouchableOpacity
             className="mt-4 bg-green-300 rounded-xl p-4"
             onPress={() =>
-              setUserMeasurements({
-                ...userMeasurements,
-                targetWeight: userMeasurements.initialWeight,
-              })
+              setUserMeasurements((prev) => ({
+                ...prev,
+                targetWeight: prev.initialWeight,
+              }))
             }
           >
             <Text className="text-white text-center font-benzinBold">
@@ -506,10 +497,10 @@ const Measurements = () => {
               keyboardType="numeric"
               value={userMeasurements.dailyCalorieGoal}
               onChangeText={(text) =>
-                setUserMeasurements({
-                  ...userMeasurements,
+                setUserMeasurements((prev) => ({
+                  ...prev,
                   dailyCalorieGoal: text,
-                })
+                }))
               }
             />
             <View className={unitContainerStyle}>
@@ -529,7 +520,7 @@ const Measurements = () => {
               keyboardType="numeric"
               value={userMeasurements.checkpoints}
               onChangeText={(text) =>
-                setUserMeasurements({ ...userMeasurements, checkpoints: text })
+                setUserMeasurements((prev) => ({ ...prev, checkpoints: text }))
               }
             />
           </View>
