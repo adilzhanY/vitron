@@ -2,7 +2,6 @@ import { View, Text, ScrollView } from "react-native";
 import React from "react";
 import * as Linking from "expo-linking";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SignOutButton } from "@/components/auth/SignOutButton";
 import CustomButton from "@/components/shared/CustomButton";
 import { useClerk, useUser } from "@clerk/clerk-expo";
 import { fetchAPI } from "@/lib/fetch";
@@ -28,13 +27,6 @@ const Profile = () => {
         <CustomButton
           title={"Sign Out"}
           onPress={handleSignOut}
-          className="flex-1 ml-2"
-        />
-        <SignOutButton />
-
-        <CustomButton
-          title={"Create new weight goal"}
-          onPress={handleCreateNewWeightGoal}
           className="flex-1 ml-2"
         />
       </ScrollView>

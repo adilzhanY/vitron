@@ -5,6 +5,7 @@ import { tokenCache } from "@clerk/clerk-expo/token-cache"
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { fetchAPI } from "@/lib/fetch";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -93,8 +94,10 @@ export default function RootLayout() {
     );
   }
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <InitialLayout />
-    </ClerkProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+        <InitialLayout />
+      </ClerkProvider>
+    </GestureHandlerRootView>
   )
 }

@@ -1,11 +1,13 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import React, { useMemo } from "react";
+import { View, StyleSheet } from "react-native";
+import Picker, { PickerItem } from "./Picker";
 
 interface BirthdayPickerProps {
   onDateChange: (date: { day: number; month: number; year: number }) => void;
   initialYear?: number;
   initialMonth?: number;
   initialDay?: number;
+  enable3DEffect?: boolean;
 }
 
 const ITEM_HEIGHT = 60;
@@ -17,151 +19,129 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
   initialYear = 1998,
   initialMonth = 1,
   initialDay = 1,
+  enable3DEffect = true,
 }) => {
-  const [selectedDay, setSelectedDay] = useState(initialDay);
-  const [selectedMonth, setSelectedMonth] = useState(initialMonth);
-  const [selectedYear, setSelectedYear] = useState(initialYear);
+  const [selectedDay, setSelectedDay] = React.useState(initialDay);
+  const [selectedMonth, setSelectedMonth] = React.useState(initialMonth);
+  const [selectedYear, setSelectedYear] = React.useState(initialYear);
 
-  const dayScrollRef = useRef<ScrollView>(null);
-  const monthScrollRef = useRef<ScrollView>(null);
-  const yearScrollRef = useRef<ScrollView>(null);
-
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-  const years = Array.from({ length: 2017 - 1900 + 1 }, (_, i) => 1900 + i);
-
-  const handleScroll = useCallback(
-    (
-      event: NativeSyntheticEvent<NativeScrollEvent>,
-      items: number[],
-      setSelected: (value: number) => void,
-      type: 'day' | 'month' | 'year'
-    ) => {
-      const offsetY = event.nativeEvent.contentOffset.y;
-      const index = Math.round(offsetY / ITEM_HEIGHT);
-      const selectedValue = items[index];
-
-      if (selectedValue !== undefined) {
-        setSelected(selectedValue);
-
-        // Notify parent component
-        const newDate = {
-          day: type === 'day' ? selectedValue : selectedDay,
-          month: type === 'month' ? selectedValue : selectedMonth,
-          year: type === 'year' ? selectedValue : selectedYear,
-        };
-        onDateChange(newDate);
-      }
-    },
-    [selectedDay, selectedMonth, selectedYear, onDateChange]
+  // Prepare data for pickers
+  const dayData: PickerItem<number>[] = useMemo(
+    () =>
+      Array.from({ length: 31 }, (_, i) => ({
+        value: i + 1,
+        label: String(i + 1),
+      })),
+    [],
   );
 
-  const handleMomentumScrollEnd = useCallback(
-    (
-      event: NativeSyntheticEvent<NativeScrollEvent>,
-      items: number[],
-      scrollRef: React.RefObject<ScrollView | null>
-    ) => {
-      const offsetY = event.nativeEvent.contentOffset.y;
-      const index = Math.round(offsetY / ITEM_HEIGHT);
-
-      // Snap to nearest item
-      scrollRef.current?.scrollTo({
-        y: index * ITEM_HEIGHT,
-        animated: true,
-      });
-    },
-    []
+  const monthData: PickerItem<number>[] = useMemo(
+    () => [
+      { value: 1, label: "Jan" },
+      { value: 2, label: "Feb" },
+      { value: 3, label: "Mar" },
+      { value: 4, label: "Apr" },
+      { value: 5, label: "May" },
+      { value: 6, label: "Jun" },
+      { value: 7, label: "Jul" },
+      { value: 8, label: "Aug" },
+      { value: 9, label: "Sep" },
+      { value: 10, label: "Oct" },
+      { value: 11, label: "Nov" },
+      { value: 12, label: "Dec" },
+    ],
+    [],
   );
 
-  const renderItem = (item: number | string, index: number, selectedValue: number, isMonth: boolean = false) => {
-    const isSelected = isMonth ? index + 1 === selectedValue : item === selectedValue;
+  const yearData: PickerItem<number>[] = useMemo(
+    () =>
+      Array.from({ length: 2017 - 1900 + 1 }, (_, i) => ({
+        value: 1900 + i,
+        label: String(1900 + i),
+      })),
+    [],
+  );
 
-    return (
-      <View key={index} style={styles.itemContainer}>
-        <Text
-          style={[
-            isMonth ? styles.monthText : styles.itemText,
-            isSelected && (isMonth ? styles.selectedMonthText : styles.selectedItemText),
-          ]}
-        >
-          {isMonth ? String(item).slice(0, 3) : item}
-        </Text>
-      </View>
-    );
+  const handleDayChange = (value: number) => {
+    setSelectedDay(value);
+    onDateChange({
+      day: value,
+      month: selectedMonth,
+      year: selectedYear,
+    });
   };
 
-  const renderScrollPicker = (
-    items: (number | string)[],
-    selectedValue: number,
-    setSelected: (value: number) => void,
-    scrollRef: React.RefObject<ScrollView | null>,
-    type: 'day' | 'month' | 'year',
-    isMonth: boolean = false
-  ) => {
-    return (
-      <View style={styles.pickerColumn}>
-        <ScrollView
-          ref={scrollRef}
-          showsVerticalScrollIndicator={false}
-          snapToInterval={ITEM_HEIGHT}
-          decelerationRate="fast"
-          onScroll={(e) => handleScroll(e, items as number[], setSelected, type)}
-          onMomentumScrollEnd={(e) => handleMomentumScrollEnd(e, items as number[], scrollRef)}
-          scrollEventThrottle={16}
-          contentContainerStyle={styles.scrollContent}
-          bounces={true}
-        >
-          {/* Top padding */}
-          <View style={{ height: ITEM_HEIGHT * 2 }} />
-
-          {/* Items */}
-          {items.map((item, index) => renderItem(item, index, selectedValue, isMonth))}
-
-          {/* Bottom padding */}
-          <View style={{ height: ITEM_HEIGHT * 2 }} />
-        </ScrollView>
-      </View>
-    );
+  const handleMonthChange = (value: number) => {
+    setSelectedMonth(value);
+    onDateChange({
+      day: selectedDay,
+      month: value,
+      year: selectedYear,
+    });
   };
 
-  // Initialize scroll positions
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      dayScrollRef.current?.scrollTo({
-        y: (initialDay - 1) * ITEM_HEIGHT,
-        animated: false,
-      });
-      monthScrollRef.current?.scrollTo({
-        y: (initialMonth - 1) * ITEM_HEIGHT,
-        animated: false,
-      });
-      yearScrollRef.current?.scrollTo({
-        y: (initialYear - 1900) * ITEM_HEIGHT,
-        animated: false,
-      });
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const handleYearChange = (value: number) => {
+    setSelectedYear(value);
+    onDateChange({
+      day: selectedDay,
+      month: selectedMonth,
+      year: value,
+    });
+  };
 
   return (
     <View style={styles.container}>
-      {/* Highlight bar */}
-      <View style={styles.highlightBar} pointerEvents="none" />
-
       <View style={styles.pickersRow}>
         {/* Day Picker */}
-        {renderScrollPicker(days, selectedDay, setSelectedDay, dayScrollRef, 'day')}
+        <View style={styles.pickerColumn}>
+          <Picker
+            data={dayData}
+            selectedValue={selectedDay}
+            onValueChange={handleDayChange}
+            itemHeight={ITEM_HEIGHT}
+            visibleItems={VISIBLE_ITEMS}
+            enable3DEffect={enable3DEffect}
+            perspective={600}
+            containerStyle={styles.picker}
+            highlightStyle={styles.highlight}
+            textStyle={styles.itemText}
+            selectedTextStyle={styles.selectedItemText}
+          />
+        </View>
 
         {/* Month Picker */}
-        {renderScrollPicker(months, selectedMonth, setSelectedMonth, monthScrollRef, 'month', true)}
+        <View style={styles.pickerColumn}>
+          <Picker
+            data={monthData}
+            selectedValue={selectedMonth}
+            onValueChange={handleMonthChange}
+            itemHeight={ITEM_HEIGHT}
+            visibleItems={VISIBLE_ITEMS}
+            enable3DEffect={enable3DEffect}
+            perspective={600}
+            containerStyle={styles.picker}
+            highlightStyle={styles.highlight}
+            textStyle={styles.monthText}
+            selectedTextStyle={styles.selectedMonthText}
+          />
+        </View>
 
         {/* Year Picker */}
-        {renderScrollPicker(years, selectedYear, setSelectedYear, yearScrollRef, 'year')}
+        <View style={styles.pickerColumn}>
+          <Picker
+            data={yearData}
+            selectedValue={selectedYear}
+            onValueChange={handleYearChange}
+            itemHeight={ITEM_HEIGHT}
+            visibleItems={VISIBLE_ITEMS}
+            enable3DEffect={enable3DEffect}
+            perspective={600}
+            containerStyle={styles.picker}
+            highlightStyle={styles.highlight}
+            textStyle={styles.itemText}
+            selectedTextStyle={styles.selectedItemText}
+          />
+        </View>
       </View>
     </View>
   );
@@ -169,66 +149,54 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '90%',
+    width: "90%",
     height: CONTAINER_HEIGHT,
     marginTop: 20,
-    backgroundColor: '#1F2937',
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    alignSelf: 'center',
-    overflow: 'hidden',
+    alignSelf: "center",
+    overflow: "hidden",
   },
   pickersRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: CONTAINER_HEIGHT,
   },
   pickerColumn: {
     flex: 1,
     height: CONTAINER_HEIGHT,
   },
-  scrollContent: {
-    paddingVertical: 0,
+  picker: {
+    backgroundColor: "transparent",
   },
-  itemContainer: {
-    height: ITEM_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
+  highlight: {
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
   },
   itemText: {
     fontSize: 22,
-    color: '#9CA3AF',
-    fontFamily: 'Benzin-Bold',
-    textAlign: 'center',
+    color: "#9CA3AF",
+    fontFamily: "Benzin-Bold",
+    textAlign: "center",
   },
   selectedItemText: {
     fontSize: 26,
-    color: '#FFFFFF',
-    fontFamily: 'Benzin-Bold',
-    textAlign: 'center',
+    color: "#000000",
+    fontFamily: "Benzin-Bold",
+    textAlign: "center",
   },
   monthText: {
     fontSize: 16,
-    color: '#9CA3AF',
-    fontFamily: 'Benzin-Bold',
-    textAlign: 'center',
+    color: "#9CA3AF",
+    fontFamily: "Benzin-Bold",
+    textAlign: "center",
   },
   selectedMonthText: {
     fontSize: 18,
-    color: '#FFFFFF',
-    fontFamily: 'Benzin-Bold',
-    textAlign: 'center',
-  },
-  highlightBar: {
-    position: 'absolute',
-    top: '50%',
-    left: 10,
-    right: 10,
-    height: ITEM_HEIGHT,
-    marginTop: -ITEM_HEIGHT / 2,
-    borderTopWidth: 2,
-    borderBottomWidth: 2,
-    borderColor: '#4A5568',
-    borderRadius: 10,
-    zIndex: 1,
+    color: "#000000",
+    fontFamily: "Benzin-Bold",
+    textAlign: "center",
   },
 });
 

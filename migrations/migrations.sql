@@ -104,7 +104,7 @@ CREATE TABLE daily_water_intake (
     total_consumed INT DEFAULT 0, -- in ml
     daily_goal INT DEFAULT 2500,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE exercises (

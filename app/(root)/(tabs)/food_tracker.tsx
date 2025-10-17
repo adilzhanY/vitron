@@ -81,14 +81,34 @@ const FoodTracker = () => {
           actionText=""
           onActionPress={() => {}}
         />
-        <View>
+        <View
+          style={{
+            borderRadius: 50,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 5 },
+            shadowOpacity: 0.15,
+            shadowRadius: 10,
+            elevation: 8,
+            alignSelf: "flex-start",
+          }}
+        >
           <FoodDateSelector
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
           />
         </View>
 
-        <View style={{ borderRadius: 50 }} className="bg-white p-5">
+        <View
+          style={{
+            borderRadius: 50,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 5 },
+            shadowOpacity: 0.15,
+            shadowRadius: 10,
+            elevation: 8,
+          }}
+          className="bg-white p-5"
+        >
           <FoodHeader
             totalCalories={foodTotals.calories}
             onSetFoodEntry={() => setModalVisible(true)}
@@ -119,7 +139,18 @@ const FoodTracker = () => {
         </View>
 
         {/* Water Tracking Card */}
-        <WaterCard dailyGoal={2500} glassSize={250} />
+        <View
+          style={{
+            borderRadius: 50,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 5 },
+            shadowOpacity: 0.15,
+            shadowRadius: 10,
+            elevation: 8,
+          }}
+        >
+          <WaterCard dailyGoal={2500} glassSize={250} />
+        </View>
 
         <View className="h-[500px]"></View>
       </ScrollView>
