@@ -10,6 +10,7 @@ CREATE TABLE users (
     goal VARCHAR(20) CHECK (goal IN ('lose weight', 'gain weight', 'be fit')),
     created_at TIMESTAMP DEFAULT NOW(),
     activity_level activity_level_enum,
+    unit_system VARCHAR(10) CHECK (unit_system IN ('metric', 'imperial')) DEFAULT 'metric',
     birthday DATE
 );
 

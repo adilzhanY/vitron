@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, memo } from "react";
 import {
   StyleProp,
   StyleSheet,
@@ -17,6 +17,7 @@ import Animated, {
   runOnJS,
   withTiming,
   Easing,
+  SharedValue,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
@@ -30,6 +31,135 @@ export type PickerItem<T> = {
   value: T;
   label?: string;
 };
+
+// Separate PickerItem component to avoid hooks in map
+interface AnimatedPickerItemProps<T> {
+  item: PickerItem<T>;
+  index: number;
+  itemHeight: number;
+  containerHeight: number;
+  translateY: SharedValue<number>;
+  enable3DEffect: boolean;
+  perspective: number;
+  RADIUS: number;
+  textStyle?: StyleProp<TextStyle>;
+  selectedTextStyle?: StyleProp<TextStyle>;
+  renderItem?: (params: {
+    item: PickerItem<T>;
+    index: number;
+    isSelected: boolean;
+  }) => React.ReactNode;
+}
+
+const AnimatedPickerItem = memo(<T,>({
+  item,
+  index,
+  itemHeight,
+  containerHeight,
+  translateY,
+  enable3DEffect,
+  perspective,
+  RADIUS,
+  textStyle,
+  selectedTextStyle,
+  renderItem,
+}: AnimatedPickerItemProps<T>) => {
+  const animatedItemStyle = useAnimatedStyle(() => {
+    const itemCenterY =
+      index * itemHeight + translateY.value + itemHeight / 2;
+    const distanceFromCenter = itemCenterY - containerHeight / 2;
+    const absDistance = Math.abs(distanceFromCenter);
+
+    const opacity = interpolate(
+      absDistance,
+      [0, itemHeight, itemHeight * 2],
+      [1, 0.6, 0.3],
+      Extrapolate.CLAMP,
+    );
+
+    if (!enable3DEffect) {
+      return {
+        height: itemHeight,
+        justifyContent: "center" as const,
+        alignItems: "center" as const,
+        opacity,
+      };
+    }
+
+    // Normalized distance from -1 to 1
+    const normalizedDistance = interpolate(
+      distanceFromCenter,
+      [-RADIUS, 0, RADIUS],
+      [-1, 0, 1],
+      Extrapolate.CLAMP,
+    );
+
+    // Calculate rotation (in radians)
+    const rotateXValue = Math.asin(normalizedDistance);
+
+    return {
+      height: itemHeight,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      opacity,
+      transform: [
+        { perspective },
+        { rotateX: `${rotateXValue}rad` },
+      ],
+    };
+  });
+
+  const textAnimatedStyle = useAnimatedStyle(() => {
+    const itemCenterY =
+      index * itemHeight + translateY.value + itemHeight / 2;
+    const distanceFromCenter = Math.abs(
+      itemCenterY - containerHeight / 2,
+    );
+    const isSelected = distanceFromCenter < itemHeight / 2;
+
+    const fontSize = interpolate(
+      distanceFromCenter,
+      [0, itemHeight],
+      [24, 20],
+      Extrapolate.CLAMP,
+    );
+
+    return {
+      fontSize: isSelected ? 24 : fontSize,
+    };
+  });
+
+  if (renderItem) {
+    return (
+      <Animated.View style={animatedItemStyle}>
+        {renderItem({
+          item,
+          index,
+          isSelected: false,
+        })}
+      </Animated.View>
+    );
+  }
+
+  return (
+    <Animated.View style={animatedItemStyle}>
+      <Animated.Text
+        style={[
+          {
+            color: "#9CA3AF",
+            fontFamily: "Benzin-Bold",
+            textAlign: "center" as const,
+          },
+          textStyle,
+          textAnimatedStyle,
+          selectedTextStyle,
+        ]}
+      >
+        {item.label ?? String(item.value)}
+      </Animated.Text>
+    </Animated.View>
+  );
+}) as <T>(props: AnimatedPickerItemProps<T>) => React.ReactElement;
 
 export interface PickerProps<T> {
   data: readonly PickerItem<T>[];
@@ -290,98 +420,21 @@ const Picker = <T,>({
           <Animated.View style={containerAnimatedStyle}>
             {data.map((item, index) => {
               const key = getKey(item, index);
-
-              // Animated style for each item
-              const animatedItemStyle = useAnimatedStyle(() => {
-                const itemCenterY =
-                  index * itemHeight + translateY.value + itemHeight / 2;
-                const distanceFromCenter = itemCenterY - containerHeight / 2;
-                const absDistance = Math.abs(distanceFromCenter);
-
-                const opacity = interpolate(
-                  absDistance,
-                  [0, itemHeight, itemHeight * 2],
-                  [1, 0.6, 0.3],
-                  Extrapolate.CLAMP,
-                );
-
-                if (!enable3DEffect) {
-                  return {
-                    height: itemHeight,
-                    justifyContent: "center" as const,
-                    alignItems: "center" as const,
-                    opacity,
-                  };
-                }
-
-                // Normalized distance from -1 to 1
-                const normalizedDistance = interpolate(
-                  distanceFromCenter,
-                  [-RADIUS, 0, RADIUS],
-                  [-1, 0, 1],
-                  Extrapolate.CLAMP,
-                );
-
-                // Calculate rotation (in radians)
-                const rotateXValue = Math.asin(normalizedDistance);
-
-                return {
-                  height: itemHeight,
-                  justifyContent: "center" as const,
-                  alignItems: "center" as const,
-                  opacity,
-                  transform: [
-                    { perspective },
-                    { rotateX: `${rotateXValue}rad` },
-                  ],
-                };
-              });
-
-              const textAnimatedStyle = useAnimatedStyle(() => {
-                const itemCenterY =
-                  index * itemHeight + translateY.value + itemHeight / 2;
-                const distanceFromCenter = Math.abs(
-                  itemCenterY - containerHeight / 2,
-                );
-                const isSelected = distanceFromCenter < itemHeight / 2;
-
-                const fontSize = interpolate(
-                  distanceFromCenter,
-                  [0, itemHeight],
-                  [24, 20],
-                  Extrapolate.CLAMP,
-                );
-
-                return {
-                  fontSize: isSelected ? 24 : fontSize,
-                };
-              });
-
-              if (renderItem) {
-                return (
-                  <Animated.View key={key} style={animatedItemStyle}>
-                    {renderItem({
-                      item,
-                      index,
-                      isSelected: false,
-                    })}
-                  </Animated.View>
-                );
-              }
-
               return (
-                <Animated.View key={key} style={animatedItemStyle}>
-                  <Animated.Text
-                    style={[
-                      styles.itemText,
-                      textStyle,
-                      textAnimatedStyle,
-                      selectedTextStyle,
-                    ]}
-                  >
-                    {item.label ?? String(item.value)}
-                  </Animated.Text>
-                </Animated.View>
+                <AnimatedPickerItem
+                  key={key}
+                  item={item}
+                  index={index}
+                  itemHeight={itemHeight}
+                  containerHeight={containerHeight}
+                  translateY={translateY}
+                  enable3DEffect={enable3DEffect}
+                  perspective={perspective}
+                  RADIUS={RADIUS}
+                  textStyle={textStyle}
+                  selectedTextStyle={selectedTextStyle}
+                  renderItem={renderItem}
+                />
               );
             })}
           </Animated.View>

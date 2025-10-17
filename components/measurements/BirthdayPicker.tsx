@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import Picker, { PickerItem } from "./Picker";
+import Picker, { PickerItem } from "../shared/Picker";
 
 interface BirthdayPickerProps {
   onDateChange: (date: { day: number; month: number; year: number }) => void;

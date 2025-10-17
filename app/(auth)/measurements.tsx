@@ -6,9 +6,9 @@ import CustomButton from "@/components/shared/CustomButton";
 import { useUser } from "@clerk/clerk-expo";
 import { fetchAPI } from "@/lib/fetch";
 import { FontAwesome5 } from "@expo/vector-icons";
-import BirthdayPicker from "@/components/shared/BirthdayPicker"; // Import the new component
+import BirthdayPicker from "@/components/measurements/BirthdayPicker";
+import WeightPicker from "@/components/measurements/WeightPicker";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const SwiperModule = require("react-native-swiper");
 const Swiper: any = SwiperModule?.default ?? SwiperModule;
 
@@ -22,11 +22,31 @@ type ActivityLevel =
 
 const activityOptions: { value: ActivityLevel; label: string; icon: string }[] =
   [
-    { label: "Sedentary", icon: "couch" },
-    { label: "Lightly active", icon: "walking" },
-    { label: "Moderately active", icon: "running" },
-    { label: "Very active", icon: "bicycle" },
-    { label: "Extremely active", icon: "dumbbell" },
+    {
+      label: "Sedentary",
+      icon: "couch",
+      value: "sedentary",
+    },
+    {
+      label: "Lightly active",
+      icon: "walking",
+      value: "sedentary",
+    },
+    {
+      label: "Moderately active",
+      icon: "running",
+      value: "sedentary",
+    },
+    {
+      label: "Very active",
+      icon: "bicycle",
+      value: "sedentary",
+    },
+    {
+      label: "Extremely active",
+      icon: "dumbbell",
+      value: "sedentary",
+    },
   ];
 
 const Measurements = () => {
@@ -38,12 +58,13 @@ const Measurements = () => {
     gender: "",
     initialWeight: "",
     height: "",
-    birthday: "1998-01-01", // Default birthday, will be updated by picker
+    birthday: "1998-01-01",
     goal: "lose weight" as Goal,
     targetWeight: "",
     dailyCalorieGoal: "",
     checkpoints: "9",
     activityLevel: "sedentary" as ActivityLevel,
+    unitSystem: "metric",
   });
 
   const [weightUnit, setWeightUnit] = useState("kg");
@@ -52,7 +73,7 @@ const Measurements = () => {
     null,
   );
 
-  const totalSlides = 8; // Total slides is now 8
+  const totalSlides = 9; // Increased from 8 to 9 for unit system slide
   const isLastSlide = activeIndex === totalSlides - 1;
 
   const finalGoal = useMemo(() => {
@@ -77,7 +98,6 @@ const Measurements = () => {
   const handleIndexChanged = (index: number) => {
     setActiveIndex(index);
     if (index === totalSlides - 2) {
-      // When on the calorie slide (now second to last)
       calculateAndSetCalories();
     }
   };
@@ -102,7 +122,7 @@ const Measurements = () => {
     if (!gender || !initialWeight || !height || !birthday) return;
 
     const ageNum = calculateAge(birthday);
-    if (ageNum < 8) return; // Don't calculate for children
+    if (ageNum < 8) return;
 
     const weightInKg =
       weightUnit === "lb"
@@ -172,9 +192,10 @@ const Measurements = () => {
             gender: userMeasurements.gender,
             weight: weightInKg,
             height: heightInCm,
-            birthday: userMeasurements.birthday, // Sending correctly formatted birthday
+            birthday: userMeasurements.birthday,
             activityLevel: userMeasurements.activityLevel,
             goal: finalGoal,
+            unitSystem: userMeasurements.unitSystem,
           }),
         });
 
@@ -232,6 +253,17 @@ const Measurements = () => {
     [],
   );
 
+  const handleWeightChange = useCallback(
+    (weight: number, unit: "kg" | "lb") => {
+      setUserMeasurements((prev) => ({
+        ...prev,
+        initialWeight: weight.toString(),
+      }));
+      setWeightUnit(unit);
+    },
+    [],
+  );
+
   const slideContainerStyle = "flex-1 items-center justify-center p-5 z-10";
   const titleStyle = "text-black text-3xl font-benzinBold mx-10 text-center";
   const inputContainerStyle = "flex-row items-center mt-5";
@@ -285,7 +317,7 @@ const Measurements = () => {
                     gender: option.toLowerCase(),
                   })
                 }
-                className={`p-3 mx-2 rounded-lg ${userMeasurements.gender === option.toLowerCase() ? "bg-green-300" : "bg-gray-700"}`}
+                className={`p-3 mx-2 rounded-3xl ${userMeasurements.gender === option.toLowerCase() ? "bg-green-300" : "bg-gray-700"}`}
               >
                 <Text className="text-white font-benzin">{option}</Text>
               </TouchableOpacity>
@@ -293,43 +325,68 @@ const Measurements = () => {
           </View>
         </View>
 
-        {/* Slide 2: Weight */}
-        <View key="initial-weight-slide" className={slideContainerStyle}>
-          <Text className={titleStyle}>What is your weight?</Text>
-          <View className={inputContainerStyle}>
-            <TextInput
-              className={textInputStyle}
-              placeholder="0"
-              placeholderTextColor="#858585"
-              keyboardType="numeric"
-              value={userMeasurements.initialWeight}
-              onChangeText={(text) =>
-                setUserMeasurements({
-                  ...userMeasurements,
-                  initialWeight: text,
-                })
-              }
-            />
-            <View className={unitContainerStyle}>
-              <UnitButton
-                currentUnit={weightUnit}
-                targetUnit="kg"
-                onPress={() => setWeightUnit("kg")}
+        {/* Slide 2: Unit System */}
+        <View key="unit-system-slide" className={slideContainerStyle}>
+          <Text className={titleStyle}>Choose your unit system</Text>
+          <View className="mt-5 w-full px-4">
+            {[
+              {
+                value: "metric",
+                label: "Metric",
+                examples: "kg, cm, m",
+              },
+              {
+                value: "imperial",
+                label: "Imperial",
+                examples: "lb, ft, in",
+              },
+            ].map((option) => (
+              <TouchableOpacity
+                key={option.value}
+                onPress={() => {
+                  setUserMeasurements({
+                    ...userMeasurements,
+                    unitSystem: option.value,
+                  });
+                  // Set default units based on system
+                  if (option.value === "metric") {
+                    setWeightUnit("kg");
+                    setHeightUnit("cm");
+                  } else {
+                    setWeightUnit("lb");
+                    setHeightUnit("ft");
+                  }
+                }}
+                className={`p-4 mx-2 my-2 rounded-3xl ${userMeasurements.unitSystem === option.value ? "bg-green-300" : "bg-gray-700"}`}
               >
-                kg
-              </UnitButton>
-              <UnitButton
-                currentUnit={weightUnit}
-                targetUnit="lb"
-                onPress={() => setWeightUnit("lb")}
-              >
-                lb
-              </UnitButton>
-            </View>
+                <Text className="text-white font-benzinBold text-lg text-center">
+                  {option.label}
+                </Text>
+                <Text className="text-white font-benzin text-sm text-center mt-1">
+                  {option.examples}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
-        {/* Slide 3: Height */}
+        {/* Slide 3: Weight */}
+        <View key="initial-weight-slide" className={slideContainerStyle}>
+          <Text className={titleStyle}>What is your weight?</Text>
+          <View className="mt-8 w-full px-4">
+            <WeightPicker
+              onWeightChange={handleWeightChange}
+              initialWeight={
+                userMeasurements.initialWeight
+                  ? parseFloat(userMeasurements.initialWeight)
+                  : undefined
+              }
+              unitSystem={userMeasurements.unitSystem as "metric" | "imperial"}
+            />
+          </View>
+        </View>
+
+        {/* Slide 4: Height */}
         <View key="height-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your height?</Text>
           <View className={inputContainerStyle}>
@@ -362,13 +419,13 @@ const Measurements = () => {
           </View>
         </View>
 
-        {/* Slide 4: Birthday*/}
+        {/* Slide 5: Birthday*/}
         <View key="birthday-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your date of birth?</Text>
           <BirthdayPicker onDateChange={handleDateChange} initialYear={1998} />
         </View>
 
-        {/* Slide 5: Activity Level */}
+        {/* Slide 6: Activity Level */}
         <View key="activity-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>Select your activity level</Text>
           <View className="mt-5 w-full">
@@ -378,10 +435,10 @@ const Measurements = () => {
                 onPress={() =>
                   setUserMeasurements({
                     ...userMeasurements,
-                    activityLevel: option.label.toLowerCase(),
+                    activityLevel: option.label.toLowerCase() as ActivityLevel,
                   })
                 }
-                className={`flex-row items-center p-4 m-2 rounded-2xl ${userMeasurements.activityLevel === option.label ? "bg-green-300" : "bg-gray-700"}`}
+                className={`flex-row items-center p-4 m-2 rounded-2xl ${userMeasurements.activityLevel === option.label.toLowerCase() ? "bg-green-300" : "bg-gray-700"}`}
               >
                 <View style={{ width: 30, alignItems: "center" }}>
                   <FontAwesome5 name={option.icon} size={24} color="white" />
@@ -394,7 +451,7 @@ const Measurements = () => {
           </View>
         </View>
 
-        {/* Slide 6: Target Weight */}
+        {/* Slide 7: Target Weight */}
         <View key="target-weight-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your target weight?</Text>
           <View className={inputContainerStyle}>
@@ -427,7 +484,7 @@ const Measurements = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Slide 7: Daily Calorie Goal */}
+        {/* Slide 8: Daily Calorie Goal */}
         <View key="calorie-goal-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>Your daily calorie goal</Text>
           {calculatedCalories ? (
@@ -461,7 +518,7 @@ const Measurements = () => {
           </View>
         </View>
 
-        {/* Slide 8: Checkpoints */}
+        {/* Slide 9: Checkpoints */}
         <View key="checkpoints-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>How many checkpoints do you want?</Text>
           <View className={inputContainerStyle}>
