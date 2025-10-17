@@ -51,6 +51,8 @@ export interface PickerProps<T> {
   // 3D Effect props
   enable3DEffect?: boolean;
   perspective?: number;
+  // Mask/Gradient props
+  showGradientMask?: boolean;
   // Animation props
   decayDeceleration?: number;
   snapAnimationDuration?: number;
@@ -77,6 +79,7 @@ const Picker = <T,>({
   selectedTextStyle,
   enable3DEffect = false,
   perspective = DEFAULT_PERSPECTIVE,
+  showGradientMask = false,
   decayDeceleration = DEFAULT_DECAY_DECELERATION,
   snapAnimationDuration = DEFAULT_SNAP_DURATION,
 }: PickerProps<T>) => {
@@ -249,6 +252,25 @@ const Picker = <T,>({
     <View
       style={[styles.container, { height: containerHeight }, containerStyle]}
     >
+      {/* Gradient mask overlay */}
+      {showGradientMask && (
+        <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+          <View
+            style={[
+              styles.gradientTop,
+              { height: (containerHeight - itemHeight) / 2 },
+            ]}
+          />
+          <View style={{ height: itemHeight }} />
+          <View
+            style={[
+              styles.gradientBottom,
+              { height: (containerHeight - itemHeight) / 2 },
+            ]}
+          />
+        </View>
+      )}
+
       {/* Highlight bar */}
       <View
         pointerEvents="none"
@@ -271,20 +293,19 @@ const Picker = <T,>({
 
               // Animated style for each item
               const animatedItemStyle = useAnimatedStyle(() => {
+                const itemCenterY =
+                  index * itemHeight + translateY.value + itemHeight / 2;
+                const distanceFromCenter = itemCenterY - containerHeight / 2;
+                const absDistance = Math.abs(distanceFromCenter);
+
+                const opacity = interpolate(
+                  absDistance,
+                  [0, itemHeight, itemHeight * 2],
+                  [1, 0.6, 0.3],
+                  Extrapolate.CLAMP,
+                );
+
                 if (!enable3DEffect) {
-                  const itemCenterY =
-                    index * itemHeight + translateY.value + itemHeight / 2;
-                  const distanceFromCenter = Math.abs(
-                    itemCenterY - containerHeight / 2,
-                  );
-
-                  const opacity = interpolate(
-                    distanceFromCenter,
-                    [0, itemHeight, itemHeight * 2],
-                    [1, 0.6, 0.3],
-                    Extrapolate.CLAMP,
-                  );
-
                   return {
                     height: itemHeight,
                     justifyContent: "center" as const,
@@ -292,11 +313,6 @@ const Picker = <T,>({
                     opacity,
                   };
                 }
-
-                // Calculate position relative to center
-                const itemCenterY =
-                  index * itemHeight + translateY.value + itemHeight / 2;
-                const distanceFromCenter = itemCenterY - containerHeight / 2;
 
                 // Normalized distance from -1 to 1
                 const normalizedDistance = interpolate(
@@ -308,14 +324,6 @@ const Picker = <T,>({
 
                 // Calculate rotation (in radians)
                 const rotateXValue = Math.asin(normalizedDistance);
-
-                // Calculate opacity
-                const opacity = interpolate(
-                  Math.abs(distanceFromCenter),
-                  [0, itemHeight, itemHeight * 2],
-                  [1, 0.6, 0.3],
-                  Extrapolate.CLAMP,
-                );
 
                 return {
                   height: itemHeight,
@@ -408,6 +416,12 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
     fontFamily: "Benzin-Bold",
     textAlign: "center",
+  },
+  gradientTop: {
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+  },
+  gradientBottom: {
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
   },
 });
 

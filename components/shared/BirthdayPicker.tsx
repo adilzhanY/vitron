@@ -19,7 +19,7 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
   initialYear = 1998,
   initialMonth = 1,
   initialDay = 1,
-  enable3DEffect = true,
+  enable3DEffect = false,
 }) => {
   const [selectedDay, setSelectedDay] = React.useState(initialDay);
   const [selectedMonth, setSelectedMonth] = React.useState(initialMonth);
@@ -55,9 +55,9 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
 
   const yearData: PickerItem<number>[] = useMemo(
     () =>
-      Array.from({ length: 2017 - 1900 + 1 }, (_, i) => ({
-        value: 1900 + i,
-        label: String(1900 + i),
+      Array.from({ length: 2017 - 1920 + 1 }, (_, i) => ({
+        value: 1920 + i,
+        label: String(1920 + i),
       })),
     [],
   );
@@ -101,6 +101,7 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
             itemHeight={ITEM_HEIGHT}
             visibleItems={VISIBLE_ITEMS}
             enable3DEffect={enable3DEffect}
+            showGradientMask={false}
             perspective={600}
             containerStyle={styles.picker}
             highlightStyle={styles.highlight}
@@ -118,6 +119,7 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
             itemHeight={ITEM_HEIGHT}
             visibleItems={VISIBLE_ITEMS}
             enable3DEffect={enable3DEffect}
+            showGradientMask={false}
             perspective={600}
             containerStyle={styles.picker}
             highlightStyle={styles.highlight}
@@ -135,6 +137,7 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
             itemHeight={ITEM_HEIGHT}
             visibleItems={VISIBLE_ITEMS}
             enable3DEffect={enable3DEffect}
+            showGradientMask={false}
             perspective={600}
             containerStyle={styles.picker}
             highlightStyle={styles.highlight}
