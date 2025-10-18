@@ -7,7 +7,14 @@ interface BirthdayPickerProps {
   initialYear?: number;
   initialMonth?: number;
   initialDay?: number;
+  // Performance optimization props
   enable3DEffect?: boolean;
+  showGradientMask?: boolean;
+  enableDecayAnimation?: boolean;
+  enableSpringAnimation?: boolean;
+  enableOpacityAnimation?: boolean;
+  enableFontSizeAnimation?: boolean;
+  disableAllAnimations?: boolean;
 }
 
 const ITEM_HEIGHT = 60;
@@ -20,7 +27,15 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
   initialMonth = 1,
   initialDay = 1,
   enable3DEffect = false,
+  showGradientMask = false,
+  enableDecayAnimation = true,
+  enableSpringAnimation = true,
+  enableOpacityAnimation = true,
+  enableFontSizeAnimation = true,
+  disableAllAnimations = false,
 }) => {
+  console.log("🎂 [BirthdayPicker] Component MOUNTING/RENDERING");
+
   const [selectedDay, setSelectedDay] = React.useState(initialDay);
   const [selectedMonth, setSelectedMonth] = React.useState(initialMonth);
   const [selectedYear, setSelectedYear] = React.useState(initialYear);
@@ -101,8 +116,13 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
             itemHeight={ITEM_HEIGHT}
             visibleItems={VISIBLE_ITEMS}
             enable3DEffect={enable3DEffect}
-            showGradientMask={false}
+            showGradientMask={showGradientMask}
             perspective={600}
+            enableDecayAnimation={enableDecayAnimation}
+            enableSpringAnimation={enableSpringAnimation}
+            enableOpacityAnimation={enableOpacityAnimation}
+            enableFontSizeAnimation={enableFontSizeAnimation}
+            disableAllAnimations={disableAllAnimations}
             containerStyle={styles.picker}
             highlightStyle={styles.highlight}
             textStyle={styles.itemText}
@@ -119,8 +139,13 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
             itemHeight={ITEM_HEIGHT}
             visibleItems={VISIBLE_ITEMS}
             enable3DEffect={enable3DEffect}
-            showGradientMask={false}
+            showGradientMask={showGradientMask}
             perspective={600}
+            enableDecayAnimation={enableDecayAnimation}
+            enableSpringAnimation={enableSpringAnimation}
+            enableOpacityAnimation={enableOpacityAnimation}
+            enableFontSizeAnimation={enableFontSizeAnimation}
+            disableAllAnimations={disableAllAnimations}
             containerStyle={styles.picker}
             highlightStyle={styles.highlight}
             textStyle={styles.monthText}
@@ -137,8 +162,13 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
             itemHeight={ITEM_HEIGHT}
             visibleItems={VISIBLE_ITEMS}
             enable3DEffect={enable3DEffect}
-            showGradientMask={false}
+            showGradientMask={showGradientMask}
             perspective={600}
+            enableDecayAnimation={enableDecayAnimation}
+            enableSpringAnimation={enableSpringAnimation}
+            enableOpacityAnimation={enableOpacityAnimation}
+            enableFontSizeAnimation={enableFontSizeAnimation}
+            disableAllAnimations={disableAllAnimations}
             containerStyle={styles.picker}
             highlightStyle={styles.highlight}
             textStyle={styles.itemText}

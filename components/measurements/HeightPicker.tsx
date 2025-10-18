@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, useEffect, useCallback } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Picker, { PickerItem } from "../shared/Picker";
 
@@ -6,6 +6,14 @@ interface HeightPickerProps {
   onHeightChange: (height: number, unit: "cm" | "ft") => void;
   initialHeight?: number;
   unitSystem: "metric" | "imperial";
+  // Performance optimization props
+  enable3DEffect?: boolean;
+  showGradientMask?: boolean;
+  enableDecayAnimation?: boolean;
+  enableSpringAnimation?: boolean;
+  enableOpacityAnimation?: boolean;
+  enableFontSizeAnimation?: boolean;
+  disableAllAnimations?: boolean;
 }
 
 const ITEM_HEIGHT = 50;
@@ -18,11 +26,42 @@ const HEIGHT_LIMITS = {
   ft: { minFt: 3, maxFt: 8, minIn: 0, maxIn: 11 },
 };
 
+// Pre-generate data outside component to avoid recreation
+const CM_DATA = Array.from(
+  { length: HEIGHT_LIMITS.cm.max - HEIGHT_LIMITS.cm.min + 1 },
+  (_, i) => ({
+    value: HEIGHT_LIMITS.cm.min + i,
+    label: String(HEIGHT_LIMITS.cm.min + i),
+  })
+);
+
+const FEET_DATA = Array.from(
+  { length: HEIGHT_LIMITS.ft.maxFt - HEIGHT_LIMITS.ft.minFt + 1 },
+  (_, i) => ({
+    value: HEIGHT_LIMITS.ft.minFt + i,
+    label: String(HEIGHT_LIMITS.ft.minFt + i),
+  })
+);
+
+const INCHES_DATA = Array.from({ length: 12 }, (_, i) => ({
+  value: i,
+  label: String(i),
+}));
+
 const HeightPickerComponent: React.FC<HeightPickerProps> = ({
   onHeightChange,
   initialHeight,
   unitSystem,
+  enable3DEffect = false,
+  showGradientMask = false,
+  enableDecayAnimation = true,
+  enableSpringAnimation = true,
+  enableOpacityAnimation = true,
+  enableFontSizeAnimation = true,
+  disableAllAnimations = false,
 }) => {
+  console.log("📏 [HeightPicker] Component MOUNTING/RENDERING");
+
   const unit: HeightUnit = unitSystem === "metric" ? "cm" : "ft";
 
   const [heightCm, setHeightCm] = useState<number>(() => {
@@ -46,28 +85,10 @@ const HeightPickerComponent: React.FC<HeightPickerProps> = ({
     return 3;
   });
 
-  const cmData: PickerItem<number>[] = useMemo(() => {
-    const { min, max } = HEIGHT_LIMITS.cm;
-    return Array.from({ length: max - min + 1 }, (_, i) => ({
-      value: min + i,
-      label: String(min + i),
-    }));
-  }, []);
-
-  const feetData: PickerItem<number>[] = useMemo(() => {
-    const { minFt, maxFt } = HEIGHT_LIMITS.ft;
-    return Array.from({ length: maxFt - minFt + 1 }, (_, i) => ({
-      value: minFt + i,
-      label: String(minFt + i),
-    }));
-  }, []);
-
-  const inchesData: PickerItem<number>[] = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => ({
-      value: i,
-      label: String(i),
-    }));
-  }, []);
+  // Use pre-generated data
+  const cmData = CM_DATA;
+  const feetData = FEET_DATA;
+  const inchesData = INCHES_DATA;
 
   useEffect(() => {
     if (unit === "cm") {
@@ -103,8 +124,13 @@ const HeightPickerComponent: React.FC<HeightPickerProps> = ({
               onValueChange={handleCmChange}
               itemHeight={ITEM_HEIGHT}
               visibleItems={VISIBLE_ITEMS}
-              enable3DEffect={false}
-              showGradientMask={false}
+              enable3DEffect={enable3DEffect}
+              showGradientMask={showGradientMask}
+              enableDecayAnimation={enableDecayAnimation}
+              enableSpringAnimation={enableSpringAnimation}
+              enableOpacityAnimation={enableOpacityAnimation}
+              enableFontSizeAnimation={enableFontSizeAnimation}
+              disableAllAnimations={disableAllAnimations}
               containerStyle={styles.picker}
               highlightStyle={styles.highlight}
               textStyle={styles.itemText}
@@ -131,8 +157,13 @@ const HeightPickerComponent: React.FC<HeightPickerProps> = ({
               onValueChange={handleFeetChange}
               itemHeight={ITEM_HEIGHT}
               visibleItems={VISIBLE_ITEMS}
-              enable3DEffect={false}
-              showGradientMask={false}
+              enable3DEffect={enable3DEffect}
+              showGradientMask={showGradientMask}
+              enableDecayAnimation={enableDecayAnimation}
+              enableSpringAnimation={enableSpringAnimation}
+              enableOpacityAnimation={enableOpacityAnimation}
+              enableFontSizeAnimation={enableFontSizeAnimation}
+              disableAllAnimations={disableAllAnimations}
               containerStyle={styles.picker}
               highlightStyle={styles.highlight}
               textStyle={styles.itemText}
@@ -151,8 +182,13 @@ const HeightPickerComponent: React.FC<HeightPickerProps> = ({
               onValueChange={handleInchesChange}
               itemHeight={ITEM_HEIGHT}
               visibleItems={VISIBLE_ITEMS}
-              enable3DEffect={false}
-              showGradientMask={false}
+              enable3DEffect={enable3DEffect}
+              showGradientMask={showGradientMask}
+              enableDecayAnimation={enableDecayAnimation}
+              enableSpringAnimation={enableSpringAnimation}
+              enableOpacityAnimation={enableOpacityAnimation}
+              enableFontSizeAnimation={enableFontSizeAnimation}
+              disableAllAnimations={disableAllAnimations}
               containerStyle={styles.picker}
               highlightStyle={styles.highlight}
               textStyle={styles.itemText}

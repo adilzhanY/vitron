@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, TextInput, Alert } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native";
 import React, { useMemo, useRef, useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -7,8 +7,9 @@ import { useUser } from "@clerk/clerk-expo";
 import { fetchAPI } from "@/lib/fetch";
 import { FontAwesome5 } from "@expo/vector-icons";
 import BirthdayPicker from "@/components/measurements/BirthdayPicker";
-import WeightPicker from "@/components/measurements/WeightPicker";
+import WeightInput from "@/components/measurements/WeightInput";
 import HeightPicker from "@/components/measurements/HeightPicker";
+import LazySlide from "@/components/measurements/LazySlide";
 
 const SwiperModule = require("react-native-swiper");
 const Swiper: any = SwiperModule?.default ?? SwiperModule;
@@ -27,32 +28,32 @@ const ACTIVITY_OPTIONS: {
   label: string;
   icon: string;
 }[] = [
-  {
-    label: "Sedentary",
-    icon: "couch",
-    value: "sedentary",
-  },
-  {
-    label: "Lightly active",
-    icon: "walking",
-    value: "lightly active",
-  },
-  {
-    label: "Moderately active",
-    icon: "running",
-    value: "moderately active",
-  },
-  {
-    label: "Very active",
-    icon: "bicycle",
-    value: "very active",
-  },
-  {
-    label: "Extremely active",
-    icon: "dumbbell",
-    value: "extremely active",
-  },
-];
+    {
+      label: "Sedentary",
+      icon: "couch",
+      value: "sedentary",
+    },
+    {
+      label: "Lightly active",
+      icon: "walking",
+      value: "lightly active",
+    },
+    {
+      label: "Moderately active",
+      icon: "running",
+      value: "moderately active",
+    },
+    {
+      label: "Very active",
+      icon: "bicycle",
+      value: "very active",
+    },
+    {
+      label: "Extremely active",
+      icon: "dumbbell",
+      value: "extremely active",
+    },
+  ];
 
 const UNIT_SYSTEM_OPTIONS = [
   {
@@ -70,9 +71,16 @@ const UNIT_SYSTEM_OPTIONS = [
 const GENDER_OPTIONS = ["Male", "Female"] as const;
 
 const Measurements = () => {
+  console.log("🏁 [Measurements] Component rendering...");
+
   const { user: clerkUser } = useUser();
   const swiperRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Track which slides have been visited to enable lazy loading
+  const [loadedSlides, setLoadedSlides] = useState<Set<number>>(new Set([0]));
+
+  console.log(`📍 [Measurements] Current activeIndex: ${activeIndex}, loadedSlides:`, Array.from(loadedSlides));
 
   const [userMeasurements, setUserMeasurements] = useState({
     gender: "",
@@ -92,6 +100,9 @@ const Measurements = () => {
   const [calculatedCalories, setCalculatedCalories] = useState<number | null>(
     null,
   );
+
+  const [weightError, setWeightError] = useState<string | null>(null);
+  const [targetWeightError, setTargetWeightError] = useState<string | null>(null);
 
   const totalSlides = 9; // Increased from 8 to 9 for unit system slide
   const isLastSlide = activeIndex === totalSlides - 1;
@@ -116,13 +127,25 @@ const Measurements = () => {
   ]);
 
   const handleIndexChanged = (index: number) => {
+    console.log(`🔄 [Measurements] handleIndexChanged called with index: ${index}`);
     setActiveIndex(index);
+
+    // Mark slides as loaded when we're close to them
+    setLoadedSlides((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(index);
+      // Pre-load next slide for smoother transition
+      if (index + 1 < totalSlides) {
+        newSet.add(index + 1);
+      }
+      console.log(`✨ [Measurements] Updating loadedSlides to:`, Array.from(newSet));
+      return newSet;
+    });
+
     if (index === totalSlides - 2) {
       calculateAndSetCalories();
     }
-  };
-
-  const calculateAge = (birthdayString: string): number => {
+  }; const calculateAge = (birthdayString: string): number => {
     if (!birthdayString) return 0;
     const birthDate = new Date(birthdayString);
     const today = new Date();
@@ -189,6 +212,11 @@ const Measurements = () => {
   };
 
   const handleNext = async () => {
+    // Check for validation errors before proceeding
+    if (weightError || targetWeightError) {
+      return;
+    }
+
     if (isLastSlide) {
       try {
         const weightInKg =
@@ -312,29 +340,40 @@ const Measurements = () => {
     }));
   }, []);
 
-  // Optimized unit system handler - batch all state updates
+  // Optimized unit system handler - use requestAnimationFrame for immediate UI response
   const handleUnitSystemChange = useCallback(
     (newSystem: "metric" | "imperial") => {
-      const newWeightUnit = newSystem === "metric" ? "kg" : "lb";
-      const newHeightUnit = newSystem === "metric" ? "cm" : "ft";
+      console.log(`🎯 [Measurements] handleUnitSystemChange called with: ${newSystem}`);
 
-      // Batch all updates together using functional setState
+      // Update UI immediately for instant feedback
       setUserMeasurements((prev) => ({
         ...prev,
         unitSystem: newSystem,
       }));
-      setWeightUnit(newWeightUnit);
-      setHeightUnit(newHeightUnit);
+
+      // Defer heavy state updates to next frame
+      requestAnimationFrame(() => {
+        console.log(`⚙️ [Measurements] Updating weight/height units in next frame`);
+        const newWeightUnit = newSystem === "metric" ? "kg" : "lb";
+        const newHeightUnit = newSystem === "metric" ? "cm" : "ft";
+        setWeightUnit(newWeightUnit);
+        setHeightUnit(newHeightUnit);
+      });
     },
     [],
-  );
-
-  const slideContainerStyle = "flex-1 items-center justify-center p-5 z-10";
+  ); const slideContainerStyle = "flex-1 items-center justify-center p-5 z-10";
   const titleStyle = "text-black text-3xl font-benzinBold mx-10 text-center";
   const inputContainerStyle = "flex-row items-center mt-5";
   const textInputStyle =
     "text-white text-2xl font-benzinBold bg-gray-800 p-3 rounded-lg w-40 text-center";
   const unitContainerStyle = "flex-row ml-3";
+
+  // Helper function to determine if a slide should be rendered
+  const shouldRenderSlide = useCallback((slideIndex: number) => {
+    const should = loadedSlides.has(slideIndex);
+    console.log(`🤔 [Measurements] shouldRenderSlide(${slideIndex}) = ${should}`);
+    return should;
+  }, [loadedSlides]);
 
   return (
     <SafeAreaView className="flex h-full items-center justify-between bg-white relative overflow-hidden">
@@ -379,6 +418,8 @@ const Measurements = () => {
               <TouchableOpacity
                 key={option.value}
                 onPress={() => handleUnitSystemChange(option.value)}
+                activeOpacity={0.7}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 className={`p-4 mx-2 my-2 rounded-3xl ${userMeasurements.unitSystem === option.value ? "bg-green-300" : "bg-gray-700"}`}
               >
                 <Text className="text-white font-benzinBold text-lg text-center">
@@ -396,7 +437,7 @@ const Measurements = () => {
         <View key="initial-weight-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your weight?</Text>
           <View className="mt-8 w-full px-4">
-            <WeightPicker
+            <WeightInput
               onWeightChange={handleWeightChange}
               initialWeight={
                 userMeasurements.initialWeight
@@ -404,6 +445,7 @@ const Measurements = () => {
                   : undefined
               }
               unitSystem={userMeasurements.unitSystem as "metric" | "imperial"}
+              onValidationError={setWeightError}
             />
           </View>
         </View>
@@ -412,24 +454,44 @@ const Measurements = () => {
         <View key="height-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your height?</Text>
           <View className="mt-8 w-full px-4">
-            <HeightPicker
-              onHeightChange={handleHeightChange}
-              initialHeight={
-                userMeasurements.height
-                  ? parseFloat(userMeasurements.height)
-                  : undefined
-              }
-              unitSystem={userMeasurements.unitSystem as "metric" | "imperial"}
-            />
+            <LazySlide shouldLoad={shouldRenderSlide(3)} slideName="HeightPicker">
+              <HeightPicker
+                onHeightChange={handleHeightChange}
+                initialHeight={
+                  userMeasurements.height
+                    ? parseFloat(userMeasurements.height)
+                    : undefined
+                }
+                unitSystem={userMeasurements.unitSystem as "metric" | "imperial"}
+                enable3DEffect={false}
+                showGradientMask={false}
+                enableDecayAnimation={true}
+                enableSpringAnimation={false}
+                enableOpacityAnimation={true}
+                enableFontSizeAnimation={true}
+                disableAllAnimations={false}
+              />
+            </LazySlide>
           </View>
         </View>
 
         {/* Slide 5: Birthday*/}
         <View key="birthday-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your date of birth?</Text>
-          <BirthdayPicker onDateChange={handleDateChange} initialYear={1998} />
+          <LazySlide shouldLoad={shouldRenderSlide(4)} slideName="BirthdayPicker">
+            <BirthdayPicker
+              onDateChange={handleDateChange}
+              initialYear={1998}
+              enable3DEffect={false}
+              showGradientMask={false}
+              enableDecayAnimation={true}
+              enableSpringAnimation={false}
+              enableOpacityAnimation={true}
+              enableFontSizeAnimation={true}
+              disableAllAnimations={false}
+            />
+          </LazySlide>
         </View>
-
         {/* Slide 6: Activity Level */}
         <View key="activity-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>Select your activity level</Text>
@@ -455,7 +517,7 @@ const Measurements = () => {
         <View key="target-weight-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>What is your target weight?</Text>
           <View className="mt-8 w-full px-4">
-            <WeightPicker
+            <WeightInput
               onWeightChange={handleTargetWeightChange}
               initialWeight={
                 userMeasurements.targetWeight
@@ -463,6 +525,7 @@ const Measurements = () => {
                   : undefined
               }
               unitSystem={userMeasurements.unitSystem as "metric" | "imperial"}
+              onValidationError={setTargetWeightError}
             />
           </View>
         </View>
@@ -518,6 +581,14 @@ const Measurements = () => {
           </View>
         </View>
       </Swiper>
+
+      {/* Display validation error */}
+      {(weightError || targetWeightError) && (
+        <Text className="text-red-500 font-benzinBold text-center px-4 mb-2">
+          {weightError || targetWeightError}
+        </Text>
+      )}
+
       <CustomButton
         title={isLastSlide ? "Finish" : "Next"}
         onPress={handleNext}
