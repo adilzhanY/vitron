@@ -30,6 +30,7 @@ const WeightInputComponent: React.FC<WeightInputProps> = ({
   });
 
   const decimalInputRef = useRef<TextInput>(null);
+  const integerInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     if (integerPart === "") {
@@ -74,6 +75,11 @@ const WeightInputComponent: React.FC<WeightInputProps> = ({
     const limited = cleaned.slice(0, 3);
 
     setIntegerPart(limited);
+
+    // Auto-focus decimal input when 3 digits entered
+    if (limited.length === 3) {
+      decimalInputRef.current?.focus();
+    }
   };
 
   const handleDecimalChange = (text: string) => {
@@ -81,6 +87,13 @@ const WeightInputComponent: React.FC<WeightInputProps> = ({
     const cleaned = text.replace(/[^0-9]/g, "");
     const limited = cleaned.slice(0, 1);
     setDecimalPart(limited);
+  };
+
+  const handleDecimalKeyPress = (e: any) => {
+    // On backspace when decimal is empty, move focus back to integer
+    if (e.nativeEvent.key === 'Backspace' && decimalPart === '') {
+      integerInputRef.current?.focus();
+    }
   };
 
   const handleIntegerSubmit = () => {
@@ -97,6 +110,7 @@ const WeightInputComponent: React.FC<WeightInputProps> = ({
       <View style={styles.content}>
         <View style={styles.inputSection}>
           <TextInput
+            ref={integerInputRef}
             style={styles.integerInput}
             value={integerPart}
             onChangeText={handleIntegerChange}
@@ -116,6 +130,7 @@ const WeightInputComponent: React.FC<WeightInputProps> = ({
             style={styles.decimalInput}
             value={decimalPart}
             onChangeText={handleDecimalChange}
+            onKeyPress={handleDecimalKeyPress}
             keyboardType="numeric"
             returnKeyType="done"
             selectTextOnFocus
