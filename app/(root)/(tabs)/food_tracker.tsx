@@ -20,9 +20,75 @@ const FoodTracker = () => {
   const { user: clerkUser } = useUser();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isModalVisible, setModalVisible] = useState(false);
+  const [waterConsumed, setWaterConsumed] = useState(0);
+  const [waterLoading, setWaterLoading] = useState(false);
 
   const { loading, error, foodTotals, mealGoals, refetch } =
     useFoodData(selectedDate);
+
+  // Fetch water intake for selected date
+  const fetchWaterIntake = useCallback(async () => {
+    if (!clerkUser) return;
+
+    try {
+      setWaterLoading(true);
+      const dateStr = selectedDate.toISOString().split("T")[0];
+      const response = await fetchAPI(
+        `/(api)/water?clerkId=${clerkUser.id}&date=${dateStr}`,
+      );
+
+      if (response.data) {
+        setWaterConsumed(response.data.total_consumed || 0);
+      }
+    } catch (error) {
+      console.error("Failed to fetch water intake:", error);
+    } finally {
+      setWaterLoading(false);
+    }
+  }, [clerkUser, selectedDate]);
+
+  // Fetch water intake when component mounts or date changes
+  useEffect(() => {
+    fetchWaterIntake();
+  }, [fetchWaterIntake]);
+
+  // Handle adding water
+  const handleAddWater = useCallback(async () => {
+    if (!clerkUser) return;
+
+    try {
+      const dateStr = selectedDate.toISOString().split("T")[0];
+
+      // If no water consumed yet, create new entry with POST
+      if (waterConsumed === 0) {
+        await fetchAPI("/(api)/water", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            clerkId: clerkUser.id,
+            date: dateStr,
+            amount: 250,
+            dailyGoal: 2500,
+          }),
+        });
+        setWaterConsumed(250);
+      } else {
+        // Otherwise, update existing entry with PATCH
+        await fetchAPI("/(api)/water", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            clerkId: clerkUser.id,
+            date: dateStr,
+            amount: 250,
+          }),
+        });
+        setWaterConsumed((prev) => prev + 250);
+      }
+    } catch (error) {
+      console.error("Failed to add water:", error);
+    }
+  }, [clerkUser, selectedDate, waterConsumed]);
 
   const handleCreateNewMeal = useCallback(
     async (newMeal: {
@@ -79,7 +145,7 @@ const FoodTracker = () => {
         <PageHeader
           title="Track your food"
           actionText=""
-          onActionPress={() => {}}
+          onActionPress={() => { }}
         />
         <View
           style={{
@@ -149,7 +215,12 @@ const FoodTracker = () => {
             elevation: 8,
           }}
         >
-          <WaterCard dailyGoal={2500} glassSize={250} />
+          <WaterCard
+            waterConsumed={waterConsumed}
+            dailyGoal={2500}
+            increment={250}
+            onAddWater={handleAddWater}
+          />
         </View>
 
         <View className="h-[500px]"></View>

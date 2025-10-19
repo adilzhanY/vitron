@@ -1,26 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Svg, { Path, Defs, ClipPath, Rect as SvgRect } from "react-native-svg";
 
 interface WaterCardProps {
-  // in ml
+  waterConsumed: number;
   dailyGoal?: number;
-  // in ml
   increment?: number;
+  onAddWater: () => void;
 }
 
 const WaterCard: React.FC<WaterCardProps> = ({
+  waterConsumed,
   dailyGoal = 2500,
   increment = 250,
+  onAddWater,
 }) => {
-  const [waterConsumed, setWaterConsumed] = useState(0);
-
   // Calculate fill percentage (0 to 1)
   const fillPercentage = Math.min(waterConsumed / dailyGoal, 1);
-
-  const addWater = () => {
-    setWaterConsumed((prev) => Math.min(prev + increment, dailyGoal));
-  };
 
   return (
     <View style={{ borderRadius: 24 }} className="bg-white p-6 mt-5">
@@ -41,7 +37,7 @@ const WaterCard: React.FC<WaterCardProps> = ({
 
           {/* Add button */}
           <TouchableOpacity
-            onPress={addWater}
+            onPress={onAddWater}
             disabled={waterConsumed >= dailyGoal}
             className="bg-gray-100 px-4 py-2 rounded-xl flex-row items-center self-start"
             style={{ opacity: waterConsumed >= dailyGoal ? 0.5 : 1 }}
