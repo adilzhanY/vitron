@@ -1,6 +1,8 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, Text, TouchableOpacity, Animated } from "react-native";
 import Svg, { Path, Defs, ClipPath, Rect as SvgRect } from "react-native-svg";
+
+const AnimatedSvgRect = Animated.createAnimatedComponent(SvgRect);
 
 interface WaterCardProps {
   waterConsumed: number;
@@ -17,6 +19,29 @@ const WaterCard: React.FC<WaterCardProps> = ({
 }) => {
   // Calculate fill percentage (0 to 1)
   const fillPercentage = Math.min(waterConsumed / dailyGoal, 1);
+
+  // Animated value for smooth filling
+  const animatedFill = useRef(new Animated.Value(0)).current;
+
+  // Animate when fillPercentage changes
+  useEffect(() => {
+    Animated.timing(animatedFill, {
+      toValue: fillPercentage,
+      duration: 800,
+      useNativeDriver: false,
+    }).start();
+  }, [fillPercentage]);
+
+  // Interpolate animated value for y position and height
+  const animatedY = animatedFill.interpolate({
+    inputRange: [0, 1],
+    outputRange: [90, 8], // 90 - 82 * 0 = 90, 90 - 82 * 1 = 8
+  });
+
+  const animatedHeight = animatedFill.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 82], // 82 * 0 = 0, 82 * 1 = 82
+  });
 
   return (
     <View style={{ borderRadius: 24 }} className="bg-white p-6 mt-5">
@@ -63,11 +88,11 @@ const WaterCard: React.FC<WaterCardProps> = ({
 
             {/* Filled water (clipped to drop shape) */}
             {fillPercentage > 0 && (
-              <SvgRect
+              <AnimatedSvgRect
                 x="10"
-                y={90 - 82 * fillPercentage}
+                y={animatedY}
                 width="60"
-                height={82 * fillPercentage}
+                height={animatedHeight}
                 fill="#60A5FA"
                 clipPath="url(#dropClip)"
               />

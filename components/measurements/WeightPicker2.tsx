@@ -1,19 +1,11 @@
 import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import Picker, { PickerItem } from "../shared/Picker";
+import Picker2, { PickerItem } from "../shared/Picker2";
 
-interface WeightPickerProps {
+interface WeightPicker2Props {
   onWeightChange: (weight: number, unit: "kg" | "lb") => void;
   initialWeight?: number;
   unitSystem: "metric" | "imperial";
-  // Performance optimization props
-  enable3DEffect?: boolean;
-  showGradientMask?: boolean;
-  enableDecayAnimation?: boolean;
-  enableSpringAnimation?: boolean;
-  enableOpacityAnimation?: boolean;
-  enableFontSizeAnimation?: boolean;
-  disableAllAnimations?: boolean;
 }
 
 const ITEM_HEIGHT = 50;
@@ -49,19 +41,12 @@ const generateWeightData = (min: number, max: number): PickerItem<number>[] => {
   return data;
 };
 
-const WeightPickerComponent: React.FC<WeightPickerProps> = ({
+const WeightPicker2Component: React.FC<WeightPicker2Props> = ({
   onWeightChange,
   initialWeight,
   unitSystem,
-  enable3DEffect = false,
-  showGradientMask = false,
-  enableDecayAnimation = true,
-  enableSpringAnimation = true,
-  enableOpacityAnimation = true,
-  enableFontSizeAnimation = true,
-  disableAllAnimations = false,
 }) => {
-  console.log("🏋️ [WeightPicker] Component MOUNTING/RENDERING");
+  console.log("🏋️ [WeightPicker2] Component MOUNTING/RENDERING");
 
   const unit: WeightUnit = unitSystem === "metric" ? "kg" : "lb";
 
@@ -78,7 +63,7 @@ const WeightPickerComponent: React.FC<WeightPickerProps> = ({
 
   // Generate data only when unit changes (useMemo optimization)
   const integerData = useMemo(() => {
-    console.log(`🔢 [WeightPicker] Generating ${unit} data...`);
+    console.log(`🔢 [WeightPicker2] Generating ${unit} data...`);
     const limits = WEIGHT_LIMITS[unit];
     return generateWeightData(limits.min, limits.max);
   }, [unit]);
@@ -90,7 +75,6 @@ const WeightPickerComponent: React.FC<WeightPickerProps> = ({
 
   // Set ready after data is generated
   useEffect(() => {
-    // Use a small delay to allow the component to mount first
     const timer = setTimeout(() => {
       setIsReady(true);
     }, 0);
@@ -101,12 +85,12 @@ const WeightPickerComponent: React.FC<WeightPickerProps> = ({
     onWeightChange(weight, unit);
   }, [weight, unit, onWeightChange]);
 
-  const handleIntegerChange = useCallback((value: number) => {
-    setIntegerPart(value);
+  const handleIntegerChange = useCallback((item: PickerItem<number>) => {
+    setIntegerPart(item.value);
   }, []);
 
-  const handleDecimalChange = useCallback((value: number) => {
-    setDecimalPart(value);
+  const handleDecimalChange = useCallback((item: PickerItem<number>) => {
+    setDecimalPart(item.value);
   }, []);
 
   // Show loading state while data is being prepared
@@ -130,24 +114,17 @@ const WeightPickerComponent: React.FC<WeightPickerProps> = ({
       <View style={styles.content}>
         <View style={styles.pickersSection}>
           <View style={styles.integerPickerColumn}>
-            <Picker
+            <Picker2
               key={unit}
               data={integerData}
-              selectedValue={integerPart}
-              onValueChange={handleIntegerChange}
+              value={integerPart}
+              onValueChanged={handleIntegerChange}
               itemHeight={ITEM_HEIGHT}
-              visibleItems={VISIBLE_ITEMS}
-              enable3DEffect={enable3DEffect}
-              showGradientMask={showGradientMask}
-              enableDecayAnimation={enableDecayAnimation}
-              enableSpringAnimation={enableSpringAnimation}
-              enableOpacityAnimation={enableOpacityAnimation}
-              enableFontSizeAnimation={enableFontSizeAnimation}
-              disableAllAnimations={disableAllAnimations}
+              visibleItemCount={VISIBLE_ITEMS}
+              enableScrollByTapOnItem={true}
               containerStyle={styles.picker}
-              highlightStyle={styles.highlight}
-              textStyle={styles.itemText}
-              selectedTextStyle={styles.selectedItemText}
+              itemTextStyle={styles.itemText}
+              overlayItemStyle={styles.highlight}
             />
           </View>
 
@@ -156,23 +133,16 @@ const WeightPickerComponent: React.FC<WeightPickerProps> = ({
           </View>
 
           <View style={styles.decimalPickerColumn}>
-            <Picker
+            <Picker2
               data={DECIMAL_DATA}
-              selectedValue={decimalPart}
-              onValueChange={handleDecimalChange}
+              value={decimalPart}
+              onValueChanged={handleDecimalChange}
               itemHeight={ITEM_HEIGHT}
-              visibleItems={VISIBLE_ITEMS}
-              enable3DEffect={enable3DEffect}
-              showGradientMask={showGradientMask}
-              enableDecayAnimation={enableDecayAnimation}
-              enableSpringAnimation={enableSpringAnimation}
-              enableOpacityAnimation={enableOpacityAnimation}
-              enableFontSizeAnimation={enableFontSizeAnimation}
-              disableAllAnimations={disableAllAnimations}
+              visibleItemCount={VISIBLE_ITEMS}
+              enableScrollByTapOnItem={true}
               containerStyle={styles.picker}
-              highlightStyle={styles.highlight}
-              textStyle={styles.itemText}
-              selectedTextStyle={styles.selectedItemText}
+              itemTextStyle={styles.itemText}
+              overlayItemStyle={styles.highlight}
             />
           </View>
         </View>
@@ -248,17 +218,11 @@ const styles = StyleSheet.create({
     fontFamily: "Benzin-Bold",
     textAlign: "center",
   },
-  selectedItemText: {
-    fontSize: 24,
-    color: "#000000",
-    fontFamily: "Benzin-Bold",
-    textAlign: "center",
-  },
 });
 
 const arePropsEqual = (
-  prev: WeightPickerProps,
-  next: WeightPickerProps,
+  prev: WeightPicker2Props,
+  next: WeightPicker2Props,
 ) => {
   return (
     prev.unitSystem === next.unitSystem &&
@@ -267,4 +231,4 @@ const arePropsEqual = (
   );
 };
 
-export default memo(WeightPickerComponent, arePropsEqual);
+export default memo(WeightPicker2Component, arePropsEqual);

@@ -120,7 +120,8 @@ export async function GET(request: Request) {
                 height,
                 measurements_filled,
                 goal,
-                activity_level
+                activity_level,
+                unit_system
             FROM users
             WHERE clerk_id = ${clerkId}
         `;

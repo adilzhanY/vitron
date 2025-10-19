@@ -93,8 +93,8 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
           <View className="h-4" />
 
           {/* Meal Type Dropdown */}
-          <Text className="text-gray-700 text-base font-benzinMedium mb-2">
-            Meal Type
+          <Text className="text-gray-700 text-lg font-benzinBold mb-2">
+            Meal time
           </Text>
           <TouchableOpacity
             onPress={() => setDropdownVisible(!dropdownVisible)}

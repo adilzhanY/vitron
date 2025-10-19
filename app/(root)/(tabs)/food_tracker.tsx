@@ -1,4 +1,4 @@
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import { View, ScrollView, ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useUser } from "@clerk/clerk-expo";
@@ -15,6 +15,7 @@ import FoodEntryModal from "@/components/food/FoodEntryModal";
 import WaterCard from "@/components/food/WaterCard";
 import { fetchAPI } from "@/lib/fetch";
 import { useFoodData } from "@/hooks/useFoodData";
+import { calculateMacrosByMealImage, calculateMacrosByMealLabel } from "@/services/food/aiService";
 
 const FoodTracker = () => {
   const { user: clerkUser } = useUser();
@@ -22,6 +23,10 @@ const FoodTracker = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [waterConsumed, setWaterConsumed] = useState(0);
   const [waterLoading, setWaterLoading] = useState(false);
+
+  // AI test states
+  const [aiLoading, setAiLoading] = useState<'meal' | 'label' | null>(null);
+  const [aiResponse, setAiResponse] = useState<any>(null);
 
   const { loading, error, foodTotals, mealGoals, refetch } =
     useFoodData(selectedDate);
@@ -131,6 +136,60 @@ const FoodTracker = () => {
     [clerkUser, selectedDate, refetch],
   );
 
+  // AI test handlers
+  const handleTestMealImage = async () => {
+    try {
+      setAiLoading('meal');
+      setAiResponse(null);
+
+      // Using a publicly accessible test image URL
+      // NOTE: OpenRouter/OpenAI requires public URLs, not local file paths
+      // Replace this with your actual test image URL or upload your local image to a service like Imgur, Cloudinary, etc.
+      const testImageUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800';
+
+      const response = await calculateMacrosByMealImage(testImageUrl);
+
+      setAiResponse({
+        type: 'Meal Image Analysis',
+        data: response.choices[0].message
+      });
+    } catch (error) {
+      console.error('AI Meal Image Error:', error);
+      setAiResponse({
+        type: 'Meal Image Analysis',
+        error: error instanceof Error ? error.message : String(error)
+      });
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
+  const handleTestMealLabel = async () => {
+    try {
+      setAiLoading('label');
+      setAiResponse(null);
+
+      // Using a publicly accessible test image URL for nutrition label
+      // NOTE: Replace this with your actual nutrition label image URL
+      const testLabelUrl = 'https://vitron-meal-images.s3.eu-central-1.amazonaws.com/meal-labels/ai_test_1_meal_label.jpg';
+
+      const response = await calculateMacrosByMealLabel(testLabelUrl);
+
+      setAiResponse({
+        type: 'Meal Label Analysis',
+        data: response.choices[0].message
+      });
+    } catch (error) {
+      console.error('AI Meal Label Error:', error);
+      setAiResponse({
+        type: 'Meal Label Analysis',
+        error: error instanceof Error ? error.message : String(error)
+      });
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
   if (loading) {
     return (
       <SafeAreaView className="bg-white flex-1 justify-center items-center">
@@ -221,6 +280,71 @@ const FoodTracker = () => {
             increment={250}
             onAddWater={handleAddWater}
           />
+        </View>
+
+        {/* AI Test Section */}
+        <View
+          style={{
+            borderRadius: 24,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 5 },
+            shadowOpacity: 0.15,
+            shadowRadius: 10,
+            elevation: 8,
+          }}
+          className="bg-white p-6 mt-5"
+        >
+          <Text className="text-xl font-benzinBold text-gray-800 mb-4">
+            AI Nutrition Analysis Test
+          </Text>
+
+          <View className="flex-row gap-3 mb-4">
+            <TouchableOpacity
+              onPress={handleTestMealImage}
+              disabled={aiLoading !== null}
+              className="flex-1 bg-blue-500 py-3 px-4 rounded-xl items-center"
+              style={{ opacity: aiLoading !== null ? 0.5 : 1 }}
+            >
+              {aiLoading === 'meal' ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text className="text-white font-benzinBold">
+                  Test Meal Image
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleTestMealLabel}
+              disabled={aiLoading !== null}
+              className="flex-1 bg-purple-500 py-3 px-4 rounded-xl items-center"
+              style={{ opacity: aiLoading !== null ? 0.5 : 1 }}
+            >
+              {aiLoading === 'label' ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text className="text-white font-benzinBold">
+                  Test Meal Label
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {aiResponse && (
+            <View className="bg-gray-50 p-4 rounded-xl">
+              <Text className="text-base font-benzinBold text-gray-800 mb-2">
+                {aiResponse.type}
+              </Text>
+              <ScrollView
+                style={{ maxHeight: 300 }}
+                showsVerticalScrollIndicator={true}
+              >
+                <Text className="text-sm font-mono text-gray-700">
+                  {JSON.stringify(aiResponse.data || aiResponse.error, null, 2)}
+                </Text>
+              </ScrollView>
+            </View>
+          )}
         </View>
 
         <View className="h-[500px]"></View>
