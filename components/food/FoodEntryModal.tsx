@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Modal, TouchableOpacity } from "react-native";
+import { View, Text, Modal, TouchableOpacity, TextInput } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import CustomButton from "@/components/shared/CustomButton";
 import InputField from "@/components/shared/InputField";
 import { MealType } from "@/types/type";
@@ -36,6 +37,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
   const [fat, setFat] = useState("");
   const [mealType, setMealType] = useState<MealType>("breakfast");
   const [isSaving, setIsSaving] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const handleSave = async () => {
     // Validate required fields
@@ -81,6 +83,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
             Track your meal
           </Text>
 
+          {/* Meal name input - full width */}
           <InputField
             label="Meal name"
             value={entryName}
@@ -89,58 +92,120 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
           />
           <View className="h-4" />
 
-          {/* Meal Type Selector */}
+          {/* Meal Type Dropdown */}
           <Text className="text-gray-700 text-base font-benzinMedium mb-2">
             Meal Type
           </Text>
-          <View className="flex-row flex-wrap gap-2 mb-4">
-            {mealTypeOptions.map((type) => (
-              <TouchableOpacity
-                key={type}
-                onPress={() => setMealType(type)}
-                className={`px-4 py-2 rounded-lg ${
-                  mealType === type ? "bg-green-500" : "bg-gray-200"
-                }`}
-              >
-                <Text
-                  className={`text-sm font-benzinMedium ${
-                    mealType === type ? "text-white" : "text-gray-700"
-                  }`}
+          <TouchableOpacity
+            onPress={() => setDropdownVisible(!dropdownVisible)}
+            className="bg-gray-100 rounded-xl px-4 py-3 mb-2 flex-row justify-between items-center"
+          >
+            <Text className="text-gray-800 text-base font-benzinMedium">
+              {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+            </Text>
+            <FontAwesome
+              name={dropdownVisible ? "chevron-up" : "chevron-down"}
+              size={16}
+              color="#6B7280"
+            />
+          </TouchableOpacity>
+
+          {/* Dropdown options */}
+          {dropdownVisible && (
+            <View className="bg-gray-50 rounded-xl mb-4 overflow-hidden border border-gray-200">
+              {mealTypeOptions.map((type) => (
+                <TouchableOpacity
+                  key={type}
+                  onPress={() => {
+                    setMealType(type);
+                    setDropdownVisible(false);
+                  }}
+                  className={`px-4 py-3 border-b border-gray-200 ${mealType === type ? "bg-green-100" : ""
+                    }`}
                 >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                  <Text
+                    className={`text-base font-benzinMedium ${mealType === type ? "text-green-700" : "text-gray-700"
+                      }`}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
+          {/* Compact macro inputs - 2 columns */}
+          <View className="flex-row justify-between mb-3">
+            {/* Calories */}
+            <View className="flex-1 mr-2">
+              <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
+                <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                  Calories
                 </Text>
-              </TouchableOpacity>
-            ))}
+                <TextInput
+                  value={calories}
+                  onChangeText={setCalories}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                  className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                />
+              </View>
+            </View>
+
+            {/* Protein */}
+            <View className="flex-1 ml-2">
+              <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
+                <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                  Protein
+                </Text>
+                <TextInput
+                  value={protein}
+                  onChangeText={setProtein}
+                  keyboardType="numeric"
+                  placeholder="0g"
+                  placeholderTextColor="#9CA3AF"
+                  className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                />
+              </View>
+            </View>
           </View>
 
-          <InputField
-            label="Calories"
-            value={calories}
-            onChangeText={setCalories}
-            keyboardType="numeric"
-            placeholder="e.g., 1523"
-          />
-          <InputField
-            label="Protein (g)"
-            value={protein}
-            onChangeText={setProtein}
-            keyboardType="numeric"
-            placeholder="e.g., 34"
-          />
-          <InputField
-            label="Carbs (g)"
-            value={carbs}
-            onChangeText={setCarbs}
-            keyboardType="numeric"
-            placeholder="e.g., 122"
-          />
-          <InputField
-            label="Fat (g)"
-            value={fat}
-            onChangeText={setFat}
-            keyboardType="numeric"
-            placeholder="e.g., 23"
-          />
+          <View className="flex-row justify-between mb-4">
+            {/* Carbs */}
+            <View className="flex-1 mr-2">
+              <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
+                <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                  Carbs
+                </Text>
+                <TextInput
+                  value={carbs}
+                  onChangeText={setCarbs}
+                  keyboardType="numeric"
+                  placeholder="0g"
+                  placeholderTextColor="#9CA3AF"
+                  className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                />
+              </View>
+            </View>
+
+            {/* Fat */}
+            <View className="flex-1 ml-2">
+              <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
+                <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                  Fat
+                </Text>
+                <TextInput
+                  value={fat}
+                  onChangeText={setFat}
+                  keyboardType="numeric"
+                  placeholder="0g"
+                  placeholderTextColor="#9CA3AF"
+                  className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                />
+              </View>
+            </View>
+          </View>
 
           <View className="flex-row mt-6">
             <CustomButton
