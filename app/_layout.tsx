@@ -1,3 +1,4 @@
+import "react-native-get-random-values";
 import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import './global.css';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo'

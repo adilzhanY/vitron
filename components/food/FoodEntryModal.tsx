@@ -4,6 +4,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import CustomButton from "@/components/shared/CustomButton";
 import InputField from "@/components/shared/InputField";
 import { MealType } from "@/types/type";
+import FoodCameraView from "./FoodCameraView";
+import { useUser } from "@clerk/clerk-expo";
+import { uploadImageToS3, ImageUploadMode } from "@/services/food/s3Service";
 
 interface FoodEntryModalProps {
   visible: boolean;
@@ -30,6 +33,10 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const { user } = useUser();
+  const [activeTab, setActiveTab] = useState<"scan" | "describe">("scan");
+  const [showCamera, setShowCamera] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [entryName, setEntryName] = useState("");
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
@@ -68,7 +75,70 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
     onClose();
   };
 
+  const handleImageCapture = async (imageUri: string, mode: "scan" | "label" | "gallery") => {
+    if (!user) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+
+      // Determine the upload mode (gallery uses scan mode for folder structure)
+      const uploadMode: ImageUploadMode = mode === "label" ? "label" : "scan";
+
+      // Upload image to S3
+      const result = await uploadImageToS3({
+        imageUri,
+        userId: user.id,
+        mode: uploadMode,
+      });
+
+      if (result.success) {
+        console.log("Image uploaded successfully:", result.url);
+        // TODO: Process the image with AI and populate the form fields
+        // For now, just close the camera
+        setShowCamera(false);
+      } else {
+        console.error("Failed to upload image:", result.error);
+        alert("Failed to upload image. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error handling image capture:", error);
+      alert("An error occurred while processing the image.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleCameraClose = () => {
+    setShowCamera(false);
+  };
+
+  // Open camera when tab switches to "scan" and modal is visible
+  useEffect(() => {
+    if (visible && activeTab === "scan") {
+      setShowCamera(true);
+    } else {
+      setShowCamera(false);
+    }
+  }, [visible, activeTab]);
+
   const mealTypeOptions: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
+
+  // If camera is active, show full-screen camera
+  if (showCamera) {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={visible}
+        onRequestClose={onClose}
+      >
+        <FoodCameraView onCapture={handleImageCapture} onClose={handleCameraClose} />
+      </Modal>
+    );
+  }
 
   return (
     <Modal
@@ -79,6 +149,34 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
     >
       <View className="flex-1 justify-center items-center bg-black/80">
         <View className="w-11/12 bg-white rounded-2xl p-6">
+          {/* Tab Switcher */}
+          <View className="flex-row mb-4 bg-gray-100 rounded-xl p-1">
+            <TouchableOpacity
+              onPress={() => setActiveTab("scan")}
+              className={`flex-1 py-3 rounded-lg ${activeTab === "scan" ? "bg-green-500" : "bg-transparent"
+                }`}
+            >
+              <Text
+                className={`text-center font-benzinBold ${activeTab === "scan" ? "text-white" : "text-gray-600"
+                  }`}
+              >
+                Scan Food
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveTab("describe")}
+              className={`flex-1 py-3 rounded-lg ${activeTab === "describe" ? "bg-green-500" : "bg-transparent"
+                }`}
+            >
+              <Text
+                className={`text-center font-benzinBold ${activeTab === "describe" ? "text-white" : "text-gray-600"
+                  }`}
+              >
+                Describe Food
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <Text className="text-black text-2xl font-benzinBold mb-4">
             Track your meal
           </Text>
