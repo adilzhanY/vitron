@@ -7,7 +7,7 @@ const normalizeWeightData = (rawData: any[]): WeightEntry[] => {
   return (rawData ?? [])
     .map((entry: any) => ({
       weight: parseFloat(entry.weight),
-      date: entry.logged_at || entry.date,
+      date: entry.loggedAt || entry.logged_at || entry.date,
     }))
     .filter((e: WeightEntry) => !Number.isNaN(e.weight) && e.date)
     .sort((a: WeightEntry, b: WeightEntry) => {

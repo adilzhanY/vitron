@@ -108,6 +108,19 @@ CREATE TABLE daily_water_intake (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE meal_images (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    meal_id INT REFERENCES meals(id) ON DELETE SET NULL,
+    image_data BYTEA,
+    image_name VARCHAR(255),
+    image_type VARCHAR(50),
+    image_size INT,
+    is_analyzed BOOLEAN DEFAULT FALSE,
+    ai_response JSONB,
+    uploaded_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE TABLE exercises (
     id SERIAL PRIMARY KEY,
     exercise_id VARCHAR(255) UNIQUE NOT NULL,

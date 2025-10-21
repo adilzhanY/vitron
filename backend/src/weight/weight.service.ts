@@ -33,7 +33,7 @@ export class WeightService {
     return weights.map((w) => ({
       id: w.id,
       weight: w.weight,
-      loggedAt: w.logged_at,
+      loggedAt: w.logged_at instanceof Date ? w.logged_at.toISOString() : w.logged_at,
     }));
   }
 
@@ -58,7 +58,7 @@ export class WeightService {
     return {
       id: result[0].id,
       weight: result[0].weight,
-      loggedAt: result[0].logged_at,
+      loggedAt: result[0].logged_at instanceof Date ? result[0].logged_at.toISOString() : result[0].logged_at,
     };
   }
 

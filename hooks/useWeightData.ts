@@ -72,13 +72,28 @@ export const useWeightData = () => {
     const bmiValue =
       heightM > 0 ? (mostRecentWeight / (heightM * heightM)).toFixed(1) : "-";
 
+    // Format date safely
+    let formattedStartDate = "-";
+    if (startDateValue) {
+      try {
+        // Handle both ISO strings and timestamp objects
+        const dateObj = typeof startDateValue === 'string'
+          ? parseISO(startDateValue)
+          : new Date(startDateValue);
+
+        if (!isNaN(dateObj.getTime())) {
+          formattedStartDate = format(dateObj, "d MMM yyyy");
+        }
+      } catch (e) {
+        console.error("Error parsing date:", e);
+      }
+    }
+
     return {
       startWeight: start,
       goalWeight: goal,
       currentWeight: mostRecentWeight,
-      startDate: startDateValue
-        ? format(parseISO(startDateValue), "d MMM yyyy")
-        : "-",
+      startDate: formattedStartDate,
       bmi: bmiValue,
       radialChartEntries: [...weightData].reverse().map((e) => e.weight),
       userGoal: userData.goal,
@@ -86,7 +101,7 @@ export const useWeightData = () => {
     };
   }, [weightData, userData, weightGoalData]);
 
-  const streaks = useMemo(() => findStreaks(weightData, [weightData]));
+  const streaks = useMemo(() => findStreaks(weightData), [weightData]);
 
   return {
     loading,

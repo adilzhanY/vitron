@@ -61,8 +61,8 @@ export class MealService {
       fat: meal.fat,
       mealType: meal.meal_type,
       isSaved: meal.is_saved,
-      entryDate: meal.entry_date,
-      loggedAt: meal.logged_at,
+      entryDate: meal.entry_date instanceof Date ? meal.entry_date.toISOString().split('T')[0] : meal.entry_date,
+      loggedAt: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
     }));
   }
 
@@ -116,8 +116,8 @@ export class MealService {
       fat: meal.fat,
       mealType: meal.meal_type,
       isSaved: meal.is_saved,
-      entryDate: meal.logged_at,
-      loggedAt: meal.logged_at,
+      entryDate: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
+      loggedAt: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
     };
   }
 

@@ -17,17 +17,35 @@ import { colors } from "@/constants";
 import { graphqlRequest } from "@/lib/graphqlRequest";
 interface UserData {
   name: string;
-  activity_level: string;
+  activityLevel: string;
   birthday: string;
   gender: string;
-  initial_weight: string;
-  height: string;
+  initialWeight: number;
+  height: number;
   goal: string;
 }
 
-const calculateAge = (birthdayString: string): number => {
+const calculateAge = (birthdayString: string | Date | any): number => {
   if (!birthdayString) return 0;
-  const birthDate = new Date(birthdayString);
+
+  // Handle different date formats
+  let birthDate: Date;
+
+  if (typeof birthdayString === 'string') {
+    // Try parsing ISO date string
+    birthDate = new Date(birthdayString);
+  } else if (birthdayString instanceof Date) {
+    birthDate = birthdayString;
+  } else {
+    return 0;
+  }
+
+  // Check if date is valid
+  if (isNaN(birthDate.getTime())) {
+    console.log('Invalid birthday:', birthdayString);
+    return 0;
+  }
+
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDifference = today.getMonth() - birthDate.getMonth();
@@ -66,6 +84,8 @@ const Home = () => {
           `,
           { clerkId: clerkUser.id }
         );
+        console.log('User data received:', data.user);
+        console.log('Birthday value:', data.user?.birthday, 'Type:', typeof data.user?.birthday);
         setUserData(data.user);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
@@ -92,14 +112,14 @@ const Home = () => {
         {userData ? (
           <View className="space-y-2 items-center">
             <Text className="text-black text-xl font-benzin">
-              Your activity level: {userData.activity_level}
+              Your activity level: {userData.activityLevel}
             </Text>
             <Text className="text-black text-xl font-benzin">
               Your age:{" "}
               {userData?.birthday ? calculateAge(userData.birthday) : "-"}
             </Text>
             <Text className="text-black text-xl font-benzin">
-              Your height: {userData.height}
+              Your height: {userData.height} cm
             </Text>
             <Text className="text-black text-xl font-benzin">
               You are: {userData.gender}
@@ -108,7 +128,7 @@ const Home = () => {
               Your Goal: {userData.goal}
             </Text>
             <Text className="text-black text-xl font-benzin">
-              Your initial weight: {userData.initial_weight} kg
+              Your initial weight: {userData.initialWeight} kg
             </Text>
           </View>
         ) : (
