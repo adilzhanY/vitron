@@ -30,9 +30,12 @@ export default function SignInPage() {
   const checkUserMeasurements = async () => {
     if (!user) return;
     try {
-      const response = await fetchAPI(`/(api)/user-status?clerkId=${user.id}`);
-      const data = await response.json();
-      if (data.measurementsFilled) {
+      const { graphqlRequest } = await import("@/lib/graphqlRequest");
+      const { GET_USER_STATUS_QUERY } = await import("@/lib/graphql/userQueries");
+
+      const data = await graphqlRequest(GET_USER_STATUS_QUERY, { clerkId: user.id });
+
+      if (data.userStatus.measurementsFilled) {
         router.replace('/(root)/(tabs)/home');
       } else {
         router.replace('/(auth)/measurements');

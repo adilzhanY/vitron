@@ -7,7 +7,8 @@ import InputField from '@/components/shared/InputField'
 import CustomButton from '@/components/shared/CustomButton'
 import OAuth from '@/components/auth/OAuth'
 import { ReactNativeModal } from 'react-native-modal'
-import { fetchAPI } from '@/lib/fetch'
+import { graphqlRequest } from '@/lib/graphqlRequest'
+import { CREATE_USER_MUTATION } from '@/lib/graphql/userQueries'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 // import Logo from '';
@@ -53,13 +54,12 @@ export default function SignUpScreen() {
         code: verification.code,
       })
       if (completeSignUp.status === 'complete') {
-        await fetchAPI('/(api)/user', {
-          method: 'POST',
-          body: JSON.stringify({
+        await graphqlRequest(CREATE_USER_MUTATION, {
+          input: {
             name: form.name,
             email: form.email,
             clerkId: completeSignUp.createdUserId,
-          }),
+          },
         })
 
         await setActive({ session: completeSignUp.createdSessionId })
@@ -97,7 +97,7 @@ export default function SignUpScreen() {
           <Image
             source={icons.applogo}
             className="z-0 w-[200px] h-[200px] mb-20"
-          /> 
+          />
           <Text className="text-2xl text-black font-benzinSemiBold absolute bottom-5 left-5">
             Create Your Account
           </Text>

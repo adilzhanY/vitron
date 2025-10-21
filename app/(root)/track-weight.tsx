@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useRouter } from 'expo-router'
 import CustomButton from '@/components/shared/CustomButton'
 import { useUser } from '@clerk/clerk-expo'
-import { fetchAPI } from '@/lib/fetch'
+import { graphqlRequest } from '@/lib/graphqlRequest'
+import { GET_USER_QUERY } from '@/lib/graphql/userQueries'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { colors } from '@/constants'
 import WeightPicker from '@/components/measurements/WeightPicker'
@@ -28,10 +29,11 @@ const TrackWeight = () => {
       if (!clerkUser) return;
 
       try {
-        const response = await fetchAPI(`/(api)/user?clerkId=${clerkUser.id}`);
-        if (response.data?.unit_system) {
-          setUnitSystem(response.data.unit_system);
-        }
+        // For now, default to metric. Unit system preference can be added later
+        // const data = await graphqlRequest(GET_USER_QUERY, { clerkId: clerkUser.id });
+        // if (data.user?.unitSystem) {
+        //   setUnitSystem(data.user.unitSystem);
+        // }
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {
@@ -63,12 +65,14 @@ const TrackWeight = () => {
 
     setLoading(true);
     try {
-      await fetchAPI('/weights', {
-        method: 'POST',
-        body: JSON.stringify({
+      const { graphqlRequest } = await import("@/lib/graphqlRequest");
+      const { CREATE_WEIGHT_MUTATION } = await import("@/lib/graphql/weightQueries");
+
+      await graphqlRequest(CREATE_WEIGHT_MUTATION, {
+        input: {
           clerkId: clerkUser.id,
           weight: parseFloat(weight),
-        }),
+        },
       });
 
       Alert.alert("Success", "Weight has been saved successfully!");

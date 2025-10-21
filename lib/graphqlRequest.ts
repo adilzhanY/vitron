@@ -1,5 +1,8 @@
 export async function graphqlRequest(query: string, variables?: any) {
-  const response = await fetch('http://localhost:3000/graphql', {
+  const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL || 'http://localhost:3000';
+  const graphqlEndpoint = `${serverUrl}/graphql`;
+
+  const response = await fetch(graphqlEndpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

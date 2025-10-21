@@ -6,7 +6,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import InputField from "@/components/shared/InputField";
 import CustomButton from "@/components/shared/CustomButton";
 import { useUser } from "@clerk/clerk-expo";
-import { fetchAPI } from "@/lib/fetch";
+import { graphqlRequest } from "@/lib/graphqlRequest";
+import { CREATE_WEIGHT_GOAL_MUTATION } from "@/lib/graphql/weightQueries";
 
 const SetGoal = () => {
   const { user: clerkUser } = useUser();
@@ -27,17 +28,13 @@ const SetGoal = () => {
 
     try {
       // Send correct field names
-      await fetchAPI("/(api)/weight-goals", {
-        method: "POST",
-        body: JSON.stringify({
-          clerkId: clerkUser.id,
-          startWeight: parseFloat(newStartWeight),
-          targetWeight: parseFloat(newGoalWeight),
-          checkpoints: parseInt(newCheckpoints, 10),
-          dailyCalorieGoal: null,
-        }),
+      const data = await graphqlRequest(CREATE_WEIGHT_GOAL_MUTATION, {
+        clerkId: clerkUser.id,
+        startWeight: parseFloat(newStartWeight),
+        targetWeight: parseFloat(newGoalWeight),
+        checkpoints: parseInt(newCheckpoints, 10),
       });
-      console.log("Success, weight goal and meal goal created");
+      console.log("Success, weight goal and meal goal created", data);
       Alert.alert("Success", "Your new weight goal has been set!");
       setNewGoalWeight("");
       setNewCheckpoints("9");

@@ -4,7 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import CustomButton from "@/components/shared/CustomButton";
 import { useUser } from "@clerk/clerk-expo";
-import { fetchAPI } from "@/lib/fetch";
+import { graphqlRequest } from "@/lib/graphqlRequest";
+import { UPDATE_USER_MUTATION } from "@/lib/graphql/userQueries";
 import { FontAwesome5 } from "@expo/vector-icons";
 import BirthdayPicker from "@/components/measurements/BirthdayPicker";
 import WeightInput from "@/components/measurements/WeightInput";
@@ -233,24 +234,22 @@ const Measurements = () => {
             : parseFloat(userMeasurements.targetWeight)
           : weightInKg;
 
-        await fetchAPI("/(api)/user", {
-          method: "PATCH",
-          body: JSON.stringify({
+        await graphqlRequest(UPDATE_USER_MUTATION, {
+          input: {
             clerkId: clerkUser?.id,
             gender: userMeasurements.gender,
-            weight: weightInKg,
             height: heightInCm,
-            birthday: userMeasurements.birthday,
+            age: calculateAge(userMeasurements.birthday),
             activityLevel: userMeasurements.activityLevel,
-            goal: finalGoal,
-            unitSystem: userMeasurements.unitSystem,
-          }),
+          },
         });
 
         try {
-          await fetchAPI("/(api)/first-weight-goal", {
-            method: "POST",
-            body: JSON.stringify({
+          const { graphqlRequest } = await import("@/lib/graphqlRequest");
+          const { CREATE_WEIGHT_GOAL_MUTATION } = await import("@/lib/graphql/weightQueries");
+
+          await graphqlRequest(CREATE_WEIGHT_GOAL_MUTATION, {
+            input: {
               clerkId: clerkUser?.id,
               startWeight: weightInKg,
               targetWeight: targetWeightInKg,
@@ -258,7 +257,7 @@ const Measurements = () => {
               dailyCalorieGoal: userMeasurements.dailyCalorieGoal
                 ? parseInt(userMeasurements.dailyCalorieGoal)
                 : null,
-            }),
+            },
           });
           console.log("Success, weight goal saved");
         } catch (error) {
@@ -266,12 +265,14 @@ const Measurements = () => {
         }
 
         try {
-          await fetchAPI("/(api)/weights", {
-            method: "POST",
-            body: JSON.stringify({
+          const { graphqlRequest } = await import("@/lib/graphqlRequest");
+          const { CREATE_WEIGHT_MUTATION } = await import("@/lib/graphql/weightQueries");
+
+          await graphqlRequest(CREATE_WEIGHT_MUTATION, {
+            input: {
               clerkId: clerkUser?.id,
               weight: weightInKg,
-            }),
+            },
           });
           console.log("Success, weight saved");
         } catch (error) {

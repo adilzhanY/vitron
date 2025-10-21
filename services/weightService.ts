@@ -1,4 +1,5 @@
-import { fetchAPI } from "@/lib/fetch";
+import { graphqlRequest } from "@/lib/graphqlRequest";
+import { GET_WEIGHTS_QUERY, GET_WEIGHT_GOAL_QUERY, CREATE_WEIGHT_GOAL_MUTATION } from "@/lib/graphql/weightQueries";
 import { WeightEntry, UserData, WeightGoalData } from "@/types/type";
 
 // Normalizes and sorts raw weight entries from the API
@@ -48,60 +49,52 @@ const selectActiveWeightGoal = (rawGoals: any): any | null => {
 
 // Fetches all necessary data for the weight page and returns it in a clean, structured format
 export const fetchWeightPageData = async (clerkId: string) => {
-  const [weightResponse, userResponse, weightGoalResponse] = await Promise.all([
-    fetchAPI(`/weights?clerkId=${clerkId}`),
-    fetchAPI(`/user?clerkId=${clerkId}`),
-    fetchAPI(`/weight-goals?clerkId=${clerkId}`),
+  const [weightData, userData, weightGoalData] = await Promise.all([
+    graphqlRequest(GET_WEIGHTS_QUERY, { clerkId }).then(data => normalizeWeightData(data.weights)),
+    graphqlRequest(`query GetUser($clerkId: String!) { user(clerkId: $clerkId) { goal height } }`, { clerkId }).then(data => data.user),
+    graphqlRequest(GET_WEIGHT_GOAL_QUERY, { clerkId }).then(data => data.weightGoal),
   ]);
-  console.log("user response: ", JSON.stringify(userResponse, null, 2));
-  console.log(
-    "weight response: last weight: ",
-    JSON.stringify(weightResponse, null, 2),
-  );
-  console.log(
-    "weight goal response:",
-    JSON.stringify(weightGoalResponse, null, 2),
-  );
 
-  // 1. Process Weight data
-  const weightData = normalizeWeightData(weightResponse?.data);
+  console.log("user response: ", JSON.stringify(userData, null, 2));
+  console.log("weight response: last weight: ", JSON.stringify(weightData, null, 2));
+  console.log("weight goal response:", JSON.stringify(weightGoalData, null, 2));
 
+  // 1. Process Weight data (already normalized)
   // 2. Process User data
-  const rawUser = userResponse?.data ?? {};
-  const userData: UserData = {
-    goal: rawUser.goal ?? "be fit",
-    heightCm: parseFloat(
-      rawUser.height ?? rawUser.height_cm ?? rawUser.heightCm ?? 0,
-    ),
+  const processedUserData: UserData = {
+    goal: userData?.goal ?? "be fit",
+    heightCm: parseFloat(userData?.height ?? 0),
   };
 
   // 3. Process Goal data
-  const activeGoal = selectActiveWeightGoal(weightGoalResponse);
-
-  console.log("Acitve goal selected:", activeGoal);
   const oldestWeight = weightData.at(-1)?.weight ?? 0;
   const mostRecentWeight = weightData[0]?.weight ?? 0;
 
-  const weightGoalData: WeightGoalData | null = activeGoal
+  const processedWeightGoalData: WeightGoalData | null = weightGoalData
     ? {
-        startWeight: parseFloat(
-          String(activeGoal.start_weight ?? activeGoal.startWeight ?? 0),
-        ),
-        targetWeight: parseFloat(
-          String(activeGoal.target_weight ?? activeGoal.targetWeight ?? 0),
-        ),
-        checkpoints: parseInt(String(activeGoal.checkpoints ?? 9), 10),
-      }
+      startWeight: parseFloat(String(weightGoalData.startWeight ?? 0)),
+      targetWeight: parseFloat(String(weightGoalData.targetWeight ?? 0)),
+      checkpoints: parseInt(String(weightGoalData.checkpoints ?? 9), 10),
+    }
     : null;
-  console.log("Final weightGoalData:", weightGoalData);
-  return { weightData, userData, weightGoalData };
+
+  console.log("Final weightGoalData:", processedWeightGoalData);
+  return {
+    weightData,
+    userData: processedUserData,
+    weightGoalData: processedWeightGoalData
+  };
 };
 
 // Saves a new weight goal for the user
-export const saveWeightGoal = async (payload: object) => {
-  return await fetchAPI("/weight-goals", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+export const saveWeightGoal = async (payload: any) => {
+  const input = {
+    clerkId: payload.clerkId,
+    startWeight: payload.startWeight,
+    targetWeight: payload.targetWeight,
+    checkpoints: payload.checkpoints,
+    dailyCalorieGoal: payload.dailyCalorieGoal,
+  };
+
+  return await graphqlRequest(CREATE_WEIGHT_GOAL_MUTATION, { input });
 };

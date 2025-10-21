@@ -12,7 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import CustomButton from "@/components/shared/CustomButton";
 import { useClerk, useUser } from "@clerk/clerk-expo";
-import { fetchAPI } from "@/lib/fetch";
+import { graphqlRequest } from "@/lib/graphqlRequest";
+import { GET_USER_QUERY } from "@/lib/graphql/userQueries";
 import { colors } from "@/constants";
 
 const Profile = () => {
@@ -26,10 +27,10 @@ const Profile = () => {
       if (!clerkUser) return;
 
       try {
-        const response = await fetchAPI(`/(api)/user?clerkId=${clerkUser.id}`, {
-          method: "GET",
+        const data = await graphqlRequest(GET_USER_QUERY, {
+          clerkId: clerkUser.id
         });
-        setUserData(response.data);
+        setUserData(data.user);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {
@@ -187,7 +188,7 @@ const Profile = () => {
               <Text className="text-base font-benzinBold text-gray-800">
                 {userData?.activity_level
                   ? userData.activity_level.charAt(0).toUpperCase() +
-                    userData.activity_level.slice(1)
+                  userData.activity_level.slice(1)
                   : "Not set"}
               </Text>
             </View>

@@ -40,9 +40,11 @@ function InitialLayout() {
     const checkUserStatus = async () => {
       if (userId) {
         try {
-          const data = await fetchAPI(`/(api)/user-status?clerkId=${userId}`)
-          // const data = await res.json();
-          setMeasurementsFilled(data.measurements_filled);
+          const { graphqlRequest } = await import("@/lib/graphqlRequest");
+          const { GET_USER_STATUS_QUERY } = await import("@/lib/graphql/userQueries");
+
+          const data = await graphqlRequest(GET_USER_STATUS_QUERY, { clerkId: userId });
+          setMeasurementsFilled(data.userStatus.measurementsFilled);
 
         } catch (error) {
           console.error("Failed to fetch user status", error);

@@ -1,7 +1,8 @@
 import * as Linking from "expo-linking";
 import * as SecureStore from "expo-secure-store";
 
-import { fetchAPI } from "@/lib/fetch";
+import { graphqlRequest } from "@/lib/graphqlRequest";
+import { CREATE_USER_MUTATION } from "@/lib/graphql/userQueries";
 
 export const tokenCache = {
   async getToken(key: string) {
@@ -39,13 +40,12 @@ export const googleOAuth = async (startOAuthFlow: any) => {
         await setActive({ session: createdSessionId });
 
         if (signUp.createdUserId) {
-          await fetchAPI("/(api)/user", {
-            method: "POST",
-            body: JSON.stringify({
+          await graphqlRequest(CREATE_USER_MUTATION, {
+            input: {
               name: `${signUp.firstName} ${signUp.lastName}`,
               email: signUp.emailAddress,
               clerkId: signUp.createdUserId,
-            }),
+            },
           });
         }
 
