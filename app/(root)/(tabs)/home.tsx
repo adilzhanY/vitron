@@ -14,6 +14,7 @@ import { images } from "@/constants";
 import { Link, router } from "expo-router";
 import { fetchAPI } from "@/lib/fetch";
 import { colors } from "@/constants";
+import { graphqlRequest } from "@/lib/graphqlRequest";
 interface UserData {
   name: string;
   activity_level: string;
@@ -49,10 +50,23 @@ const Home = () => {
       if (!clerkUser) return;
       try {
         setLoading(true);
-        const data = await fetchAPI(`/user?clerkId=${clerkUser.id}`, {
-          method: "GET",
-        });
-        setUserData(data.data);
+        const data = await graphqlRequest(
+          `
+            query GetUser($clerkId: String!) {
+              user(clerkId: $clerkId) {
+                name
+                activityLevel
+                birthday
+                gender
+                initialWeight
+                height
+                goal
+              }
+            }
+          `,
+          { clerkId: clerkUser.id }
+        );
+        setUserData(data.user);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {

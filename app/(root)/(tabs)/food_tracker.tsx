@@ -5,6 +5,17 @@ import { useUser } from "@clerk/clerk-expo";
 import { colors } from "@/constants";
 import { FoodTotals, FoodUserGoals, MealType } from "@/types/type";
 
+type NewMeal = {
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  mealType: MealType;
+  isSaved: boolean;
+  date: string;
+};
+
 import CustomButton from "@/components/shared/CustomButton";
 import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
@@ -38,12 +49,17 @@ const FoodTracker = () => {
     try {
       setWaterLoading(true);
       const dateStr = selectedDate.toISOString().split("T")[0];
-      const response = await fetchAPI(
-        `/(api)/water?clerkId=${clerkUser.id}&date=${dateStr}`,
-      );
 
-      if (response.data) {
-        setWaterConsumed(response.data.total_consumed || 0);
+      const { graphqlRequest } = await import("@/lib/graphqlRequest");
+      const { GET_WATER_INTAKE_QUERY } = await import("@/lib/graphql/mealQueries");
+
+      const data = await graphqlRequest(GET_WATER_INTAKE_QUERY, {
+        clerkId: clerkUser.id,
+        date: dateStr,
+      });
+
+      if (data.waterIntake) {
+        setWaterConsumed(data.waterIntake.totalConsumed || 0);
       }
     } catch (error) {
       console.error("Failed to fetch water intake:", error);
@@ -63,32 +79,30 @@ const FoodTracker = () => {
 
     try {
       const dateStr = selectedDate.toISOString().split("T")[0];
+      const { graphqlRequest } = await import("@/lib/graphqlRequest");
+      const { CREATE_WATER_INTAKE_MUTATION, UPDATE_WATER_INTAKE_MUTATION } = await import("@/lib/graphql/mealQueries");
 
-      // If no water consumed yet, create new entry with POST
+      // If no water consumed yet, create new entry
       if (waterConsumed === 0) {
-        await fetchAPI("/(api)/water", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const data = await graphqlRequest(CREATE_WATER_INTAKE_MUTATION, {
+          input: {
             clerkId: clerkUser.id,
             date: dateStr,
             amount: 250,
             dailyGoal: 2500,
-          }),
+          },
         });
-        setWaterConsumed(250);
+        setWaterConsumed(data.createWaterIntake.totalConsumed);
       } else {
-        // Otherwise, update existing entry with PATCH
-        await fetchAPI("/(api)/water", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        // Otherwise, update existing entry
+        const data = await graphqlRequest(UPDATE_WATER_INTAKE_MUTATION, {
+          input: {
             clerkId: clerkUser.id,
             date: dateStr,
             amount: 250,
-          }),
+          },
         });
-        setWaterConsumed((prev) => prev + 250);
+        setWaterConsumed(data.updateWaterIntake.totalConsumed);
       }
     } catch (error) {
       console.error("Failed to add water:", error);
@@ -96,20 +110,11 @@ const FoodTracker = () => {
   }, [clerkUser, selectedDate, waterConsumed]);
 
   const handleCreateNewMeal = useCallback(
-    async (newMeal: {
-      name: string;
-      calories: number;
-      protein: number;
-      carbs: number;
-      fat: number;
-      mealType: MealType;
-      isSaved: boolean;
-      date: string;
-    }) => {
+    async (newMeal: NewMeal) => {
       if (!clerkUser) return;
 
-      const payload = {
-        clerkId: clerkUser?.id,
+      const input = {
+        clerkId: clerkUser.id,
         name: newMeal.name,
         calories: newMeal.calories,
         protein: newMeal.protein,
@@ -119,13 +124,12 @@ const FoodTracker = () => {
         isSaved: false,
         entryDate: selectedDate.toISOString().split("T")[0],
       };
-      console.log(payload);
+      console.log(input);
       try {
-        await fetchAPI("/(api)/food", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        const { graphqlRequest } = await import("@/lib/graphqlRequest");
+        const { CREATE_MEAL_MUTATION } = await import("@/lib/graphql/mealQueries");
+
+        await graphqlRequest(CREATE_MEAL_MUTATION, { input });
         console.log("New meal created in db");
         // Refetch data to update the UI
         refetch();

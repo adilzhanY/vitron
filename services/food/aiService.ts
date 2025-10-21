@@ -48,28 +48,16 @@ export const calculateMacrosByMealImage = async (imageUrl: string) => {
     return response;
   }
 
-  // Web: Use API routes
-  const response = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/(api)/ai-meal-image`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ imageUrl }),
+  // Web: Use GraphQL API
+  const { graphqlRequest } = await import('@/lib/graphqlRequest');
+  const { ANALYZE_MEAL_IMAGE_MUTATION } = await import('@/lib/graphql/mealQueries');
+
+  const result = await graphqlRequest(ANALYZE_MEAL_IMAGE_MUTATION, {
+    input: { imageUrl },
+    prompt: MACRO_CALCULATION_PROMPT_MEAL_IMAGE,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('AI Meal Image API Error:', errorText);
-    throw new Error(`Failed to analyze meal image: ${response.statusText}`);
-  }
-
-  const text = await response.text();
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    console.error('Failed to parse response as JSON:', text);
-    throw new Error('Server returned invalid JSON response');
-  }
+  return JSON.parse(result.analyzeMealImage);
 };
 
 export const calculateMacrosByMealLabel = async (imageUrl: string) => {
@@ -102,28 +90,16 @@ export const calculateMacrosByMealLabel = async (imageUrl: string) => {
     return response;
   }
 
-  // Web: Use API routes
-  const response = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/(api)/ai-meal-label`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ imageUrl }),
+  // Web: Use GraphQL API
+  const { graphqlRequest } = await import('@/lib/graphqlRequest');
+  const { ANALYZE_MEAL_IMAGE_MUTATION } = await import('@/lib/graphql/mealQueries');
+
+  const result = await graphqlRequest(ANALYZE_MEAL_IMAGE_MUTATION, {
+    input: { imageUrl },
+    prompt: MACRO_CALCULATION_PROMPT_MEAL_LABEL,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('AI Meal Label API Error:', errorText);
-    throw new Error(`Failed to analyze meal label: ${response.statusText}`);
-  }
-
-  const text = await response.text();
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    console.error('Failed to parse response as JSON:', text);
-    throw new Error('Server returned invalid JSON response');
-  }
+  return JSON.parse(result.analyzeMealImage);
 };
 
 

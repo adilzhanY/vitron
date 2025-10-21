@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useUser } from "@clerk/clerk-expo";
-import { fetchAPI } from "@/lib/fetch";
+import { graphqlRequest } from "@/lib/graphqlRequest";
+import { GET_MEALS_QUERY, GET_MEAL_GOAL_QUERY } from "@/lib/graphql/mealQueries";
 import { calculateMacros } from "@/services/food/foodService";
 import { useWeightData } from "./useWeightData";
 
@@ -52,12 +53,12 @@ export const useFoodData = (selectedDate: Date) => {
     age: number | null;
     gender: "male" | "female" | null;
     activityLevel:
-      | "sedentary"
-      | "lightly active"
-      | "moderately active"
-      | "very active"
-      | "extremely active"
-      | null;
+    | "sedentary"
+    | "lightly active"
+    | "moderately active"
+    | "very active"
+    | "extremely active"
+    | null;
     goal: "lose weight" | "gain weight" | "be fit";
   } | null>(null);
 
@@ -66,8 +67,19 @@ export const useFoodData = (selectedDate: Date) => {
     if (!clerkUser) return;
 
     try {
-      const response = await fetchAPI(`/(api)/user?clerkId=${clerkUser.id}`);
-      const user = response.data;
+      const data = await graphqlRequest(
+        `query GetUser($clerkId: String!) {
+          user(clerkId: $clerkId) {
+            height
+            birthday
+            gender
+            activityLevel
+            goal
+          }
+        }`,
+        { clerkId: clerkUser.id }
+      );
+      const user = data.user;
 
       // Calculate age from birthday
       let age = null;
@@ -88,7 +100,7 @@ export const useFoodData = (selectedDate: Date) => {
         height: user.height,
         age,
         gender: user.gender,
-        activityLevel: user.activity_level,
+        activityLevel: user.activityLevel,
         goal: user.goal || "be fit",
       });
     } catch (err) {
@@ -106,10 +118,11 @@ export const useFoodData = (selectedDate: Date) => {
 
       try {
         const dateString = date.toISOString().split("T")[0];
-        const response = await fetchAPI(
-          `/(api)/food?clerkId=${clerkUser.id}&date=${dateString}`,
-        );
-        setFoodEntries(response.data || []);
+        const data = await graphqlRequest(GET_MEALS_QUERY, {
+          clerkId: clerkUser.id,
+          date: dateString,
+        });
+        setFoodEntries(data.meals || []);
       } catch (err) {
         console.error("Failed to fetch food data:", err);
         setError("Could not load your food data. Please try again");
@@ -127,18 +140,18 @@ export const useFoodData = (selectedDate: Date) => {
 
     try {
       console.log("Fetching meal goals for user:", clerkUser.id);
-      const response = await fetchAPI(
-        `/(api)/meal-goals?clerkId=${clerkUser.id}`,
-      );
-      console.log("Meal goals response:", response);
+      const data = await graphqlRequest(GET_MEAL_GOAL_QUERY, {
+        clerkId: clerkUser.id,
+      });
+      console.log("Meal goals response:", data);
 
-      if (response.data) {
-        console.log("Setting meal goals from db:", response.data);
+      if (data.mealGoal) {
+        console.log("Setting meal goals from db:", data.mealGoal);
         setMealGoals({
-          calories: response.data.calories_target,
-          protein: response.data.protein_target,
-          carbs: response.data.carbs_target,
-          fat: response.data.fat_target,
+          calories: data.mealGoal.caloriesTarget,
+          protein: data.mealGoal.proteinTarget,
+          carbs: data.mealGoal.carbsTarget,
+          fat: data.mealGoal.fatTarget,
         });
       } else {
         console.log("No meal goals found in database, will calculate instead");
