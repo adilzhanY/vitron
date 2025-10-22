@@ -4,23 +4,23 @@ import { neon } from "@neondatabase/serverless";
 // Helper function to format birthday
 const formatBirthday = (birthday: any): string | null => {
   if (!birthday) return null;
-  
+
   // If it's already a string in ISO format (YYYY-MM-DD)
   if (typeof birthday === 'string' && /^\d{4}-\d{2}-\d{2}/.test(birthday)) {
     return birthday.split('T')[0];
   }
-  
+
   // If it's a Date object
   if (birthday instanceof Date) {
     return birthday.toISOString().split('T')[0];
   }
-  
+
   // If it's a timestamp number or string
   const timestamp = typeof birthday === 'string' ? parseInt(birthday) : birthday;
   if (!isNaN(timestamp) && timestamp > 0) {
     return new Date(timestamp).toISOString().split('T')[0];
   }
-  
+
   return null;
 };
 

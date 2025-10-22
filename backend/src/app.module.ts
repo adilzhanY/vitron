@@ -12,6 +12,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       driver: ApolloDriver,
       autoSchemaFile: true, // generates schema automatically
       playground: false,     // Disable the old playground
+      introspection: true,   // Enable introspection for testing
       plugins: [ApolloServerPluginLandingPageLocalDefault()], // Use Apollo Sandbox instead
     }),
     UserModule,
