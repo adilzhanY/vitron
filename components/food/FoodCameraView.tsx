@@ -19,7 +19,6 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
   const [isCapturing, setIsCapturing] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
-  // Request permissions if not granted
   if (!permission) {
     return (
       <View style={styles.container}>

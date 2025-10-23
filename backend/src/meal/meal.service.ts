@@ -27,14 +27,12 @@ export class MealService {
   // ============ MEAL (FOOD ENTRY) METHODS ============
 
   async getMeals(clerkId: string, date: string) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
     }
     const userId = userResult[0].id;
 
-    // Fetch meals for the date
     const meals = await this.sql`
       SELECT 
         id,
@@ -67,7 +65,6 @@ export class MealService {
   }
 
   async createMeal(input: CreateMealInput) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
@@ -168,7 +165,6 @@ export class MealService {
   }
 
   async createMealGoal(input: CreateMealGoalInput) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
@@ -217,7 +213,6 @@ export class MealService {
   }
 
   async updateMealGoal(input: UpdateMealGoalInput) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
@@ -261,111 +256,7 @@ export class MealService {
     };
   }
 
-  // ============ MEAL IMAGES METHODS ============
-
-  async uploadMealImage(input: UploadMealImageInput) {
-    // Get user ID from clerkId
-    const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
-    if (userResult.length === 0) {
-      throw new Error('User not found');
-    }
-    const userId = userResult[0].id;
-
-    // Convert base64 to binary
-    const imageBuffer = Buffer.from(input.imageData, 'base64');
-
-    // Insert image into database
-    const result = await this.sql`
-      INSERT INTO meal_images (
-        user_id,
-        meal_id,
-        image_data,
-        image_name,
-        image_type,
-        image_size
-      )
-      VALUES (
-        ${userId},
-        ${input.mealId || null},
-        ${imageBuffer},
-        ${input.imageName},
-        ${input.imageType},
-        ${imageBuffer.length}
-      )
-      RETURNING id, image_name, image_size, uploaded_at
-    `;
-
-    const image = result[0];
-    return {
-      id: image.id,
-      imageName: image.image_name,
-      imageSize: image.image_size,
-      isAnalyzed: false,
-      uploadedAt: image.uploaded_at,
-    };
-  }
-
-  async getMealImages(clerkId: string, imageId?: number) {
-    // Get user ID from clerkId
-    const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
-    if (userResult.length === 0) {
-      throw new Error('User not found');
-    }
-    const userId = userResult[0].id;
-
-    let result;
-    if (imageId) {
-      result = await this.sql`
-        SELECT id, image_data, image_name, image_type, image_size, 
-               is_analyzed, ai_response, uploaded_at
-        FROM meal_images
-        WHERE id = ${imageId} AND user_id = ${userId}
-      `;
-    } else {
-      result = await this.sql`
-        SELECT id, image_name, image_type, image_size, 
-               is_analyzed, uploaded_at
-        FROM meal_images
-        WHERE user_id = ${userId}
-        ORDER BY uploaded_at DESC
-      `;
-    }
-
-    return result.map((img) => ({
-      id: img.id,
-      imageName: img.image_name,
-      imageSize: img.image_size,
-      isAnalyzed: img.is_analyzed,
-      aiResponse: img.ai_response,
-      uploadedAt: img.uploaded_at,
-    }));
-  }
-
-  async updateMealImage(input: UpdateMealImageInput) {
-    const result = await this.sql`
-      UPDATE meal_images
-      SET 
-        ai_response = ${input.aiResponse ? JSON.stringify(input.aiResponse) : null},
-        is_analyzed = ${input.isAnalyzed !== undefined ? input.isAnalyzed : true}
-      WHERE id = ${input.imageId}
-      RETURNING id, is_analyzed, ai_response
-    `;
-
-    if (result.length === 0) {
-      throw new Error('Image not found');
-    }
-
-    const image = result[0];
-    return {
-      id: image.id,
-      imageName: '',
-      imageSize: 0,
-      isAnalyzed: image.is_analyzed,
-      aiResponse: image.ai_response,
-      uploadedAt: new Date().toISOString(),
-    };
-  }
-
+ 
   // ============ AI ANALYSIS METHODS ============
 
   async analyzeMealImage(imageUrl: string, prompt: string) {
@@ -396,14 +287,12 @@ export class MealService {
   // ============ WATER INTAKE METHODS ============
 
   async getWaterIntake(clerkId: string, date: string) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
     }
     const userId = userResult[0].id;
 
-    // Fetch water intake for the date
     const waterIntake = await this.sql`
       SELECT 
         id,
@@ -416,7 +305,6 @@ export class MealService {
       LIMIT 1;
     `;
 
-    // If no record exists, return default values
     if (waterIntake.length === 0) {
       return {
         id: 0,
@@ -438,7 +326,6 @@ export class MealService {
   }
 
   async createWaterIntake(input: CreateWaterInput) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
@@ -449,7 +336,6 @@ export class MealService {
     const amount = input.amount || 250;
     const dailyGoal = input.dailyGoal || 2500;
 
-    // Insert the new water intake entry
     const result = await this.sql`
       INSERT INTO daily_water_intake (
         user_id,
@@ -477,7 +363,6 @@ export class MealService {
   }
 
   async updateWaterIntake(input: UpdateWaterInput) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
@@ -487,7 +372,6 @@ export class MealService {
     const entryDate = input.date || new Date().toISOString().split('T')[0];
     const amount = input.amount || 250;
 
-    // Increment the water intake by the specified amount
     const result = await this.sql`
       UPDATE daily_water_intake
       SET 

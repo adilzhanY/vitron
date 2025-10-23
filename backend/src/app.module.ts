@@ -14,6 +14,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       playground: false,     // Disable the old playground
       introspection: true,   // Enable introspection for testing
       plugins: [ApolloServerPluginLandingPageLocalDefault()], // Use Apollo Sandbox instead
+      csrfPrevention: false, // Disable CSRF protection for easier API access
     }),
     UserModule,
     MealModule,

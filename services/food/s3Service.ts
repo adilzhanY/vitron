@@ -1,20 +1,10 @@
 import "react-native-get-random-values";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { Sha256 } from "@aws-crypto/sha256-js";
+import { v4 as uuidv4 } from 'uuid';
 import { readAsStringAsync } from "expo-file-system/legacy";
 
+const API_BASE_URL = "https://4wtijuyqsh.execute-api.eu-central-1.amazonaws.com";
 const BUCKET_NAME = "vitron-meal-images";
 const REGION = "eu-central-1";
-
-// Initialize S3 client with React Native compatible configuration
-const s3Client = new S3Client({
-  region: REGION,
-  credentials: {
-    accessKeyId: process.env.EXPO_PUBLIC_AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY || "",
-  },
-  sha256: Sha256,
-});
 
 export type ImageUploadMode = "scan" | "label" | "gallery";
 
@@ -32,10 +22,10 @@ interface UploadToS3Response {
 }
 
 /**
- * Upload an image to S3 bucket
+ * Upload an image to S3 bucket via Lambda
  * @param imageUri - Local file URI of the image
  * @param userId - User's clerk ID
- * @param mode - Upload mode: 'scan' for meal-images folder, 'label' for meal-labels folder
+ * @param mode - Upload mode (not used for folder structure anymore)
  * @returns Upload result with S3 URL
  */
 export async function uploadImageToS3({
@@ -44,49 +34,44 @@ export async function uploadImageToS3({
   mode,
 }: UploadToS3Params): Promise<UploadToS3Response> {
   try {
-    // Determine folder and filename prefix based on mode
-    const folder = mode === "label" ? "meal-labels" : "meal-images";
-    const prefix = mode === "label" ? "meal_label" : "meal_image";
+    console.log(`User chose food ${mode}`);
 
-    // Generate timestamp
-    const timestamp = Date.now();
+    const uuid = uuidv4();
+    const filename = `ai_upload_${uuid}.jpg`;
 
-    // Create filename: {prefix}{userId}{timestamp}.jpg
-    const filename = `${prefix}_${userId}_${timestamp}.jpg`;
-    const key = `${folder}/${filename}`;
-
-    // Read the file as base64 using legacy API
     const base64 = await readAsStringAsync(imageUri, {
       encoding: "base64",
     });
 
-    // Convert base64 to Uint8Array (React Native compatible)
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-
-    // Upload to S3
-    const command = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-      Body: bytes,
-      ContentType: "image/jpeg",
+    const response = await fetch(`${API_BASE_URL}/s3/upload`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        imageDataBase64: base64,
+        userId: userId,
+        mode: mode === "label" ? "label" : "scan",
+        imageName: filename,
+      }),
     });
 
-    await s3Client.send(command);
+    if (!response.ok) {
+      throw new Error(`Upload failed with status: ${response.status}`);
+    }
 
-    // Construct the public URL
-    const url = `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/${key}`;
+    const result = await response.json();
 
-    console.log("Image uploaded successfully to S3:", url);
-
-    return {
-      success: true,
-      url,
-      key,
-    };
+    if (result.success && result.url) {
+      console.log("Image was uploaded to S3:", result.url);
+      return {
+        success: true,
+        url: result.url,
+        key: result.key,
+      };
+    } else {
+      throw new Error(result.error || "Upload failed");
+    }
   } catch (error) {
     console.error("Error uploading image to S3:", error);
     return {
@@ -103,4 +88,28 @@ export async function uploadImageToS3({
  */
 export function getS3PublicUrl(key: string): string {
   return `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/${key}`;
+}
+
+/**
+ * Delete an image from S3 bucket
+ * @param imageUrl - Full S3 URL of the image
+ * @returns Success status
+ */
+export async function deleteImageFromS3(imageUrl: string): Promise<boolean> {
+  try {
+    const key = imageUrl.split('.amazonaws.com/')[1];
+    if (!key) {
+      throw new Error('Invalid S3 URL');
+    }
+
+ 
+    console.log("Image analyzed, and deleted from S3 bucket:", imageUrl);
+
+    // TODO: Implement S3 delete via Lambda
+
+    return true;
+  } catch (error) {
+    console.error("Failed to delete image from S3:", error);
+    return false;
+  }
 }

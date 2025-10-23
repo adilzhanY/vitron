@@ -1,4 +1,10 @@
-import { View, ScrollView, ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useUser } from "@clerk/clerk-expo";
@@ -26,7 +32,10 @@ import FoodEntryModal from "@/components/food/FoodEntryModal";
 import WaterCard from "@/components/food/WaterCard";
 import { fetchAPI } from "@/lib/fetch";
 import { useFoodData } from "@/hooks/useFoodData";
-import { calculateMacrosByMealImage, calculateMacrosByMealLabel } from "@/services/food/aiService";
+import {
+  calculateMacrosByMealImage,
+  calculateMacrosByMealLabel,
+} from "@/services/food/aiService";
 
 const FoodTracker = () => {
   const { user: clerkUser } = useUser();
@@ -36,7 +45,7 @@ const FoodTracker = () => {
   const [waterLoading, setWaterLoading] = useState(false);
 
   // AI test states
-  const [aiLoading, setAiLoading] = useState<'meal' | 'label' | null>(null);
+  const [aiLoading, setAiLoading] = useState<"meal" | "label" | null>(null);
   const [aiResponse, setAiResponse] = useState<any>(null);
 
   const { loading, error, foodTotals, mealGoals, refetch } =
@@ -51,7 +60,9 @@ const FoodTracker = () => {
       const dateStr = selectedDate.toISOString().split("T")[0];
 
       const { graphqlRequest } = await import("@/lib/graphqlRequest");
-      const { GET_WATER_INTAKE_QUERY } = await import("@/lib/graphql/mealQueries");
+      const { GET_WATER_INTAKE_QUERY } = await import(
+        "@/lib/graphql/mealQueries"
+      );
 
       const data = await graphqlRequest(GET_WATER_INTAKE_QUERY, {
         clerkId: clerkUser.id,
@@ -80,7 +91,8 @@ const FoodTracker = () => {
     try {
       const dateStr = selectedDate.toISOString().split("T")[0];
       const { graphqlRequest } = await import("@/lib/graphqlRequest");
-      const { CREATE_WATER_INTAKE_MUTATION, UPDATE_WATER_INTAKE_MUTATION } = await import("@/lib/graphql/mealQueries");
+      const { CREATE_WATER_INTAKE_MUTATION, UPDATE_WATER_INTAKE_MUTATION } =
+        await import("@/lib/graphql/mealQueries");
 
       // If no water consumed yet, create new entry
       if (waterConsumed === 0) {
@@ -127,7 +139,9 @@ const FoodTracker = () => {
       console.log(input);
       try {
         const { graphqlRequest } = await import("@/lib/graphqlRequest");
-        const { CREATE_MEAL_MUTATION } = await import("@/lib/graphql/mealQueries");
+        const { CREATE_MEAL_MUTATION } = await import(
+          "@/lib/graphql/mealQueries"
+        );
 
         await graphqlRequest(CREATE_MEAL_MUTATION, { input });
         console.log("New meal created in db");
@@ -143,25 +157,26 @@ const FoodTracker = () => {
   // AI test handlers
   const handleTestMealImage = async () => {
     try {
-      setAiLoading('meal');
+      setAiLoading("meal");
       setAiResponse(null);
 
       // Using a publicly accessible test image URL
       // NOTE: OpenRouter/OpenAI requires public URLs, not local file paths
       // Replace this with your actual test image URL or upload your local image to a service like Imgur, Cloudinary, etc.
-      const testImageUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800';
+      const testImageUrl =
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800";
 
       const response = await calculateMacrosByMealImage(testImageUrl);
 
       setAiResponse({
-        type: 'Meal Image Analysis',
-        data: response.choices[0].message
+        type: "Meal Image Analysis",
+        data: response.choices[0].message,
       });
     } catch (error) {
-      console.error('AI Meal Image Error:', error);
+      console.error("AI Meal Image Error:", error);
       setAiResponse({
-        type: 'Meal Image Analysis',
-        error: error instanceof Error ? error.message : String(error)
+        type: "Meal Image Analysis",
+        error: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setAiLoading(null);
@@ -170,24 +185,25 @@ const FoodTracker = () => {
 
   const handleTestMealLabel = async () => {
     try {
-      setAiLoading('label');
+      setAiLoading("label");
       setAiResponse(null);
 
       // Using a publicly accessible test image URL for nutrition label
       // NOTE: Replace this with your actual nutrition label image URL
-      const testLabelUrl = 'https://vitron-meal-images.s3.eu-central-1.amazonaws.com/meal-labels/ai_test_1_meal_label.jpg';
+      const testLabelUrl =
+        "https://vitron-meal-images.s3.eu-central-1.amazonaws.com/meal-labels/ai_test_1_meal_label.jpg";
 
       const response = await calculateMacrosByMealLabel(testLabelUrl);
 
       setAiResponse({
-        type: 'Meal Label Analysis',
-        data: response.choices[0].message
+        type: "Meal Label Analysis",
+        data: response.choices[0].message,
       });
     } catch (error) {
-      console.error('AI Meal Label Error:', error);
+      console.error("AI Meal Label Error:", error);
       setAiResponse({
-        type: 'Meal Label Analysis',
-        error: error instanceof Error ? error.message : String(error)
+        type: "Meal Label Analysis",
+        error: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setAiLoading(null);
@@ -208,7 +224,7 @@ const FoodTracker = () => {
         <PageHeader
           title="Track your food"
           actionText=""
-          onActionPress={() => { }}
+          onActionPress={() => {}}
         />
         <View
           style={{
@@ -286,72 +302,7 @@ const FoodTracker = () => {
           />
         </View>
 
-        {/* AI Test Section */}
-        <View
-          style={{
-            borderRadius: 24,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 5 },
-            shadowOpacity: 0.15,
-            shadowRadius: 10,
-            elevation: 8,
-          }}
-          className="bg-white p-6 mt-5"
-        >
-          <Text className="text-xl font-benzinBold text-gray-800 mb-4">
-            AI Nutrition Analysis Test
-          </Text>
-
-          <View className="flex-row gap-3 mb-4">
-            <TouchableOpacity
-              onPress={handleTestMealImage}
-              disabled={aiLoading !== null}
-              className="flex-1 bg-blue-500 py-3 px-4 rounded-xl items-center"
-              style={{ opacity: aiLoading !== null ? 0.5 : 1 }}
-            >
-              {aiLoading === 'meal' ? (
-                <ActivityIndicator size="small" color="white" />
-              ) : (
-                <Text className="text-white font-benzinBold">
-                  Test Meal Image
-                </Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleTestMealLabel}
-              disabled={aiLoading !== null}
-              className="flex-1 bg-purple-500 py-3 px-4 rounded-xl items-center"
-              style={{ opacity: aiLoading !== null ? 0.5 : 1 }}
-            >
-              {aiLoading === 'label' ? (
-                <ActivityIndicator size="small" color="white" />
-              ) : (
-                <Text className="text-white font-benzinBold">
-                  Test Meal Label
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-
-          {aiResponse && (
-            <View className="bg-gray-50 p-4 rounded-xl">
-              <Text className="text-base font-benzinBold text-gray-800 mb-2">
-                {aiResponse.type}
-              </Text>
-              <ScrollView
-                style={{ maxHeight: 300 }}
-                showsVerticalScrollIndicator={true}
-              >
-                <Text className="text-sm font-mono text-gray-700">
-                  {JSON.stringify(aiResponse.data || aiResponse.error, null, 2)}
-                </Text>
-              </ScrollView>
-            </View>
-          )}
-        </View>
-
-        <View className="h-[500px]"></View>
+  
       </ScrollView>
       <FoodEntryModal
         visible={isModalVisible}

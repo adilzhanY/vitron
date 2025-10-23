@@ -1,0 +1,90 @@
+use actix_cors::Cors;
+use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
+use std::env;
+
+mod ai;
+mod s3;
+
+#[derive(serde::Deserialize)]
+struct AiRequest {
+    #[serde(alias = "imageUrl")]
+    image_url: String,
+    prompt: Option<String>,
+}
+
+#[derive(serde::Deserialize)]
+struct S3UploadRequest {
+    #[serde(alias = "imageDataBase64")]
+    image_data_base64: String,
+    #[serde(alias = "userId")]
+    user_id: String,
+    mode: Option<String>,
+    #[serde(alias = "imageName")]
+    image_name: Option<String>,
+}
+
+#[post("/ai/analyze-image")]
+async fn analyze_image(req: web::Json<AiRequest>) -> impl Responder {
+    let api_key = env::var("OPENROUTER_API_KEY").ok();
+    if api_key.is_none() {
+        return HttpResponse::InternalServerError()
+            .json(serde_json::json!({"error":"OPENROUTER_API_KEY not set"}));
+    }
+
+    match ai::analyze_image(&req.image_url, req.prompt.clone(), api_key.unwrap()).await {
+        Ok(json) => HttpResponse::Ok().json(json),
+        Err(e) => {
+            tracing::error!("analyze_image error: {}", e);
+            HttpResponse::InternalServerError().json(serde_json::json!({"error": e.to_string()}))
+        }
+    }
+}
+
+#[post("/s3/upload")]
+async fn upload_s3(req: web::Json<S3UploadRequest>) -> impl Responder {
+    let bucket = match env::var("S3_BUCKET") {
+        Ok(v) => v,
+        Err(_) => {
+            return HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error":"S3_BUCKET env missing"}))
+        }
+    };
+
+    match s3::upload_image(
+        &bucket,
+        &req.user_id,
+        req.mode.clone(),
+        req.image_name.clone(),
+        &req.image_data_base64,
+    )
+    .await
+    {
+        Ok(resp) => HttpResponse::Ok().json(resp),
+        Err(e) => {
+            tracing::error!("s3 upload error: {}", e);
+            HttpResponse::InternalServerError().json(serde_json::json!({"error": e.to_string()}))
+        }
+    }
+}
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    dotenvy::dotenv().ok();
+
+    tracing_subscriber::fmt::init();
+    let host = env::var("AI_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:8080".to_string());
+
+    println!("Starting ai-service on {}", host);
+
+    HttpServer::new(|| {
+        let cors = Cors::permissive();
+        App::new()
+            .wrap(Logger::default())
+            .wrap(cors)
+            .service(analyze_image)
+            .service(upload_s3)
+    })
+    .bind(host)?
+    .run()
+    .await
+}

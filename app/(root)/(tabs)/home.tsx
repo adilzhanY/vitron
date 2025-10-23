@@ -28,11 +28,9 @@ interface UserData {
 const calculateAge = (birthdayString: string | Date | any): number => {
   if (!birthdayString) return 0;
 
-  // Handle different date formats
   let birthDate: Date;
 
   if (typeof birthdayString === 'string') {
-    // Try parsing ISO date string
     birthDate = new Date(birthdayString);
   } else if (birthdayString instanceof Date) {
     birthDate = birthdayString;

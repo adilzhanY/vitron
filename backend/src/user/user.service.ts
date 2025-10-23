@@ -5,17 +5,14 @@ import { neon } from "@neondatabase/serverless";
 const formatBirthday = (birthday: any): string | null => {
   if (!birthday) return null;
 
-  // If it's already a string in ISO format (YYYY-MM-DD)
   if (typeof birthday === 'string' && /^\d{4}-\d{2}-\d{2}/.test(birthday)) {
     return birthday.split('T')[0];
   }
 
-  // If it's a Date object
   if (birthday instanceof Date) {
     return birthday.toISOString().split('T')[0];
   }
 
-  // If it's a timestamp number or string
   const timestamp = typeof birthday === 'string' ? parseInt(birthday) : birthday;
   if (!isNaN(timestamp) && timestamp > 0) {
     return new Date(timestamp).toISOString().split('T')[0];
@@ -39,7 +36,6 @@ export class UserService {
 
     const user = result[0];
 
-    // Map database fields (snake_case) to GraphQL model (camelCase)
     return {
       id: user.id,
       name: user.name,
@@ -65,7 +61,6 @@ export class UserService {
 
     const user = result[0];
 
-    // Map database fields to camelCase
     return {
       id: user.id,
       name: user.name,
@@ -83,13 +78,11 @@ export class UserService {
   }
 
   async updateUser(clerkId: string, data: any) {
-    // Get current user first
     const currentUser = await this.getUser(clerkId);
     if (!currentUser) {
       throw new Error('User not found');
     }
 
-    // Prepare updated values, using current values as defaults
     const birthday = data.birthday !== undefined ? data.birthday : currentUser.birthday;
     const gender = data.gender !== undefined ? data.gender : currentUser.gender;
     const initialWeight = data.weight !== undefined ? data.weight : currentUser.initialWeight;
@@ -116,7 +109,6 @@ export class UserService {
 
     const updated = result[0];
 
-    // Map the returned database fields to camelCase
     return {
       id: updated.id,
       name: updated.name,
@@ -139,7 +131,6 @@ export class UserService {
     `;
 
     if (result.length === 0) {
-      // User not found, return default
       return { measurementsFilled: false };
     }
 

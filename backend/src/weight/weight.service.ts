@@ -38,14 +38,12 @@ export class WeightService {
   }
 
   async createWeight(input: CreateWeightInput) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
     }
     const userId = userResult[0].id;
 
-    // Insert weight entry (with conflict handling for same day)
     const result = await this.sql`
       INSERT INTO weights (user_id, weight)
       VALUES (${userId}, ${input.weight})
@@ -65,14 +63,12 @@ export class WeightService {
   // ============ WEIGHT GOAL METHODS ============
 
   async getWeightGoal(clerkId: string) {
-    // Get user ID from clerkId
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
     if (userResult.length === 0) {
       throw new Error('User not found');
     }
     const userId = userResult[0].id;
 
-    // Get latest active weight goal
     const goalResult = await this.sql`
       SELECT 
         id,
@@ -107,7 +103,6 @@ export class WeightService {
   }
 
   async createWeightGoal(input: CreateWeightGoalInput) {
-    // Get user data
     const userResult = await this.sql`
       SELECT id, height, birthday, gender, activity_level, goal 
       FROM users 
@@ -120,7 +115,6 @@ export class WeightService {
     const userId = userResult[0].id;
     const user = userResult[0];
 
-    // Mark latest active goal as achieved (if exists)
     const latestGoalResult = await this.sql`
       SELECT id FROM weight_goals
       WHERE user_id = ${userId} AND achieved = FALSE
@@ -137,7 +131,6 @@ export class WeightService {
       `;
     }
 
-    // Create new weight goal
     const weightGoalResult = await this.sql`
       INSERT INTO weight_goals
         (
@@ -161,7 +154,6 @@ export class WeightService {
 
     const weightGoalId = weightGoalResult[0].id;
 
-    // Calculate meal goals
     const macros = this.calculateMacros(
       user,
       input.startWeight,
@@ -169,7 +161,6 @@ export class WeightService {
       input.dailyCalorieGoal,
     );
 
-    // Create meal goal linked to this weight goal
     await this.sql`
       INSERT INTO meal_goals
         (
@@ -223,7 +214,6 @@ export class WeightService {
     let carbsTarget = 0;
     let fatTarget = 0;
 
-    // If we have all user data, calculate precise macros
     if (
       user.height &&
       user.birthday &&
@@ -231,7 +221,6 @@ export class WeightService {
       user.activity_level &&
       user.goal
     ) {
-      // Calculate age
       const birthDate = new Date(user.birthday);
       const today = new Date();
       let age = today.getFullYear() - birthDate.getFullYear();
