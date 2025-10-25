@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#2eff66'
+        primary: '#62CB00'
       },
       boxShadow: {
         's-custom': 'inset 0 1px 2px #ffffff30, 0 1px 2px #00000036, 0 2px 4px #00000015',

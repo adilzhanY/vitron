@@ -25,17 +25,16 @@ type NewMeal = {
 import CustomButton from "@/components/shared/CustomButton";
 import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
-import FoodHeader from "@/components/food/FoodHeader";
+import FoodStatsCard from "@/components/food/FoodStatsCard";
 import FoodDateSelector from "@/components/food/FoodDateSelector";
-import MacroProgressBar from "@/components/food/MacroProgressBar";
 import FoodEntryModal from "@/components/food/FoodEntryModal";
 import WaterCard from "@/components/food/WaterCard";
-import { fetchAPI } from "@/lib/fetch";
+import MealCard from "@/components/food/MealCard";
 import { useFoodData } from "@/hooks/useFoodData";
-import {
-  calculateMacrosByMealImage,
-  calculateMacrosByMealLabel,
-} from "@/services/food/aiService";
+// import {
+//   calculateMacrosByMealImage,
+//   calculateMacrosByMealLabel,
+// } from "@/services/food/aiService";
 
 const FoodTracker = () => {
   const { user: clerkUser } = useUser();
@@ -44,11 +43,7 @@ const FoodTracker = () => {
   const [waterConsumed, setWaterConsumed] = useState(0);
   const [waterLoading, setWaterLoading] = useState(false);
 
-  // AI test states
-  const [aiLoading, setAiLoading] = useState<"meal" | "label" | null>(null);
-  const [aiResponse, setAiResponse] = useState<any>(null);
-
-  const { loading, error, foodTotals, mealGoals, refetch } =
+  const { loading, error, foodTotals, foodEntries, mealGoals, refetch } =
     useFoodData(selectedDate);
 
   // Fetch water intake for selected date
@@ -154,62 +149,6 @@ const FoodTracker = () => {
     [clerkUser, selectedDate, refetch],
   );
 
-  // AI test handlers
-  const handleTestMealImage = async () => {
-    try {
-      setAiLoading("meal");
-      setAiResponse(null);
-
-      // Using a publicly accessible test image URL
-      // NOTE: OpenRouter/OpenAI requires public URLs, not local file paths
-      // Replace this with your actual test image URL or upload your local image to a service like Imgur, Cloudinary, etc.
-      const testImageUrl =
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800";
-
-      const response = await calculateMacrosByMealImage(testImageUrl);
-
-      setAiResponse({
-        type: "Meal Image Analysis",
-        data: response.choices[0].message,
-      });
-    } catch (error) {
-      console.error("AI Meal Image Error:", error);
-      setAiResponse({
-        type: "Meal Image Analysis",
-        error: error instanceof Error ? error.message : String(error),
-      });
-    } finally {
-      setAiLoading(null);
-    }
-  };
-
-  const handleTestMealLabel = async () => {
-    try {
-      setAiLoading("label");
-      setAiResponse(null);
-
-      // Using a publicly accessible test image URL for nutrition label
-      // NOTE: Replace this with your actual nutrition label image URL
-      const testLabelUrl =
-        "https://vitron-meal-images.s3.eu-central-1.amazonaws.com/meal-labels/ai_test_1_meal_label.jpg";
-
-      const response = await calculateMacrosByMealLabel(testLabelUrl);
-
-      setAiResponse({
-        type: "Meal Label Analysis",
-        data: response.choices[0].message,
-      });
-    } catch (error) {
-      console.error("AI Meal Label Error:", error);
-      setAiResponse({
-        type: "Meal Label Analysis",
-        error: error instanceof Error ? error.message : String(error),
-      });
-    } finally {
-      setAiLoading(null);
-    }
-  };
-
   if (loading) {
     return (
       <SafeAreaView className="bg-white flex-1 justify-center items-center">
@@ -219,7 +158,7 @@ const FoodTracker = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-green-200">
+    <SafeAreaView className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         <PageHeader
           title="Track your food"
@@ -243,46 +182,29 @@ const FoodTracker = () => {
           />
         </View>
 
-        <View
-          style={{
-            borderRadius: 50,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 5 },
-            shadowOpacity: 0.15,
-            shadowRadius: 10,
-            elevation: 8,
-          }}
-          className="bg-white p-5"
-        >
-          <FoodHeader
-            totalCalories={foodTotals.calories}
-            onSetFoodEntry={() => setModalVisible(true)}
-          />
+        <FoodStatsCard
+          foodTotals={foodTotals}
+          mealGoals={mealGoals}
+          onSetFoodEntry={() => setModalVisible(true)}
+        />
 
-          <View className="mt-4">
-            <MacroProgressBar
-              label="Protein"
-              current={foodTotals.protein}
-              goal={mealGoals.protein}
-              color="bg-sky-500"
-            />
-            <MacroProgressBar
-              label="Carbs"
-              current={foodTotals.carbs}
-              goal={mealGoals.carbs}
-              color="bg-green-500"
-            />
-            <MacroProgressBar
-              label="Fat"
-              current={foodTotals.fat}
-              goal={mealGoals.fat}
-              color="bg-amber-500"
+        {/* Meal Cards */}
+        {foodEntries.map((entry) => (
+          <View
+            key={entry.id}
+          >
+            <MealCard
+              name={entry.name}
+              calories={entry.calories}
+              protein={entry.protein}
+              carbs={entry.carbs}
+              fat={entry.fat}
+              meal_type={entry.meal_type}
+              is_saved={entry.is_saved}
+              logged_at={entry.logged_at}
             />
           </View>
-
-          <View className="mt-4"></View>
-        </View>
-
+        ))}
         {/* Water Tracking Card */}
         <View
           style={{
@@ -302,7 +224,7 @@ const FoodTracker = () => {
           />
         </View>
 
-  
+        <View className="h-[400px]"></View>
       </ScrollView>
       <FoodEntryModal
         visible={isModalVisible}

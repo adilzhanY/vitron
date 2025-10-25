@@ -1,8 +1,9 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CameraView, CameraType, FlashMode, useCameraPermissions } from "expo-camera";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import LoadingLogo from "@/components/shared/LoadingLogo";
 
 type CaptureMode = "scan" | "label" | "gallery";
 
@@ -22,7 +23,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
   if (!permission) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#22c55e" />
+        <LoadingLogo size={80} />
       </View>
     );
   }
@@ -170,7 +171,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
           disabled={isCapturing}
         >
           {isCapturing ? (
-            <ActivityIndicator size="large" color="white" />
+            <LoadingLogo size={50} />
           ) : (
             <View style={styles.captureButtonInner} />
           )}

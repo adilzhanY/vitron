@@ -1,4 +1,4 @@
-import { View, Text, TextInput, ActivityIndicator, Alert, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useRouter } from 'expo-router'
@@ -10,6 +10,7 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import { colors } from '@/constants'
 import WeightPicker from '@/components/measurements/WeightPicker'
 import WeightPicker2 from '@/components/measurements/WeightPicker2'
+import LoadingLogo from '@/components/shared/LoadingLogo';
 
 type PickerMode = 'text' | 'original' | 'new';
 
@@ -127,11 +128,11 @@ const TrackWeight = () => {
         </TouchableOpacity>
 
         {fetchingUser ? (
-          <ActivityIndicator size="large" color={colors.primary} />
+          <LoadingLogo size={80} />
         ) : !isPageReady ? (
           // Show loading while preparing picker data
           <View className='py-20'>
-            <ActivityIndicator size="large" color={colors.primary} />
+            <LoadingLogo size={80} />
             <Text className='text-center text-gray-500 mt-4 font-benzin'>
               Preparing picker...
             </Text>
@@ -184,7 +185,7 @@ const TrackWeight = () => {
 
         <View className='mt-8'>
           {loading ? (
-            <ActivityIndicator size="large" color={colors.primary} />
+            <LoadingLogo size={60} />
           ) : (
             <CustomButton title="Save Weight" onPress={handleSave} />
           )}

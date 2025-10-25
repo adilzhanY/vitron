@@ -136,7 +136,7 @@ export const data = {
 };
 
 export const colors = {
-  primary: '#2eff66',
+  primary: '#62CB00',
   black: '#000000',
   white: '#FFFFFF',
 }

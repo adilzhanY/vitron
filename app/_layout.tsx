@@ -5,9 +5,10 @@ import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
 import { tokenCache } from "@clerk/clerk-expo/token-cache"
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { fetchAPI } from "@/lib/fetch";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -80,11 +81,7 @@ function InitialLayout() {
   }, [isSignedIn, isLoaded, segments, measurementsFilled]);
 
   if (!loaded || !isLoaded || measurementsFilled === null) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0286FF" />
-      </View>
-    );
+    return <LoadingScreen message="Loading Vitron..." />;
   }
 
   return <Stack screenOptions={{ headerShown: false }} />;

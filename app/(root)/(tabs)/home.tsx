@@ -15,6 +15,7 @@ import { Link, router } from "expo-router";
 import { fetchAPI } from "@/lib/fetch";
 import { colors } from "@/constants";
 import { graphqlRequest } from "@/lib/graphqlRequest";
+import LoadingLogo from "@/components/shared/LoadingLogo";
 interface UserData {
   name: string;
   activityLevel: string;
@@ -96,9 +97,9 @@ const Home = () => {
 
   if (loading) {
     return (
-      <SafeAreaView className="bg-white flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </SafeAreaView>
+      <View className="flex-1 justify-center items-center bg-white">
+        <LoadingLogo size={100} />
+      </View>
     );
   }
   return (

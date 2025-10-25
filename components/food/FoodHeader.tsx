@@ -5,6 +5,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 interface FoodHeaderProps {
   onSetFoodEntry: () => void;
   totalCalories: number;
+  showCaloriesLeft: boolean;
+  onToggleMode: () => void;
 }
 
 const DAILY_GOAL = 2300;
@@ -12,8 +14,9 @@ const DAILY_GOAL = 2300;
 const FoodHeader: React.FC<FoodHeaderProps> = ({
   totalCalories,
   onSetFoodEntry,
+  showCaloriesLeft,
+  onToggleMode,
 }) => {
-  const [showCaloriesLeft, setShowCaloriesLeft] = useState(false);
   const [containerWidth, setContainerWidth] = useState(160);
 
   const animated = useRef(new Animated.Value(0)).current;
@@ -35,13 +38,13 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({
   });
 
   return (
-    <View className="mb-5">
+    <View>
       {/* Row with switch and button */}
-      <View className="flex-row justify-between items-center mb-1">
+      <View className="flex-row justify-between items-center">
         {/* Switch */}
         <TouchableOpacity
           activeOpacity={0.85}
-          onPress={() => setShowCaloriesLeft((s) => !s)}
+          onPress={onToggleMode}
           style={{
             width: containerWidth,
             minWidth: 160,
@@ -59,7 +62,7 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({
               width: knobWidth,
               height: "100%",
               borderRadius: 9999,
-              backgroundColor: "#34D399",
+              backgroundColor: "#62CB00",
               transform: [{ translateX }],
             }}
           />
@@ -99,21 +102,23 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({
         {/* Button on top-right */}
         <TouchableOpacity
           onPress={onSetFoodEntry}
-          className="w-20 h-20 bg-green-400 rounded-full flex items-center justify-center"
+          className="w-20 h-20 bg-primary rounded-full flex items-center justify-center"
         >
           <FontAwesome5 name="plus" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
       {/* Calories Display */}
-      <View className="flex flex-row w-full justify-start">
-        <View className="flex flex-row justify-center items-center bg-white p-5 rounded-3xl">
-          <Text className="text-4xl font-benzinBold text-black mr-2">
+      <View className="flex flex-row w-full justify-center">
+        <View className="flex flex-col justify-center items-center bg-white p-5 rounded-3xl">
+          <Text className="text-4xl font-benzinBold text-black">
             {showCaloriesLeft
               ? caloriesLeft.toFixed(0)
               : totalCalories.toFixed(0)}
           </Text>
-          <Text className="text-lg font-benzinBold text-gray-300">kcal</Text>
+          <Text className="text-sm font-benzinBold text-gray-400">
+            {showCaloriesLeft ? "calories left" : "calories taken"}
+          </Text>
         </View>
       </View>
     </View>

@@ -4,7 +4,6 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import * as Linking from "expo-linking";
@@ -15,6 +14,7 @@ import { useClerk, useUser } from "@clerk/clerk-expo";
 import { graphqlRequest } from "@/lib/graphqlRequest";
 import { GET_USER_QUERY } from "@/lib/graphql/userQueries";
 import { colors } from "@/constants";
+import LoadingLogo from "@/components/shared/LoadingLogo";
 
 const Profile = () => {
   const { user: clerkUser } = useUser();
@@ -56,9 +56,9 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <SafeAreaView className="bg-green-200 flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </SafeAreaView>
+      <View className="flex-1 justify-center items-center bg-white">
+        <LoadingLogo size={100} />
+      </View>
     );
   }
 

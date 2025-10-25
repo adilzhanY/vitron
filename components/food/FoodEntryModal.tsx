@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Modal, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
+import { View, Text, Modal, TouchableOpacity, TextInput } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomButton from "@/components/shared/CustomButton";
 import InputField from "@/components/shared/InputField";
+import LoadingLogo from "@/components/shared/LoadingLogo";
 import { MealType } from "@/types/type";
 import FoodCameraView from "./FoodCameraView";
 import FoodLabelEntryModal from "./FoodLabelEntryModal";
 import { useUser } from "@clerk/clerk-expo";
-import { uploadImageToS3, ImageUploadMode, deleteImageFromS3 } from "@/services/food/s3Service";
+import { uploadImageToS3, deleteImageFromS3, ImageUploadMode } from "@/services/food/s3Service";
 import { analyzeImageWithAI, PromptType } from "@/services/food/aiService";
 
 interface FoodEntryModalProps {
@@ -193,20 +194,19 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
       />
 
       {/* Loading Modal */}
+      {/* Loading Modal */}
       {isUploading && (
         <Modal
           animationType="fade"
           transparent={true}
           visible={isUploading}
+          onRequestClose={() => { }}
         >
           <View className="flex-1 justify-center items-center bg-black/80">
             <View className="bg-white rounded-2xl p-8 items-center">
-              <ActivityIndicator size="large" color="#22c55e" />
-              <Text className="mt-4 text-gray-800 font-benzinMedium text-lg">
+              <LoadingLogo size={100} />
+              <Text className="text-gray-700 text-lg font-benzinMedium mt-4">
                 Analyzing image...
-              </Text>
-              <Text className="mt-2 text-gray-600 font-benzinRegular text-sm text-center">
-                This may take a few seconds
               </Text>
             </View>
           </View>

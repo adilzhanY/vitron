@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text } from "react-native";
+import LoadingLogo from "@/components/shared/LoadingLogo";
 
 interface LazySlideProps {
   shouldLoad: boolean;
@@ -40,9 +41,9 @@ const LazySlide: React.FC<LazySlideProps> = ({ shouldLoad, children, fallback, s
     console.log(`⏸️ [LazySlide - ${slideName}] Showing fallback (not loaded yet)`);
     return (
       fallback || (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#22c55e" />
-          <Text style={{ marginTop: 12, color: "#9CA3AF", fontFamily: "Benzin-Bold" }}>
+        <View className="flex-1 justify-center items-center">
+          <LoadingLogo size={80} />
+          <Text className="text-gray-600 font-benzinMedium mt-4">
             Loading...
           </Text>
         </View>

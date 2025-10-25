@@ -1,6 +1,7 @@
 import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import Picker, { PickerItem } from "../shared/Picker";
+import LoadingLogo from "../shared/LoadingLogo";
 
 interface WeightPickerProps {
   onWeightChange: (weight: number, unit: "kg" | "lb") => void;
@@ -111,12 +112,11 @@ const WeightPickerComponent: React.FC<WeightPickerProps> = ({
 
   // Show loading state while data is being prepared
   if (!isReady) {
+    console.log("⏳ WeightPicker is still loading data...");
     return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>Loading picker...</Text>
-        </View>
+      <View style={styles.loadingContainer}>
+        <LoadingLogo size={60} />
+        <Text style={styles.loadingText}>Loading picker...</Text>
       </View>
     );
   }

@@ -1,6 +1,7 @@
 import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import Picker2, { PickerItem } from "../shared/Picker2";
+import LoadingLogo from "../shared/LoadingLogo";
 
 interface WeightPicker2Props {
   onWeightChange: (weight: number, unit: "kg" | "lb") => void;
@@ -98,7 +99,7 @@ const WeightPicker2Component: React.FC<WeightPicker2Props> = ({
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
+          <LoadingLogo size={60} />
           <Text style={styles.loadingText}>Loading picker...</Text>
         </View>
       </View>

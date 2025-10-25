@@ -9,7 +9,7 @@ interface WeightEntriesListProps {
 
 const WeightEntriesList: React.FC<WeightEntriesListProps> = ({ entries }) => {
   return (
-    <View className='mt-8 p-4 bg-white rounded-lg'>
+    <View className='mt-8 p-4 bg-white'>
       <Text className='text-black font-benzinExtraBold text-lg mb-2'>All Entries</Text>
       {entries.map((entry, index) => (
         <View key={index} className='flex-row justify-between py-2 border-b border-gray-100'>

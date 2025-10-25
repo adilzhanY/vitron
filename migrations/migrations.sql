@@ -82,7 +82,8 @@ CREATE TABLE meals (
     fat DECIMAL(6,2),
     meal_type meal_type NOT NULL,
     logged_at TIMESTAMP DEFAULT NOW(),
-    is_saved BOOLEAN DEFAULT FALSE
+    is_saved BOOLEAN DEFAULT FALSE,
+    image_url VARCHAR(500)
 );
 
 CREATE TABLE meal_goals (

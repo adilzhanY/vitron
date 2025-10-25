@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { RadialChartProps } from '@/types/type';
 import Svg, { Circle, G, Line, Defs, Filter, FeDropShadow } from 'react-native-svg';
 import CustomButton from '../shared/CustomButton';
+import { colors } from '@/constants';
 
 const RadialChart = ({
   startWeight,
@@ -14,8 +15,8 @@ const RadialChart = ({
   onSetNewGoal,
 }: RadialChartProps) => {
   const radius = 110;
-  const strokeWidth = 8;
-  const checkpointRadius = 12;
+  const strokeWidth = 12;
+  const checkpointRadius = 15;
   const size = (radius + checkpointRadius) * 2 + strokeWidth;
 
   // Progress calculation
@@ -116,7 +117,7 @@ const RadialChart = ({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke={isGoalAchieved ? "#22C55E" : "#3A3A5A"}
+            stroke={isGoalAchieved ? "#22C55E" : "#BBF7D0"}
             strokeWidth={strokeWidth}
             fill="none"
           />
@@ -127,7 +128,7 @@ const RadialChart = ({
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke="#C084FC"
+              stroke={colors.primary}
               strokeWidth={strokeWidth}
               fill="none"
               strokeDasharray={`${2 * Math.PI * radius}`}
@@ -152,6 +153,7 @@ const RadialChart = ({
                   cy={y}
                   r={checkpointRadius}
                   fill={isDone ? "#4ade80" : "#A9A9A9"}
+                  stroke="#000000"
                 />
 
                 {/* Checkmark if done (double flip to fix ✓) */}

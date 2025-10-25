@@ -1,0 +1,173 @@
+{
+  "name": "AI loading animation",
+  "version": "1.0.0",
+  "type": "loading-animation",
+  "theme": {
+    "colors": {
+      "background": "#FFFFFF",
+      "primary": "#22C55E",
+      "secondary": "#4ADE80",
+      "tertiary": "#16A34A"
+    }
+  },
+  "animation": {
+    "duration": 3000,
+    "easing": "linear",
+    "loop": true
+  },
+  "elements": [
+    {
+      "type": "stars",
+      "count": 3,
+      "stars": [
+        {
+          "id": 1,
+          "position": {
+            "top": "30%",
+            "left": "35%"
+          },
+          "size": 50,
+          "animation": {
+            "name": "smoothPulse",
+            "duration": 2500,
+            "delay": 0,
+            "easing": "ease-in-out",
+            "keyframes": [
+              {
+                "time": 0,
+                "opacity": 0,
+                "scale": 0
+              },
+              {
+                "time": 40,
+                "opacity": 1,
+                "scale": 1
+              },
+              {
+                "time": 60,
+                "opacity": 1,
+                "scale": 1
+              },
+              {
+                "time": 100,
+                "opacity": 0,
+                "scale": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "position": {
+            "top": "50%",
+            "right": "25%"
+          },
+          "size": 35,
+          "animation": {
+            "name": "smoothPulse",
+            "duration": 2000,
+            "delay": 800,
+            "easing": "ease-in-out",
+            "keyframes": [
+              {
+                "time": 0,
+                "opacity": 0,
+                "scale": 0
+              },
+              {
+                "time": 40,
+                "opacity": 1,
+                "scale": 1
+              },
+              {
+                "time": 60,
+                "opacity": 1,
+                "scale": 1
+              },
+              {
+                "time": 100,
+                "opacity": 0,
+                "scale": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "position": {
+            "bottom": "30%",
+            "left": "45%"
+          },
+          "size": 42,
+          "animation": {
+            "name": "smoothPulse",
+            "duration": 2200,
+            "delay": 1500,
+            "easing": "ease-in-out",
+            "keyframes": [
+              {
+                "time": 0,
+                "opacity": 0,
+                "scale": 0
+              },
+              {
+                "time": 40,
+                "opacity": 1,
+                "scale": 1
+              },
+              {
+                "time": 60,
+                "opacity": 1,
+                "scale": 1
+              },
+              {
+                "time": 100,
+                "opacity": 0,
+                "scale": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "center-glow",
+      "size": 60,
+      "animation": {
+        "name": "centerPulse",
+        "duration": 2000,
+        "keyframes": [
+          {
+            "time": 0,
+            "opacity": 0.3,
+            "scale": 0.8
+          },
+          {
+            "time": 50,
+            "opacity": 0.7,
+            "scale": 1.2
+          },
+          {
+            "time": 100,
+            "opacity": 0.3,
+            "scale": 0.8
+          }
+        ]
+      }
+    }
+  ],
+  "effects": {
+    "dropShadow": {
+      "blur": 8,
+      "color": "#4ADE80"
+    },
+    "radialGradient": {
+      "start": "#4ADE80",
+      "end": "transparent",
+      "opacity": [
+        0.3,
+        0.7
+      ]
+    }
+  }
+}
