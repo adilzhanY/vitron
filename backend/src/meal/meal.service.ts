@@ -294,6 +294,125 @@ export class MealService {
     };
   }
 
+  // ============ MEAL IMAGES METHODS ============
+
+  async uploadMealImage(input: UploadMealImageInput) {
+    const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
+    if (userResult.length === 0) {
+      throw new Error('User not found');
+    }
+    const userId = userResult[0].id;
+
+    const result = await this.sql`
+      INSERT INTO meal_images (
+        user_id,
+        image_data,
+        image_name,
+        image_type,
+        meal_id,
+        uploaded_at
+      )
+      VALUES (
+        ${userId},
+        ${input.imageData},
+        ${input.imageName},
+        ${input.imageType},
+        ${input.mealId || null},
+        NOW()
+      )
+      RETURNING *
+    `;
+
+    const image = result[0];
+    return {
+      id: image.id,
+      imageData: image.image_data,
+      imageName: image.image_name,
+      imageType: image.image_type,
+      mealId: image.meal_id,
+      uploadedAt: image.uploaded_at,
+    };
+  }
+
+  async getMealImages(clerkId: string, imageId?: number) {
+    const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
+    if (userResult.length === 0) {
+      throw new Error('User not found');
+    }
+    const userId = userResult[0].id;
+
+    let images;
+    if (imageId) {
+      images = await this.sql`
+        SELECT 
+          id,
+          image_data,
+          image_name,
+          image_type,
+          meal_id,
+          ai_response,
+          is_analyzed,
+          uploaded_at
+        FROM meal_images
+        WHERE user_id = ${userId} AND id = ${imageId}
+        ORDER BY uploaded_at DESC;
+      `;
+    } else {
+      images = await this.sql`
+        SELECT 
+          id,
+          image_data,
+          image_name,
+          image_type,
+          meal_id,
+          ai_response,
+          is_analyzed,
+          uploaded_at
+        FROM meal_images
+        WHERE user_id = ${userId}
+        ORDER BY uploaded_at DESC;
+      `;
+    }
+
+    return images.map((image) => ({
+      id: image.id,
+      imageData: image.image_data,
+      imageName: image.image_name,
+      imageType: image.image_type,
+      mealId: image.meal_id,
+      aiResponse: image.ai_response,
+      isAnalyzed: image.is_analyzed,
+      uploadedAt: image.uploaded_at,
+    }));
+  }
+
+  async updateMealImage(input: UpdateMealImageInput) {
+    const result = await this.sql`
+      UPDATE meal_images
+      SET
+        ai_response = COALESCE(${input.aiResponse}, ai_response),
+        is_analyzed = COALESCE(${input.isAnalyzed}, is_analyzed)
+      WHERE id = ${input.imageId}
+      RETURNING *
+    `;
+
+    if (result.length === 0) {
+      throw new Error('Meal image not found');
+    }
+
+    const image = result[0];
+    return {
+      id: image.id,
+      imageData: image.image_data,
+      imageName: image.image_name,
+      imageType: image.image_type,
+      mealId: image.meal_id,
+      aiResponse: image.ai_response,
+      isAnalyzed: image.is_analyzed,
+      uploadedAt: image.uploaded_at,
+    };
+  }
+
 
   // ============ AI ANALYSIS METHODS ============
 
