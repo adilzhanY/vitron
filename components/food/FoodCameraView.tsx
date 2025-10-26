@@ -1,6 +1,11 @@
 import React, { useState, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { CameraView, CameraType, FlashMode, useCameraPermissions } from "expo-camera";
+import {
+  CameraView,
+  CameraType,
+  FlashMode,
+  useCameraPermissions,
+} from "expo-camera";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import LoadingLogo from "@/components/shared/LoadingLogo";
@@ -12,10 +17,13 @@ interface FoodCameraViewProps {
   onClose: () => void;
 }
 
-const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) => {
+const FoodCameraView: React.FC<FoodCameraViewProps> = ({
+  onCapture,
+  onClose,
+}) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>("back");
-  const [flash, setFlash] = useState<FlashMode>("off");
+  const [torch, setTorch] = useState(false);
   const [selectedMode, setSelectedMode] = useState<CaptureMode>("scan");
   const [isCapturing, setIsCapturing] = useState(false);
   const cameraRef = useRef<CameraView>(null);
@@ -31,8 +39,13 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
   if (!permission.granted) {
     return (
       <View style={styles.permissionContainer}>
-        <Text style={styles.permissionText}>We need your permission to use the camera</Text>
-        <TouchableOpacity onPress={requestPermission} style={styles.permissionButton}>
+        <Text style={styles.permissionText}>
+          We need your permission to use the camera
+        </Text>
+        <TouchableOpacity
+          onPress={requestPermission}
+          style={styles.permissionButton}
+        >
           <Text style={styles.permissionButtonText}>Grant Permission</Text>
         </TouchableOpacity>
       </View>
@@ -40,7 +53,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
   }
 
   const toggleFlash = () => {
-    setFlash((current) => (current === "off" ? "on" : "off"));
+    setTorch((current) => !current);
   };
 
   const takePicture = async () => {
@@ -88,8 +101,22 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
         ref={cameraRef}
         style={styles.camera}
         facing={facing}
-        flash={flash}
+        enableTorch={torch}
       />
+      {selectedMode !== "gallery" && (
+        <View style={styles.frameOverlay}>
+          <View style={selectedMode === "scan" ? styles.squareFrame : styles.rectangleFrame}>
+            {/* Top-left corner */}
+            <View style={[styles.corner, styles.cornerTopLeft]} />
+            {/* Top-right corner */}
+            <View style={[styles.corner, styles.cornerTopRight]} />
+            {/* Bottom-left corner */}
+            <View style={[styles.corner, styles.cornerBottomLeft]} />
+            {/* Bottom-right corner */}
+            <View style={[styles.corner, styles.cornerBottomRight]} />
+          </View>
+        </View>
+      )}
 
       {/* Header with close button */}
       <View style={styles.header}>
@@ -117,6 +144,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
               styles.modeButtonText,
               selectedMode === "scan" && styles.modeButtonTextActive,
             ]}
+            className="font-benzinBold"
           >
             Scan Food
           </Text>
@@ -139,6 +167,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
               styles.modeButtonText,
               selectedMode === "label" && styles.modeButtonTextActive,
             ]}
+            className="font-benzinBold"
           >
             Food Label
           </Text>
@@ -149,7 +178,9 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
           style={styles.modeButton}
         >
           <MaterialIcons name="photo-library" size={20} color="#ddd" />
-          <Text style={styles.modeButtonText}>Gallery</Text>
+          <Text className="font-benzinBold" style={styles.modeButtonText}>
+            Gallery
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -158,7 +189,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({ onCapture, onClose }) =
         {/* Flash toggle */}
         <TouchableOpacity onPress={toggleFlash} style={styles.flashButton}>
           <Ionicons
-            name={flash === "off" ? "flash-off" : "flash"}
+            name={torch ? "flash" : "flash-off"}
             size={32}
             color="white"
           />
@@ -232,12 +263,12 @@ const styles = StyleSheet.create({
   },
   modeContainer: {
     position: "absolute",
-    top: 120,
+    bottom: 140,
     left: 0,
     right: 0,
     flexDirection: "row",
     justifyContent: "center",
-    gap: 10,
+    gap: 5,
     paddingHorizontal: 20,
   },
   modeButton: {
@@ -254,7 +285,7 @@ const styles = StyleSheet.create({
   },
   modeButtonText: {
     color: "#ddd",
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: "600",
   },
   modeButtonTextActive: {
@@ -291,6 +322,61 @@ const styles = StyleSheet.create({
     height: 68,
     borderRadius: 34,
     backgroundColor: "#22c55e",
+  },
+  frameOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  squareFrame: {
+    width: 280,
+    height: 280,
+  },
+  rectangleFrame: {
+    width: 280,
+    height: 400,
+  },
+  // Base corner style
+  corner: {
+    position: "absolute",
+    width: 40,
+    height: 40,
+    borderColor: "#ffffff",
+    borderWidth: 5,
+    borderRadius: 5
+  },
+  // Individual corners with borders on 2 sides only
+  cornerTopLeft: {
+    top: 0,
+    left: 0,
+    borderBottomWidth: 0,
+    borderRightWidth: 0,
+    borderTopLeftRadius: 20,
+  },
+  cornerTopRight: {
+    top: 0,
+    right: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
+    borderTopRightRadius: 20,
+  },
+  cornerBottomLeft: {
+    bottom: 0,
+    left: 0,
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomLeftRadius: 20,
+  },
+  cornerBottomRight: {
+    bottom: 0,
+    right: 0,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderBottomRightRadius: 20,
   },
 });
 
