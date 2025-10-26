@@ -111,8 +111,10 @@ const FoodTracker = () => {
       });
 
       if (data.allMeals) {
+        console.log("All meals fetched:", data.allMeals);
         setAllFoodEntries(data.allMeals);
         const { activeStreak } = findFoodStreaks(data.allMeals);
+        console.log("Calculated active streak:", activeStreak);
         setFoodStreak(activeStreak);
       }
     } catch (error) {
@@ -120,7 +122,10 @@ const FoodTracker = () => {
       // If the query fails (backend doesn't support it), calculate streak from current entries
       if (foodEntries.length > 0) {
         const { activeStreak } = findFoodStreaks(foodEntries);
+        console.log("Calculated streak from current entries:", activeStreak);
         setFoodStreak(activeStreak);
+      } else {
+        setFoodStreak(0);
       }
     }
   }, [clerkUser, foodEntries]);
@@ -245,14 +250,12 @@ const FoodTracker = () => {
             <Text className="text-black text-2xl font-benzinBold">
               Daily Log
             </Text>
-            {foodStreak > 0 && (
-              <View className="flex-row items-center bg-orange-100 px-3 py-2 rounded-full">
-                <FontAwesome5 name="fire" size={18} color="#F97316" />
-                <Text className="text-orange-600 font-benzinBold text-base ml-2">
-                  {foodStreak} {foodStreak === 1 ? 'day' : 'days'}
-                </Text>
-              </View>
-            )}
+            <View className="flex-row items-center bg-orange-100 px-3 py-2 rounded-full">
+              <FontAwesome5 name="fire" size={18} color="#F97316" />
+              <Text className="text-orange-600 font-benzinBold text-base ml-2">
+                {foodStreak} {foodStreak === 1 ? 'day' : 'days'}
+              </Text>
+            </View>
           </View>
         </View>
 
