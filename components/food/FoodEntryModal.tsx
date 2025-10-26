@@ -29,15 +29,16 @@ interface FoodEntryModalProps {
   protein?: number | null;
   carbs?: number | null;
   fat?: number | null;
+  mode?: "scan" | "describe";
 }
 
 const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
   visible,
   onClose,
   onSave,
+  mode = "describe",
 }) => {
   const { user } = useUser();
-  const [activeTab, setActiveTab] = useState<"scan" | "describe">("scan");
   const [showCamera, setShowCamera] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [entryName, setEntryName] = useState("");
@@ -154,15 +155,16 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
 
   const handleCameraClose = () => {
     setShowCamera(false);
+    onClose();
   };
 
   useEffect(() => {
-    if (visible && activeTab === "scan") {
+    if (visible && mode === "scan") {
       setShowCamera(true);
     } else {
       setShowCamera(false);
     }
-  }, [visible, activeTab]);
+  }, [visible, mode]);
 
   const mealTypeOptions: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
 
@@ -221,35 +223,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
         onRequestClose={onClose}
       >
         <View className="flex-1 justify-center items-center bg-black/80">
-          <View className="w-11/12 bg-white rounded-2xl p-6">
-            {/* Tab Switcher */}
-            <View className="flex-row mb-4 bg-gray-100 rounded-xl p-1">
-              <TouchableOpacity
-                onPress={() => setActiveTab("scan")}
-                className={`flex-1 py-3 rounded-lg ${activeTab === "scan" ? "bg-green-500" : "bg-transparent"
-                  }`}
-              >
-                <Text
-                  className={`text-center font-benzinBold ${activeTab === "scan" ? "text-white" : "text-gray-600"
-                    }`}
-                >
-                  Scan Food
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setActiveTab("describe")}
-                className={`flex-1 py-3 rounded-lg ${activeTab === "describe" ? "bg-green-500" : "bg-transparent"
-                  }`}
-              >
-                <Text
-                  className={`text-center font-benzinBold ${activeTab === "describe" ? "text-white" : "text-gray-600"
-                    }`}
-                >
-                  Describe Food
-                </Text>
-              </TouchableOpacity>
-            </View>
-
+          <View className="w-11/12 bg-white rounded-3xl p-6">
             <Text className="text-black text-2xl font-benzinBold mb-4">
               Track your meal
             </Text>

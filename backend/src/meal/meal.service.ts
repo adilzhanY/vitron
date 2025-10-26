@@ -64,6 +64,44 @@ export class MealService {
     }));
   }
 
+  async getAllMeals(clerkId: string) {
+    const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${clerkId}`;
+    if (userResult.length === 0) {
+      throw new Error('User not found');
+    }
+    const userId = userResult[0].id;
+
+    const meals = await this.sql`
+      SELECT 
+        id,
+        name, 
+        is_saved, 
+        calories, 
+        protein, 
+        carbs, 
+        fat, 
+        meal_type, 
+        DATE(logged_at) as entry_date,
+        logged_at
+      FROM meals
+      WHERE user_id = ${userId}
+      ORDER BY logged_at DESC;
+    `;
+
+    return meals.map((meal) => ({
+      id: meal.id,
+      name: meal.name,
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      fat: meal.fat,
+      mealType: meal.meal_type,
+      isSaved: meal.is_saved,
+      entryDate: meal.entry_date instanceof Date ? meal.entry_date.toISOString().split('T')[0] : meal.entry_date,
+      loggedAt: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
+    }));
+  }
+
   async createMeal(input: CreateMealInput) {
     const userResult = await this.sql`SELECT id FROM users WHERE clerk_id = ${input.clerkId}`;
     if (userResult.length === 0) {
@@ -256,7 +294,7 @@ export class MealService {
     };
   }
 
- 
+
   // ============ AI ANALYSIS METHODS ============
 
   async analyzeMealImage(imageUrl: string, prompt: string) {

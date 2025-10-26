@@ -27,6 +27,13 @@ export class MealResolver {
     return this.mealService.getMeals(clerkId, date);
   }
 
+  @Query(() => [Meal])
+  async allMeals(
+    @Args('clerkId') clerkId: string,
+  ) {
+    return this.mealService.getAllMeals(clerkId);
+  }
+
   @Mutation(() => Meal)
   async createMeal(@Args('input') input: CreateMealInput) {
     return this.mealService.createMeal(input);

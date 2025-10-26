@@ -28,9 +28,12 @@ import EmptyState from "@/components/shared/EmptyState";
 import FoodStatsCard from "@/components/food/FoodStatsCard";
 import FoodDateSelector from "@/components/food/FoodDateSelector";
 import FoodEntryModal from "@/components/food/FoodEntryModal";
+import FoodEntryChoiceModal from "@/components/food/FoodEntryChoiceModal";
 import WaterCard from "@/components/food/WaterCard";
 import MealCard from "@/components/food/MealCard";
 import { useFoodData } from "@/hooks/useFoodData";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { findFoodStreaks } from "@/services/food/foodStreakService";
 // import {
 //   calculateMacrosByMealImage,
 //   calculateMacrosByMealLabel,
@@ -39,9 +42,13 @@ import { useFoodData } from "@/hooks/useFoodData";
 const FoodTracker = () => {
   const { user: clerkUser } = useUser();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isChoiceModalVisible, setChoiceModalVisible] = useState(false);
+  const [isCameraModalVisible, setCameraModalVisible] = useState(false);
+  const [isDescribeModalVisible, setDescribeModalVisible] = useState(false);
   const [waterConsumed, setWaterConsumed] = useState(0);
   const [waterLoading, setWaterLoading] = useState(false);
+  const [allFoodEntries, setAllFoodEntries] = useState<any[]>([]);
+  const [foodStreak, setFoodStreak] = useState(0);
 
   const { loading, error, foodTotals, foodEntries, mealGoals, refetch } =
     useFoodData(selectedDate);
@@ -78,6 +85,49 @@ const FoodTracker = () => {
   useEffect(() => {
     fetchWaterIntake();
   }, [fetchWaterIntake]);
+
+  // Fetch all food entries to calculate streak
+  const fetchAllFoodEntries = useCallback(async () => {
+    if (!clerkUser) return;
+
+    try {
+      const { graphqlRequest } = await import("@/lib/graphqlRequest");
+
+      // Fetch all meals for this user
+      // Since the backend requires a date, we'll fetch meals for a wide date range
+      // or we can get unique dates from the current query
+      const query = `
+        query GetAllMealsForStreak($clerkId: String!) {
+          allMeals(clerkId: $clerkId) {
+            id
+            entryDate
+            loggedAt
+          }
+        }
+      `;
+
+      const data = await graphqlRequest(query, {
+        clerkId: clerkUser.id,
+      });
+
+      if (data.allMeals) {
+        setAllFoodEntries(data.allMeals);
+        const { activeStreak } = findFoodStreaks(data.allMeals);
+        setFoodStreak(activeStreak);
+      }
+    } catch (error) {
+      console.error("Failed to fetch all food entries:", error);
+      // If the query fails (backend doesn't support it), calculate streak from current entries
+      if (foodEntries.length > 0) {
+        const { activeStreak } = findFoodStreaks(foodEntries);
+        setFoodStreak(activeStreak);
+      }
+    }
+  }, [clerkUser, foodEntries]);
+
+  useEffect(() => {
+    fetchAllFoodEntries();
+  }, [fetchAllFoodEntries]);
 
   // Handle adding water
   const handleAddWater = useCallback(async () => {
@@ -142,11 +192,12 @@ const FoodTracker = () => {
         console.log("New meal created in db");
         // Refetch data to update the UI
         refetch();
+        fetchAllFoodEntries(); // Update streak
       } catch (error) {
         console.error("Failed to save meal: ", error);
       }
     },
-    [clerkUser, selectedDate, refetch],
+    [clerkUser, selectedDate, refetch, fetchAllFoodEntries],
   );
 
   if (loading) {
@@ -163,7 +214,7 @@ const FoodTracker = () => {
         <PageHeader
           title="Track your food"
           actionText=""
-          onActionPress={() => {}}
+          onActionPress={() => { }}
         />
         <View
           style={{
@@ -185,26 +236,51 @@ const FoodTracker = () => {
         <FoodStatsCard
           foodTotals={foodTotals}
           mealGoals={mealGoals}
-          onSetFoodEntry={() => setModalVisible(true)}
+          onSetFoodEntry={() => setChoiceModalVisible(true)}
         />
 
-        {/* Meal Cards */}
-        {foodEntries.map((entry) => (
-          <View
-            key={entry.id}
-          >
-            <MealCard
-              name={entry.name}
-              calories={entry.calories}
-              protein={entry.protein}
-              carbs={entry.carbs}
-              fat={entry.fat}
-              meal_type={entry.meal_type}
-              is_saved={entry.is_saved}
-              logged_at={entry.logged_at}
-            />
+        {/* Daily Log Section */}
+        <View className="mt-6 mb-4">
+          <View className="flex-row justify-between items-center px-1">
+            <Text className="text-black text-2xl font-benzinBold">
+              Daily Log
+            </Text>
+            {foodStreak > 0 && (
+              <View className="flex-row items-center bg-orange-100 px-3 py-2 rounded-full">
+                <FontAwesome5 name="fire" size={18} color="#F97316" />
+                <Text className="text-orange-600 font-benzinBold text-base ml-2">
+                  {foodStreak} {foodStreak === 1 ? 'day' : 'days'}
+                </Text>
+              </View>
+            )}
           </View>
-        ))}
+        </View>
+
+        {/* Meal Cards or Empty State */}
+        {foodEntries.length === 0 ? (
+          <View className="flex-1 justify-center items-center py-12">
+            <FontAwesome5 name="utensils" size={60} color="#D1D5DB" />
+            <Text className="text-gray-400 text-lg font-benzinBold mt-4">
+              Log your first meal for today!
+            </Text>
+          </View>
+        ) : (
+          foodEntries.map((entry) => (
+            <View key={entry.id}>
+              <MealCard
+                name={entry.name}
+                calories={entry.calories}
+                protein={entry.protein}
+                carbs={entry.carbs}
+                fat={entry.fat}
+                meal_type={entry.meal_type}
+                is_saved={entry.is_saved}
+                logged_at={entry.logged_at}
+              />
+            </View>
+          ))
+        )}
+
         {/* Water Tracking Card */}
         <View
           style={{
@@ -226,12 +302,38 @@ const FoodTracker = () => {
 
         <View className="h-[400px]"></View>
       </ScrollView>
+      {/* Choice Modal */}
+      <FoodEntryChoiceModal
+        visible={isChoiceModalVisible}
+        onClose={() => setChoiceModalVisible(false)}
+        onScanFood={() => {
+          setChoiceModalVisible(false);
+          setCameraModalVisible(true);
+        }}
+        onDescribeFood={() => {
+          setChoiceModalVisible(false);
+          setDescribeModalVisible(true);
+        }}
+      />
+
+      {/* Camera Modal */}
       <FoodEntryModal
-        visible={isModalVisible}
-        onClose={() => setModalVisible(false)}
+        visible={isCameraModalVisible}
+        onClose={() => setCameraModalVisible(false)}
         onSave={handleCreateNewMeal}
         name=""
         calories=""
+        mode="scan"
+      />
+
+      {/* Describe Modal */}
+      <FoodEntryModal
+        visible={isDescribeModalVisible}
+        onClose={() => setDescribeModalVisible(false)}
+        onSave={handleCreateNewMeal}
+        name=""
+        calories=""
+        mode="describe"
       />
     </SafeAreaView>
   );

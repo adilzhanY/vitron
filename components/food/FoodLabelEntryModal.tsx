@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Modal, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomButton from "@/components/shared/CustomButton";
 import InputField from "@/components/shared/InputField";
@@ -42,24 +42,43 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
   const [numberOfServings, setNumberOfServings] = useState(
     labelData?.numberOfServings?.toString() || "1"
   );
+  const [servingSize, setServingSize] = useState(
+    labelData?.servingSize?.toString() || "0"
+  );
+  const [nutrientsPer, setNutrientsPer] = useState(
+    labelData?.nutrientsPer?.toString() || "0"
+  );
+  const [calories, setCalories] = useState(
+    labelData?.calories?.toString() || "0"
+  );
+  const [protein, setProtein] = useState(
+    labelData?.protein?.toString() || "0"
+  );
+  const [carbs, setCarbs] = useState(
+    labelData?.carbs?.toString() || "0"
+  );
+  const [fat, setFat] = useState(
+    labelData?.fats?.toString() || "0"
+  );
   const [mealType, setMealType] = useState<MealType>("breakfast");
   const [isSaving, setIsSaving] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const calculateTotal = (value: number) => {
-    if (!labelData) return 0;
     const servings = Number(numberOfServings) || 1;
-    const ratio = (labelData.servingSize / labelData.nutrientsPer) * servings;
+    const servingSizeNum = Number(servingSize) || 1;
+    const nutrientsPerNum = Number(nutrientsPer) || 1;
+    const ratio = (servingSizeNum / nutrientsPerNum) * servings;
     return Math.round(value * ratio);
   };
 
-  const totalCalories = calculateTotal(labelData?.calories || 0);
-  const totalProtein = calculateTotal(labelData?.protein || 0);
-  const totalCarbs = calculateTotal(labelData?.carbs || 0);
-  const totalFat = calculateTotal(labelData?.fats || 0);
+  const totalCalories = calculateTotal(Number(calories) || 0);
+  const totalProtein = calculateTotal(Number(protein) || 0);
+  const totalCarbs = calculateTotal(Number(carbs) || 0);
+  const totalFat = calculateTotal(Number(fat) || 0);
 
   const handleSave = async () => {
-    if (!entryName.trim() || !labelData) {
+    if (!entryName.trim()) {
       return;
     }
 
@@ -81,8 +100,6 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
 
   const mealTypeOptions: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
 
-  if (!labelData) return null;
-
   return (
     <Modal
       animationType="slide"
@@ -91,123 +108,230 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-center items-center bg-black/80">
-        <View className="w-11/12 bg-white rounded-2xl p-6">
+        <View className="w-11/12 max-h-[90%] bg-white rounded-2xl p-6">
           <Text className="text-black text-2xl font-benzinBold mb-4">
             Track your meal (Label)
           </Text>
 
-          {/* Meal name input */}
-          <InputField
-            label="Meal name"
-            value={entryName}
-            onChangeText={setEntryName}
-            placeholder="e.g., Protein Bar"
-          />
-          <View className="h-4" />
-
-          {/* Number of servings */}
-          <Text className="text-gray-700 text-lg font-benzinBold mb-2">
-            Number of servings
-          </Text>
-          <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 mb-4">
-            <TextInput
-              value={numberOfServings}
-              onChangeText={setNumberOfServings}
-              keyboardType="numeric"
-              placeholder="1"
-              placeholderTextColor="#9CA3AF"
-              className="flex-1 text-gray-800 font-benzinMedium text-base"
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {/* Meal name input */}
+            <InputField
+              label="Meal name"
+              value={entryName}
+              onChangeText={setEntryName}
+              placeholder="e.g., Protein Bar"
             />
-          </View>
+            <View className="h-4" />
 
-          {/* Serving info */}
-          <View className="bg-blue-50 rounded-xl p-4 mb-4">
-            <Text className="text-gray-700 text-sm font-benzinMedium">
-              Serving size: {labelData.servingSize}g
+            {/* Label Information Section */}
+            <Text className="text-gray-700 text-lg font-benzinBold mb-3">
+              Label Information
             </Text>
-            <Text className="text-gray-700 text-sm font-benzinMedium">
-              Nutrients per: {labelData.nutrientsPer}g
-            </Text>
-          </View>
 
-          {/* Meal Type Dropdown */}
-          <Text className="text-gray-700 text-lg font-benzinBold mb-2">
-            Meal time
-          </Text>
-          <TouchableOpacity
-            onPress={() => setDropdownVisible(!dropdownVisible)}
-            className="bg-gray-100 rounded-xl px-4 py-3 mb-2 flex-row justify-between items-center"
-          >
-            <Text className="text-gray-800 text-base font-benzinMedium">
-              {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
-            </Text>
-            <FontAwesome
-              name={dropdownVisible ? "chevron-up" : "chevron-down"}
-              size={16}
-              color="#6B7280"
-            />
-          </TouchableOpacity>
+            {/* Serving Size and Nutrients Per - Two columns */}
+            <View className="flex-row justify-between mb-3">
+              <View className="flex-1 mr-2">
+                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                  Serving Size (g)
+                </Text>
+                <View className="bg-gray-100 rounded-xl px-4 py-3">
+                  <TextInput
+                    value={servingSize}
+                    onChangeText={setServingSize}
+                    keyboardType="numeric"
+                    placeholder="100"
+                    placeholderTextColor="#9CA3AF"
+                    className="text-gray-800 font-benzinMedium text-base"
+                  />
+                </View>
+              </View>
 
-          {dropdownVisible && (
-            <View className="bg-gray-50 rounded-xl mb-4 overflow-hidden border border-gray-200">
-              {mealTypeOptions.map((type) => (
-                <TouchableOpacity
-                  key={type}
-                  onPress={() => {
-                    setMealType(type);
-                    setDropdownVisible(false);
-                  }}
-                  className={`px-4 py-3 border-b border-gray-200 ${mealType === type ? "bg-green-100" : ""
-                    }`}
-                >
-                  <Text
-                    className={`text-base font-benzinMedium ${mealType === type ? "text-green-700" : "text-gray-700"
+              <View className="flex-1 ml-2">
+                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                  Nutrients Per (g)
+                </Text>
+                <View className="bg-gray-100 rounded-xl px-4 py-3">
+                  <TextInput
+                    value={nutrientsPer}
+                    onChangeText={setNutrientsPer}
+                    keyboardType="numeric"
+                    placeholder="100"
+                    placeholderTextColor="#9CA3AF"
+                    className="text-gray-800 font-benzinMedium text-base"
+                  />
+                </View>
+              </View>
+            </View>
+
+            {/* Nutrition Facts Section */}
+            <Text className="text-gray-700 text-lg font-benzinBold mb-3 mt-2">
+              Nutrition Facts (per {nutrientsPer}g)
+            </Text>
+
+            {/* Calories and Protein - Two columns */}
+            <View className="flex-row justify-between mb-3">
+              <View className="flex-1 mr-2">
+                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                  Calories
+                </Text>
+                <View className="bg-gray-100 rounded-xl px-4 py-3">
+                  <TextInput
+                    value={calories}
+                    onChangeText={setCalories}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    className="text-gray-800 font-benzinMedium text-base"
+                  />
+                </View>
+              </View>
+
+              <View className="flex-1 ml-2">
+                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                  Protein (g)
+                </Text>
+                <View className="bg-gray-100 rounded-xl px-4 py-3">
+                  <TextInput
+                    value={protein}
+                    onChangeText={setProtein}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    className="text-gray-800 font-benzinMedium text-base"
+                  />
+                </View>
+              </View>
+            </View>
+
+            {/* Carbs and Fat - Two columns */}
+            <View className="flex-row justify-between mb-4">
+              <View className="flex-1 mr-2">
+                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                  Carbs (g)
+                </Text>
+                <View className="bg-gray-100 rounded-xl px-4 py-3">
+                  <TextInput
+                    value={carbs}
+                    onChangeText={setCarbs}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    className="text-gray-800 font-benzinMedium text-base"
+                  />
+                </View>
+              </View>
+
+              <View className="flex-1 ml-2">
+                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                  Fat (g)
+                </Text>
+                <View className="bg-gray-100 rounded-xl px-4 py-3">
+                  <TextInput
+                    value={fat}
+                    onChangeText={setFat}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    className="text-gray-800 font-benzinMedium text-base"
+                  />
+                </View>
+              </View>
+            </View>
+
+            {/* Number of servings */}
+            <Text className="text-gray-700 text-lg font-benzinBold mb-2">
+              Number of servings
+            </Text>
+            <View className="bg-gray-100 rounded-xl px-4 py-3 mb-4">
+              <TextInput
+                value={numberOfServings}
+                onChangeText={setNumberOfServings}
+                keyboardType="numeric"
+                placeholder="1"
+                placeholderTextColor="#9CA3AF"
+                className="text-gray-800 font-benzinMedium text-base"
+              />
+            </View>
+
+            {/* Meal Type Dropdown */}
+            <Text className="text-gray-700 text-lg font-benzinBold mb-2">
+              Meal time
+            </Text>
+            <TouchableOpacity
+              onPress={() => setDropdownVisible(!dropdownVisible)}
+              className="bg-gray-100 rounded-xl px-4 py-3 mb-2 flex-row justify-between items-center"
+            >
+              <Text className="text-gray-800 text-base font-benzinMedium">
+                {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+              </Text>
+              <FontAwesome
+                name={dropdownVisible ? "chevron-up" : "chevron-down"}
+                size={16}
+                color="#6B7280"
+              />
+            </TouchableOpacity>
+
+            {dropdownVisible && (
+              <View className="bg-gray-50 rounded-xl mb-4 overflow-hidden border border-gray-200">
+                {mealTypeOptions.map((type) => (
+                  <TouchableOpacity
+                    key={type}
+                    onPress={() => {
+                      setMealType(type);
+                      setDropdownVisible(false);
+                    }}
+                    className={`px-4 py-3 border-b border-gray-200 ${mealType === type ? "bg-green-100" : ""
                       }`}
                   >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+                    <Text
+                      className={`text-base font-benzinMedium ${mealType === type ? "text-green-700" : "text-gray-700"
+                        }`}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
 
-          {/* Total macros display */}
-          <Text className="text-gray-700 text-lg font-benzinBold mb-2">
-            Total nutrition ({numberOfServings} serving{Number(numberOfServings) !== 1 ? 's' : ''})
-          </Text>
-          <View className="bg-green-50 rounded-xl p-4 mb-4">
-            <View className="flex-row justify-between mb-2">
-              <Text className="text-gray-700 font-benzinMedium">Calories:</Text>
-              <Text className="text-gray-900 font-benzinBold">{totalCalories}</Text>
+            {/* Total macros display */}
+            <View className="bg-green-50 rounded-xl p-4 mb-4 border border-green-200">
+              <Text className="text-gray-700 text-base font-benzinBold mb-3">
+                Total for {numberOfServings} serving{Number(numberOfServings) !== 1 ? 's' : ''}:
+              </Text>
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-gray-600 font-benzinMedium text-sm">Calories:</Text>
+                <Text className="text-gray-900 font-benzinBold text-lg">{totalCalories}</Text>
+              </View>
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-gray-600 font-benzinMedium text-sm">Protein:</Text>
+                <Text className="text-gray-900 font-benzinBold text-lg">{totalProtein}g</Text>
+              </View>
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-gray-600 font-benzinMedium text-sm">Carbs:</Text>
+                <Text className="text-gray-900 font-benzinBold text-lg">{totalCarbs}g</Text>
+              </View>
+              <View className="flex-row justify-between items-center">
+                <Text className="text-gray-600 font-benzinMedium text-sm">Fat:</Text>
+                <Text className="text-gray-900 font-benzinBold text-lg">{totalFat}g</Text>
+              </View>
             </View>
-            <View className="flex-row justify-between mb-2">
-              <Text className="text-gray-700 font-benzinMedium">Protein:</Text>
-              <Text className="text-gray-900 font-benzinBold">{totalProtein}g</Text>
-            </View>
-            <View className="flex-row justify-between mb-2">
-              <Text className="text-gray-700 font-benzinMedium">Carbs:</Text>
-              <Text className="text-gray-900 font-benzinBold">{totalCarbs}g</Text>
-            </View>
-            <View className="flex-row justify-between">
-              <Text className="text-gray-700 font-benzinMedium">Fat:</Text>
-              <Text className="text-gray-900 font-benzinBold">{totalFat}g</Text>
-            </View>
-          </View>
 
-          <View className="flex-row mt-4">
-            <CustomButton
-              title="Cancel"
-              onPress={onClose}
-              className="flex-1 bg-gray-600 mr-2"
-              disabled={isSaving}
-            />
-            <CustomButton
-              title={isSaving ? "Saving..." : "Log Meal"}
-              onPress={handleSave}
-              className="flex-1 ml-2"
-              disabled={isSaving}
-            />
-          </View>
+            <View className="flex-row mt-4">
+              <CustomButton
+                title="Cancel"
+                onPress={onClose}
+                className="flex-1 bg-gray-600 mr-2"
+                disabled={isSaving}
+              />
+              <CustomButton
+                title={isSaving ? "Saving..." : "Log Meal"}
+                onPress={handleSave}
+                className="flex-1 ml-2"
+                disabled={isSaving}
+              />
+            </View>
+          </ScrollView>
         </View>
       </View>
     </Modal>
