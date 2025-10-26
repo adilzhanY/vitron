@@ -23,6 +23,7 @@ interface FoodEntryModalProps {
     mealType: MealType;
     isSaved: boolean;
     date: string;
+    imageUrl?: string;
   }) => Promise<void>;
   name?: string;
   calories?: string;
@@ -51,6 +52,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [showLabelModal, setShowLabelModal] = useState(false);
   const [labelData, setLabelData] = useState<any>(null);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   const handleSave = async () => {
     if (!entryName.trim() || !calories.trim()) {
@@ -67,6 +69,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
       mealType: mealType,
       isSaved: false,
       date: new Date().toISOString(),
+      imageUrl: imageUrl,
     });
     setIsSaving(false);
 
@@ -76,6 +79,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
     setCarbs("");
     setFat("");
     setMealType("breakfast");
+    setImageUrl(undefined);
 
     onClose();
   };
@@ -125,10 +129,13 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
 
       const aiData = await analyzeImageWithAI(uploadedImageUrl, promptType);
 
-      try {
-        await deleteImageFromS3(uploadedImageUrl);
-      } catch (deleteError) {
-        console.error("Failed to delete image from S3:", deleteError);
+      // Only delete image for label mode, keep it for scan/gallery mode
+      if (mode === "label") {
+        try {
+          await deleteImageFromS3(uploadedImageUrl);
+        } catch (deleteError) {
+          console.error("Failed to delete image from S3:", deleteError);
+        }
       }
 
       // Step 4: Handle AI response based on data structure
@@ -143,6 +150,10 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
         setProtein(aiData.protein?.toString() || "");
         setCarbs(aiData.carbs?.toString() || "");
         setFat(aiData.fats?.toString() || "");
+        // Save the image URL for scan/gallery mode
+        if (mode === "scan" || mode === "gallery") {
+          setImageUrl(uploadedImageUrl);
+        }
       }
     } catch (error) {
       console.error("Failed to populate modal with AI data:", error);

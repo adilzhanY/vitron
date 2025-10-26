@@ -28,4 +28,7 @@ export class CreateMealInput {
 
   @Field({ nullable: true })
   entryDate?: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
 }

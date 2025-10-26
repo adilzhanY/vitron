@@ -35,7 +35,7 @@ export class MealService {
 
     const meals = await this.sql`
       SELECT 
-        id,
+        id, 
         name, 
         is_saved, 
         calories, 
@@ -44,7 +44,8 @@ export class MealService {
         fat, 
         meal_type, 
         DATE(logged_at) as entry_date,
-        logged_at
+        logged_at,
+        image_url
       FROM meals
       WHERE user_id = ${userId} AND DATE(logged_at) = ${date}::date
       ORDER BY logged_at DESC;
@@ -61,6 +62,7 @@ export class MealService {
       isSaved: meal.is_saved,
       entryDate: meal.entry_date instanceof Date ? meal.entry_date.toISOString().split('T')[0] : meal.entry_date,
       loggedAt: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
+      imageUrl: meal.image_url,
     }));
   }
 
@@ -82,7 +84,8 @@ export class MealService {
         fat, 
         meal_type, 
         DATE(logged_at) as entry_date,
-        logged_at
+        logged_at,
+        image_url
       FROM meals
       WHERE user_id = ${userId}
       ORDER BY logged_at DESC;
@@ -99,6 +102,7 @@ export class MealService {
       isSaved: meal.is_saved,
       entryDate: meal.entry_date instanceof Date ? meal.entry_date.toISOString().split('T')[0] : meal.entry_date,
       loggedAt: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
+      imageUrl: meal.image_url,
     }));
   }
 
@@ -125,7 +129,8 @@ export class MealService {
         fat, 
         meal_type,
         is_saved,
-        logged_at
+        logged_at,
+        image_url
       )
       VALUES (
         ${userId},
@@ -136,7 +141,8 @@ export class MealService {
         ${input.fat || 0},
         ${input.mealType},
         ${input.isSaved || false},
-        ${loggedAtTimestamp}::timestamp
+        ${loggedAtTimestamp}::timestamp,
+        ${input.imageUrl || null}
       )
       RETURNING *
     `;
@@ -153,6 +159,7 @@ export class MealService {
       isSaved: meal.is_saved,
       entryDate: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
       loggedAt: meal.logged_at instanceof Date ? meal.logged_at.toISOString() : meal.logged_at,
+      imageUrl: meal.image_url,
     };
   }
 

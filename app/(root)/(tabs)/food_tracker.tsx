@@ -20,6 +20,7 @@ type NewMeal = {
   mealType: MealType;
   isSaved: boolean;
   date: string;
+  imageUrl?: string;
 };
 
 import CustomButton from "@/components/shared/CustomButton";
@@ -185,6 +186,7 @@ const FoodTracker = () => {
         mealType: newMeal.mealType,
         isSaved: false,
         entryDate: selectedDate.toISOString().split("T")[0],
+        imageUrl: newMeal.imageUrl,
       };
       console.log(input);
       try {
@@ -279,6 +281,7 @@ const FoodTracker = () => {
                 meal_type={entry.meal_type}
                 is_saved={entry.is_saved}
                 logged_at={entry.logged_at}
+                imageUrl={entry.image_url}
               />
             </View>
           ))

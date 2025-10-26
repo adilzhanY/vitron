@@ -31,4 +31,7 @@ export class Meal {
 
   @Field()
   loggedAt: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
 }

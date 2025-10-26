@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { useFoodData } from "@/hooks/useFoodData";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -13,6 +13,7 @@ export interface FoodEntry {
   is_saved: boolean;
   entry_date: string;
   logged_at: string;
+  image_url?: string;
 }
 
 interface MealCardProps {
@@ -24,6 +25,7 @@ interface MealCardProps {
   meal_type: "breakfast" | "lunch" | "dinner" | "snack";
   is_saved: boolean;
   logged_at: string;
+  imageUrl?: string;
 }
 
 const MealCard = ({
@@ -33,7 +35,17 @@ const MealCard = ({
   carbs,
   fat,
   meal_type,
+  logged_at,
+  imageUrl,
 }: MealCardProps) => {
+  // Format time from logged_at
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
   return (
     <View
       style={{
@@ -46,9 +58,9 @@ const MealCard = ({
       }}
       className="bg-white py-5 px-7 mt-2"
     >
-      <View className="flex-row">
-        <View className="flex-col">
-          <Text className="text-2xl font-benzinBold">{name}</Text>
+      <View className="flex-row justify-between">
+        <View className="flex-col flex-1 mr-4">
+          <Text className="text-xl font-benzinBold">{name}</Text>
           <Text className="font-benzinBold mb-3">
             <Text className="text-3xl">{calories}</Text>
             <Text className="text-sm text-gray-400"> calories</Text>
@@ -71,6 +83,24 @@ const MealCard = ({
               <Text className="font-benzinBold text-[#F59E0B]">{fat}g</Text>
             </View>
           </View>
+          {/* Time display */}
+          <Text className="text-gray-400 text-sm mt-3 font-benzinMedium">
+            {formatTime(logged_at)}
+          </Text>
+        </View>
+        {/* Image or placeholder */}
+        <View className="justify-center">
+          {imageUrl ? (
+            <Image
+              source={{ uri: imageUrl }}
+              style={{ width: 80, height: 80, borderRadius: 16 }}
+              resizeMode="cover"
+            />
+          ) : (
+            <View className="items-center justify-center" style={{ width: 80, height: 80 }}>
+              <Ionicons name="fast-food" size={60} color="#D1D5DB" />
+            </View>
+          )}
         </View>
       </View>
     </View>

@@ -12,6 +12,7 @@ export const GET_MEALS_QUERY = `
       isSaved
       entryDate
       loggedAt
+      imageUrl
     }
   }
 `;
@@ -29,6 +30,7 @@ export const CREATE_MEAL_MUTATION = `
       isSaved
       entryDate
       loggedAt
+      imageUrl
     }
   }
 `;

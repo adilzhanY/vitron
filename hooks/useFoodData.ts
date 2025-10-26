@@ -16,6 +16,7 @@ export interface FoodEntry {
   is_saved: boolean;
   entry_date: string;
   logged_at: string;
+  image_url?: string;
 }
 
 export interface FoodTotals {
