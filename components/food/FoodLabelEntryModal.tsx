@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomButton from "@/components/shared/CustomButton";
@@ -38,44 +38,55 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
   onSave,
   labelData,
 }) => {
-  const [entryName, setEntryName] = useState(labelData?.foodName || "");
-  const [numberOfServings, setNumberOfServings] = useState(
-    labelData?.numberOfServings?.toString() || "1"
-  );
-  const [servingSize, setServingSize] = useState(
-    labelData?.servingSize?.toString() || "0"
-  );
-  const [nutrientsPer, setNutrientsPer] = useState(
-    labelData?.nutrientsPer?.toString() || "0"
-  );
-  const [calories, setCalories] = useState(
-    labelData?.calories?.toString() || "0"
-  );
-  const [protein, setProtein] = useState(
-    labelData?.protein?.toString() || "0"
-  );
-  const [carbs, setCarbs] = useState(
-    labelData?.carbs?.toString() || "0"
-  );
-  const [fat, setFat] = useState(
-    labelData?.fats?.toString() || "0"
-  );
+  console.log('FoodLabelEntryModal: labelData received:', labelData);
+
+  const [entryName, setEntryName] = useState("");
+  const [numberOfServings, setNumberOfServings] = useState("1");
+  const [servingSize, setServingSize] = useState("0");
+  const [nutrientsPer, setNutrientsPer] = useState("0");
+  const [calories, setCalories] = useState("0");
+  const [protein, setProtein] = useState("0");
+  const [carbs, setCarbs] = useState("0");
+  const [fat, setFat] = useState("0");
   const [mealType, setMealType] = useState<MealType>("breakfast");
   const [isSaving, setIsSaving] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  // Update state when labelData changes
+  useEffect(() => {
+    if (labelData) {
+      console.log('FoodLabelEntryModal: Updating state with labelData:', labelData);
+      setEntryName(labelData.foodName || "");
+      setNumberOfServings(labelData.numberOfServings?.toString() || "1");
+      setServingSize(labelData.servingSize?.toString() || "0");
+      setNutrientsPer(labelData.nutrientsPer?.toString() || "0");
+      setCalories(labelData.calories?.toString() || "0");
+      setProtein(labelData.protein?.toString() || "0");
+      setCarbs(labelData.carbs?.toString() || "0");
+      setFat(labelData.fats?.toString() || "0");
+    }
+  }, [labelData]);
 
   const calculateTotal = (value: number) => {
     const servings = Number(numberOfServings) || 1;
     const servingSizeNum = Number(servingSize) || 1;
     const nutrientsPerNum = Number(nutrientsPer) || 1;
     const ratio = (servingSizeNum / nutrientsPerNum) * servings;
-    return Math.round(value * ratio);
+    const result = Math.round(value * ratio);
+    console.log(`calculateTotal: value=${value}, servings=${servings}, servingSize=${servingSizeNum}, nutrientsPer=${nutrientsPerNum}, ratio=${ratio}, result=${result}`);
+    return result;
   };
 
   const totalCalories = calculateTotal(Number(calories) || 0);
   const totalProtein = calculateTotal(Number(protein) || 0);
   const totalCarbs = calculateTotal(Number(carbs) || 0);
   const totalFat = calculateTotal(Number(fat) || 0);
+
+  console.log('FoodLabelEntryModal render:', {
+    calories, protein, carbs, fat,
+    totalCalories, totalProtein, totalCarbs, totalFat,
+    servingSize, nutrientsPer, numberOfServings
+  });
 
   const handleSave = async () => {
     if (!entryName.trim()) {

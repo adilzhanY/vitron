@@ -1,4 +1,5 @@
 // GraphQL queries for meals (food entries)
+// NOTE: imageUrl field requires backend restart to update GraphQL schema
 export const GET_MEALS_QUERY = `
   query GetMeals($clerkId: String!, $date: String!) {
     meals(clerkId: $clerkId, date: $date) {

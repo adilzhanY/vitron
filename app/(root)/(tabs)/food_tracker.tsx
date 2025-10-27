@@ -278,10 +278,10 @@ const FoodTracker = () => {
                 protein={entry.protein}
                 carbs={entry.carbs}
                 fat={entry.fat}
-                meal_type={entry.meal_type}
-                is_saved={entry.is_saved}
-                logged_at={entry.logged_at}
-                imageUrl={entry.image_url}
+                meal_type={entry.mealType}
+                is_saved={entry.isSaved}
+                logged_at={entry.loggedAt}
+                imageUrl={entry.imageUrl}
               />
             </View>
           ))

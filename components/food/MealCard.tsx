@@ -9,11 +9,11 @@ export interface FoodEntry {
   protein: number;
   carbs: number;
   fat: number;
-  meal_type: "breakfast" | "lunch" | "dinner" | "snack";
-  is_saved: boolean;
-  entry_date: string;
-  logged_at: string;
-  image_url?: string;
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  isSaved: boolean;
+  entryDate: string;
+  loggedAt: string;
+  imageUrl?: string;
 }
 
 interface MealCardProps {
@@ -38,9 +38,19 @@ const MealCard = ({
   logged_at,
   imageUrl,
 }: MealCardProps) => {
+  console.log('MealCard render:', { name, logged_at, imageUrl });
+
   // Format time from logged_at
   const formatTime = (timestamp: string) => {
+    if (!timestamp) {
+      console.log('MealCard: No timestamp provided');
+      return '--:--';
+    }
     const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+      console.log('MealCard: Invalid timestamp:', timestamp);
+      return '--:--';
+    }
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;

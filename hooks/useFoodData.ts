@@ -12,11 +12,11 @@ export interface FoodEntry {
   protein: number;
   carbs: number;
   fat: number;
-  meal_type: "breakfast" | "lunch" | "dinner" | "snack";
-  is_saved: boolean;
-  entry_date: string;
-  logged_at: string;
-  image_url?: string;
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  isSaved: boolean;
+  entryDate: string;
+  loggedAt: string;
+  imageUrl?: string;
 }
 
 export interface FoodTotals {
@@ -123,6 +123,7 @@ export const useFoodData = (selectedDate: Date) => {
           clerkId: clerkUser.id,
           date: dateString,
         });
+        console.log('useFoodData: Received meals data:', data.meals);
         setFoodEntries(data.meals || []);
       } catch (err) {
         console.error("Failed to fetch food data:", err);

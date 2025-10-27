@@ -128,6 +128,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
       }
 
       const aiData = await analyzeImageWithAI(uploadedImageUrl, promptType);
+      console.log("FoodEntryModal: AI data received:", JSON.stringify(aiData, null, 2));
 
       // Only delete image for label mode, keep it for scan/gallery mode
       if (mode === "label") {
@@ -140,11 +141,11 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
 
       // Step 4: Handle AI response based on data structure
       if (aiData.servingSize !== undefined && aiData.nutrientsPer !== undefined) {
-        console.log("Opened FoodLabelEntryModal for label data");
+        console.log("Opened FoodLabelEntryModal for label data:", aiData);
         setLabelData(aiData);
         setShowLabelModal(true);
       } else {
-        console.log("Populated FoodEntryModal with meal data");
+        console.log("Populated FoodEntryModal with meal data:", aiData);
         setEntryName(aiData.foodName || "");
         setCalories(aiData.calories?.toString() || "");
         setProtein(aiData.protein?.toString() || "");

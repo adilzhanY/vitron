@@ -113,10 +113,9 @@ export class MealService {
     }
     const userId = userResult[0].id;
 
-    // Prepare logged_at timestamp
-    const loggedAtTimestamp = input.entryDate
-      ? new Date(input.entryDate).toISOString()
-      : new Date().toISOString();
+    // Use current timestamp for logged_at (when the meal is actually logged)
+    // entryDate is only used to determine which day the meal belongs to in queries
+    const loggedAtTimestamp = new Date().toISOString();
 
     // Insert meal
     const result = await this.sql`
