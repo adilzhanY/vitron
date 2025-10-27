@@ -8,7 +8,7 @@ import { MealType } from "@/types/type";
 import FoodCameraView from "./FoodCameraView";
 import FoodLabelEntryModal from "./FoodLabelEntryModal";
 import { useUser } from "@clerk/clerk-expo";
-import { uploadImageToS3, deleteImageFromS3, ImageUploadMode } from "@/services/food/s3Service";
+import { uploadImageToS3, ImageUploadMode } from "@/services/food/s3Service";
 import { analyzeImageWithAI, PromptType } from "@/services/food/aiService";
 
 interface FoodEntryModalProps {
@@ -130,19 +130,14 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
       const aiData = await analyzeImageWithAI(uploadedImageUrl, promptType);
       console.log("FoodEntryModal: AI data received:", JSON.stringify(aiData, null, 2));
 
-      // Only delete image for label mode, keep it for scan/gallery mode
-      if (mode === "label") {
-        try {
-          await deleteImageFromS3(uploadedImageUrl);
-        } catch (deleteError) {
-          console.error("Failed to delete image from S3:", deleteError);
-        }
-      }
+      // Keep the image for all modes (scan, label, gallery)
+      // Images are stored in S3 and referenced in the database
 
       // Step 4: Handle AI response based on data structure
       if (aiData.servingSize !== undefined && aiData.nutrientsPer !== undefined) {
         console.log("Opened FoodLabelEntryModal for label data:", aiData);
         setLabelData(aiData);
+        setImageUrl(uploadedImageUrl); // Save image URL for label mode too
         setShowLabelModal(true);
       } else {
         console.log("Populated FoodEntryModal with meal data:", aiData);
@@ -151,10 +146,8 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
         setProtein(aiData.protein?.toString() || "");
         setCarbs(aiData.carbs?.toString() || "");
         setFat(aiData.fats?.toString() || "");
-        // Save the image URL for scan/gallery mode
-        if (mode === "scan" || mode === "gallery") {
-          setImageUrl(uploadedImageUrl);
-        }
+        // Save the image URL for all modes
+        setImageUrl(uploadedImageUrl);
       }
     } catch (error) {
       console.error("Failed to populate modal with AI data:", error);
@@ -201,10 +194,12 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
         onClose={() => {
           setShowLabelModal(false);
           setLabelData(null);
+          setImageUrl(undefined);
           onClose();
         }}
         onSave={onSave}
         labelData={labelData}
+        imageUrl={imageUrl}
       />
 
       {/* Loading Modal */}

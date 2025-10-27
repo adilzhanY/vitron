@@ -48,11 +48,7 @@ const WaterCard: React.FC<WaterCardProps> = ({
       <View className="flex-row items-center justify-between">
         {/* Left side - Title, consumption, and button */}
         <View className="flex-1">
-          {/* Water title */}
-          <Text className="text-xl font-benzinBold text-gray-400 mb-3">
-            Water
-          </Text>
-
+  
           {/* Water consumption display */}
           <Text className="text-2xl font-benzinBold text-gray-800 mb-3">
             <Text>{waterConsumed}</Text>

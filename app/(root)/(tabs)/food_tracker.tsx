@@ -288,6 +288,11 @@ const FoodTracker = () => {
         )}
 
         {/* Water Tracking Card */}
+        <View className="mt-6">
+          <Text className="text-black text-2xl font-benzinBold">
+            Water
+          </Text>
+        </View>
         <View
           style={{
             borderRadius: 50,

@@ -28,8 +28,10 @@ interface FoodLabelEntryModalProps {
     mealType: MealType;
     isSaved: boolean;
     date: string;
+    imageUrl?: string;
   }) => Promise<void>;
   labelData: FoodLabelData | null;
+  imageUrl?: string;
 }
 
 const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
@@ -37,6 +39,7 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
   onClose,
   onSave,
   labelData,
+  imageUrl,
 }) => {
   console.log('FoodLabelEntryModal: labelData received:', labelData);
 
@@ -103,6 +106,7 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
       mealType: mealType,
       isSaved: false,
       date: new Date().toISOString(),
+      imageUrl: imageUrl,
     });
     setIsSaving(false);
     console.log("Opened FoodLabelEntryModal for label data");
