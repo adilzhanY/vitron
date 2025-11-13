@@ -216,7 +216,7 @@ const FoodTracker = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-[#F7F3E9]">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         <PageHeader
           title="Track your food"
@@ -225,13 +225,12 @@ const FoodTracker = () => {
         />
         <View
           style={{
-            borderRadius: 50,
+            borderRadius: 30,
             shadowColor: "#000",
-            shadowOffset: { width: 0, height: 5 },
             shadowOpacity: 0.15,
             shadowRadius: 10,
-            elevation: 8,
-            alignSelf: "flex-start",
+            elevation: 4,
+            alignSelf: "flex-start"
           }}
         >
           <FoodDateSelector
@@ -249,12 +248,12 @@ const FoodTracker = () => {
         {/* Daily Log Section */}
         <View className="mt-6 mb-4">
           <View className="flex-row justify-between items-center px-1">
-            <Text className="text-black text-2xl font-benzinBold">
+            <Text className="text-black text-3xl font-interBlack">
               Daily Log
             </Text>
             <View className="flex-row items-center bg-orange-100 px-3 py-2 rounded-full">
               <FontAwesome5 name="fire" size={18} color="#F97316" />
-              <Text className="text-orange-600 font-benzinBold text-base ml-2">
+              <Text className="text-orange-600 font-interExtraBold text-base ml-2">
                 {foodStreak} {foodStreak === 1 ? 'day' : 'days'}
               </Text>
             </View>
@@ -265,7 +264,7 @@ const FoodTracker = () => {
         {foodEntries.length === 0 ? (
           <View className="flex-1 justify-center items-center py-12">
             <FontAwesome5 name="utensils" size={60} color="#D1D5DB" />
-            <Text className="text-gray-400 text-lg font-benzinBold mt-4">
+            <Text className="text-gray-400 text-lg font-interExtraBold mt-4">
               Log your first meal for today!
             </Text>
           </View>
@@ -289,18 +288,16 @@ const FoodTracker = () => {
 
         {/* Water Tracking Card */}
         <View className="mt-6">
-          <Text className="text-black text-2xl font-benzinBold">
+          <Text className="text-black text-3xl font-interBlack">
             Water
           </Text>
         </View>
         <View
           style={{
-            borderRadius: 50,
             shadowColor: "#000",
-            shadowOffset: { width: 0, height: 5 },
             shadowOpacity: 0.15,
             shadowRadius: 10,
-            elevation: 8,
+            elevation: 4,
           }}
         >
           <WaterCard

@@ -193,13 +193,13 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    fontFamily: "Benzin-Regular",
+    fontFamily: "Inter-Regular",
     color: "#666666",
     marginTop: 10,
   },
   weightDisplay: {
     fontSize: 36,
-    fontFamily: "Benzin-Bold",
+    fontFamily: "Inter-Bold",
     color: "#000000",
     marginBottom: 20,
   },
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   dot: {
     fontSize: 32,
-    fontFamily: "Benzin-Bold",
+    fontFamily: "Inter-Bold",
     color: "#000000",
     marginBottom: 10,
   },
@@ -245,13 +245,13 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
     color: "#9CA3AF",
-    fontFamily: "Benzin-Bold",
+    fontFamily: "Inter-Bold",
     textAlign: "center",
   },
   selectedItemText: {
     fontSize: 24,
     color: "#000000",
-    fontFamily: "Benzin-Bold",
+    fontFamily: "Inter-Bold",
     textAlign: "center",
   },
 });

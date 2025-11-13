@@ -30,8 +30,8 @@ const MacroProgressBar: React.FC<MacroProgressBarProps> = ({
     <View className="mb-4">
       {/* Labels */}
       <View className="flex-row justify-between items-center mb-1">
-        <Text className="text-sm font-benzinBold text-gray-800">{label}</Text>
-        <Text className="text-sm font-benzinBold text-gray-600">
+        <Text className="text-sm font-interBold text-gray-800">{label}</Text>
+        <Text className="text-sm font-interBold text-gray-600">
           {safeCurrentValue.toFixed(0)} / {safeGoalValue.toFixed(0)} {unit}
         </Text>
       </View>

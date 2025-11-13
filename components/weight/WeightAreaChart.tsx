@@ -106,30 +106,18 @@ const WeightAreaChart = ({ entries }: WeightAreaChartProps) => {
     <View>
       {/* Header */}
       <View className="flex-row justify-between items-center my-4">
-        <Text className="text-black text-xl font-benzinBold">Weight Progress</Text>
+        <Text className="text-black text-xl font-interBold">Weight Progress</Text>
         <FontAwesome name="search" size={20} color="black" />
       </View>
 
-      {/* Tabs */}
-      {/* <View className="flex-row bg-dark-blue-light rounded-full p-1 mb-4">
-        {tabs.map(tab => (
-          <Pressable
-            key={tab}
-            onPress={() => setActiveTab(tab)}
-            className={`flex-1 py-2 rounded-full ${activeTab === tab ? 'bg-dark-blue-heavy' : ''}`}
-          >
-            <Text className="text-white text-center font-benzinMedium">{tab}</Text>
-          </Pressable>
-        ))}
-      </View> */}
       {/* Tooltip */}
       <View className="h-12 items-center justify-center">
         {selectedEntry && (
           <View>
-            <Text className="text-black text-2xl font-benzinBold text-center">
+            <Text className="text-black text-2xl font-interExtraBold text-center">
               {selectedEntry.weight.toFixed(1)} kg
             </Text>
-            <Text className="text-gray-400 text-sm font-benzinMedium text-center">
+            <Text className="text-gray-400 text-sm font-interSemiBold text-center">
               {format(parseISO(selectedEntry.date), 'eeee, d MMM yyyy')}
             </Text>
           </View>

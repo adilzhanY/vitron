@@ -101,7 +101,7 @@ const TrackWeight = () => {
         </TouchableOpacity>
 
         {/* Title */}
-        <Text className="text-black text-xl font-benzinExtraBold">
+        <Text className="text-black text-xl font-interExtraBold">
           Track New Weight
         </Text>
       </View>
@@ -117,12 +117,12 @@ const TrackWeight = () => {
           }}
           className='bg-blue-500 p-3 rounded-lg mb-4'
         >
-          <Text className='text-white text-center font-benzinBold'>
+          <Text className='text-white text-center font-interBold'>
             {pickerMode === 'text' && 'Using TextInput (OLD)'}
             {pickerMode === 'original' && 'Using WeightPicker (ORIGINAL)'}
             {pickerMode === 'new' && 'Using WeightPicker2 (NEW LIBRARY)'}
           </Text>
-          <Text className='text-white text-center font-benzin text-sm mt-1'>
+          <Text className='text-white text-center font-inter text-sm mt-1'>
             Tap to cycle through options
           </Text>
         </TouchableOpacity>
@@ -133,14 +133,14 @@ const TrackWeight = () => {
           // Show loading while preparing picker data
           <View className='py-20'>
             <LoadingLogo size={80} />
-            <Text className='text-center text-gray-500 mt-4 font-benzin'>
+            <Text className='text-center text-gray-500 mt-4 font-inter'>
               Preparing picker...
             </Text>
           </View>
         ) : pickerMode === 'original' ? (
           // Original WeightPicker Component (Custom Implementation)
           <View>
-            <Text className='text-black text-lg font-benzinMedium mb-2 text-center'>
+            <Text className='text-black text-lg font-interMedium mb-2 text-center'>
               Select Your Weight (Original Picker)
             </Text>
             <WeightPicker
@@ -159,7 +159,7 @@ const TrackWeight = () => {
         ) : pickerMode === 'new' ? (
           // New WeightPicker2 Component (Library Implementation)
           <View>
-            <Text className='text-black text-lg font-benzinMedium mb-2 text-center'>
+            <Text className='text-black text-lg font-interMedium mb-2 text-center'>
               Select Your Weight (New Library)
             </Text>
             <WeightPicker2
@@ -171,9 +171,9 @@ const TrackWeight = () => {
         ) : (
           // Old TextInput
           <View>
-            <Text className='text-black text-lg font-benzinMedium mb-2'>Today's Weight (kg)</Text>
+            <Text className='text-black text-lg font-interMedium mb-2'>Today's Weight (kg)</Text>
             <TextInput
-              className='bg-dark-blue-light text-black text-xl p-4 border rounded-3xl font-benzinBold'
+              className='bg-dark-blue-light text-black text-xl p-4 border rounded-3xl font-interBold'
               placeholder='e.g. 83.4'
               placeholderTextColor="#6b7280"
               keyboardType='numeric'

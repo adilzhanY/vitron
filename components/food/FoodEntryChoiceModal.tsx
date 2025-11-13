@@ -24,7 +24,7 @@ const FoodEntryChoiceModal: React.FC<FoodEntryChoiceModalProps> = ({
     >
       <View className="flex-1 justify-center items-center bg-black/50">
         <View className="w-11/12 bg-white rounded-3xl p-6">
-          <Text className="text-black text-2xl font-benzinBold mb-6 text-center">
+          <Text className="text-black text-2xl font-interExtraBold mb-6 text-center">
             Add Food Entry
           </Text>
 
@@ -35,7 +35,7 @@ const FoodEntryChoiceModal: React.FC<FoodEntryChoiceModalProps> = ({
             activeOpacity={0.8}
           >
             <MaterialIcons name="camera-alt" size={48} color="white" />
-            <Text className="text-white text-xl font-benzinBold mt-3">
+            <Text className="text-white text-xl font-interExtraBold mt-3">
               Scan Food
             </Text>
           </TouchableOpacity>
@@ -47,7 +47,7 @@ const FoodEntryChoiceModal: React.FC<FoodEntryChoiceModalProps> = ({
             activeOpacity={0.8}
           >
             <MaterialIcons name="edit" size={48} color="white" />
-            <Text className="text-white text-xl font-benzinBold mt-3">
+            <Text className="text-white text-xl font-interExtraBold mt-3">
               Describe Food
             </Text>
           </TouchableOpacity>
@@ -58,7 +58,7 @@ const FoodEntryChoiceModal: React.FC<FoodEntryChoiceModalProps> = ({
             className="bg-gray-200 rounded-2xl p-4 items-center"
             activeOpacity={0.8}
           >
-            <Text className="text-gray-700 text-lg font-benzinBold">
+            <Text className="text-gray-700 text-lg font-interExtraBold">
               Cancel
             </Text>
           </TouchableOpacity>

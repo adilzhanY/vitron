@@ -66,7 +66,7 @@ const CustomButton = React.memo(({
       {...props}
     >
       {IconLeft && <IconLeft />}
-      <Text className={`text-lg font-benzinExtraBold ${getTextVariantStyle(textVariant)}`}>
+      <Text className={`text-lg font-interExtraBold ${getTextVariantStyle(textVariant)}`}>
         {title}
       </Text>
       {IconRight && <IconRight />}

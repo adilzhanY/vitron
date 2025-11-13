@@ -70,8 +70,8 @@ const MealCard = ({
     >
       <View className="flex-row justify-between">
         <View className="flex-col flex-1 mr-4">
-          <Text className="text-lg font-benzinBold">{name}</Text>
-          <Text className="font-benzinBold mb-3">
+          <Text className="text-lg font-interExtraBold">{name}</Text>
+          <Text className="font-interBlack mb-3">
             <Text className="text-2xl">{calories}</Text>
             <Text className="text-sm text-gray-400"> calories</Text>
           </Text>
@@ -80,21 +80,21 @@ const MealCard = ({
             {/* Carbs */}
             <View className="flex-row items-center bg-[#BBF7D0] p-2 rounded-lg gap-1">
               <Ionicons name="leaf" size={15} color="#22C55E" />
-              <Text className="font-benzinBold text-[#22C55E] text-sm">{carbs}g</Text>
+              <Text className="font-interExtraBold text-[#22C55E] text-sm">{carbs}g</Text>
             </View>
             {/* Protein */}
             <View className="flex-row bg-[#BFDBFE] p-2 rounded-lg gap-1">
               <Ionicons name="fish" size={15} color="#3B82F6" />
-              <Text className="font-benzinBold text-[#3B82F6] text-sm">{protein}g</Text>
+              <Text className="font-interExtraBold text-[#3B82F6] text-sm">{protein}g</Text>
             </View>
             {/* Fat */}
             <View className="flex-row bg-[#FED7AA] p-2 rounded-lg gap-1">
               <Ionicons name="water" size={15} color="#F59E0B" />
-              <Text className="font-benzinBold text-[#F59E0B] text-sm">{fat}g</Text>
+              <Text className="font-interExtraBold text-[#F59E0B] text-sm">{fat}g</Text>
             </View>
           </View>
           {/* Time display */}
-          <Text className="text-gray-400 text-sm mt-3 font-benzinMedium">
+          <Text className="text-gray-400 text-sm mt-3 font-interSemiBold">
             {formatTime(logged_at)}
           </Text>
         </View>

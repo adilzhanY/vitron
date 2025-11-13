@@ -21,6 +21,18 @@ function InitialLayout() {
     "Benzin-ExtraBold": require("../assets/font/Benzin/Benzin-ExtraBold.ttf"),
     "Benzin-Medium": require("../assets/font/Benzin/Benzin-Medium.ttf"),
     "Benzin-Semibold": require("../assets/font/Benzin/Benzin-Semibold.ttf"),
+    "Nunito-Regular": require("../assets/font/Nunito/Nunito-Regular.ttf"),
+    "Nunito-Bold": require("../assets/font/Nunito/Nunito-Bold.ttf"),
+    "Nunito-ExtraBold": require("../assets/font/Nunito/Nunito-ExtraBold.ttf"),
+    "Nunito-SemiBold": require("../assets/font/Nunito/Nunito-SemiBold.ttf"),
+    "Nunito-Medium": require("../assets/font/Nunito/Nunito-Medium.ttf"),
+    "Nunito-Black": require("../assets/font/Nunito/Nunito-Black.ttf"),
+    "Inter-Regular": require("../assets/font/Inter/Inter_18pt-Regular.ttf"),
+    "Inter-Bold": require("../assets/font/Inter/Inter_18pt-Bold.ttf"),
+    "Inter-ExtraBold": require("../assets/font/Inter/Inter_18pt-ExtraBold.ttf"),
+    "Inter-SemiBold": require("../assets/font/Inter/Inter_18pt-SemiBold.ttf"),
+    "Inter-Medium": require("../assets/font/Inter/Inter_18pt-Medium.ttf"),
+    "Inter-Black": require("../assets/font/Inter/Inter_18pt-Black.ttf")
   });
   const { isLoaded, isSignedIn, userId } = useAuth();
   const [measurementsFilled, setMeasurementsFilled] = useState<boolean | null>(null);

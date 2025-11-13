@@ -103,30 +103,30 @@ const Home = () => {
     );
   }
   return (
-    <SafeAreaView className="bg-white flex-1">
-      <Text className="text-black text-3xl font-benzinBold mb-6">
+    <SafeAreaView className="bg-[#F7F3E9] flex-1">
+      <Text className="text-black text-3xl font-interBold mb-6">
         Welcome, {userData?.name?.split(" ")[0]}
       </Text>
       <View className="flex-1 justify-center items-center px-4">
         {userData ? (
           <View className="space-y-2 items-center">
-            <Text className="text-black text-xl font-benzin">
+            <Text className="text-black text-xl font-inter">
               Your activity level: {userData.activityLevel}
             </Text>
-            <Text className="text-black text-xl font-benzin">
+            <Text className="text-black text-xl font-inter">
               Your age:{" "}
               {userData?.birthday ? calculateAge(userData.birthday) : "-"}
             </Text>
-            <Text className="text-black text-xl font-benzin">
+            <Text className="text-black text-xl font-inter">
               Your height: {userData.height} cm
             </Text>
-            <Text className="text-black text-xl font-benzin">
+            <Text className="text-black text-xl font-inter">
               You are: {userData.gender}
             </Text>
-            <Text className="text-black text-xl font-benzin">
+            <Text className="text-black text-xl font-inter">
               Your Goal: {userData.goal}
             </Text>
-            <Text className="text-black text-xl font-benzin">
+            <Text className="text-black text-xl font-inter">
               Your initial weight: {userData.initialWeight} kg
             </Text>
           </View>

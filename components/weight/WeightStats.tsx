@@ -14,19 +14,19 @@ const WeightStats: React.FC<WeightStatsProps> = ({bmi, nextCheckpoint}) => {
       {/* BMI */}
       <View className="items-center">
         <View className="flex-row items-center">
-          <Text className="text-gray-400 text-sm font-benzinMedium">BMI</Text>
+          <Text className="text-gray-400 text-sm font-interExtraBold">BMI</Text>
           <FontAwesome5 name="weight" size={16} color={colors.black} style={{marginLeft: 6}} />
         </View>
-        <Text className="text-black text-xl font-benzinBold">{bmi}</Text>
+        <Text className="text-black text-xl font-interExtraBold">{bmi}</Text>
       </View>
 
       {/* Next Checkpoint*/}
       <View className="items-center">
         <View className="flex-row items-center">
-          <Text className="text-gray-400 text-sm font-benzinMedium">Next</Text>
+          <Text className="text-gray-400 text-sm font-interExtraBold">Next</Text>
           <FontAwesome5 name="flag-checkered" size={16} color={colors.black} style={{marginLeft: 6}} />
         </View>
-        <Text className="text-black text-xl font-benzinBold">
+        <Text className="text-black text-xl font-interExtraBold">
           {nextCheckpoint.toFixed(1)} kg
         </Text>
       </View>

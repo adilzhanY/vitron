@@ -50,7 +50,7 @@ const WaterCard: React.FC<WaterCardProps> = ({
         <View className="flex-1">
   
           {/* Water consumption display */}
-          <Text className="text-2xl font-benzinBold text-gray-800 mb-3">
+          <Text className="text-3xl font-interBlack text-gray-800 mb-3">
             <Text>{waterConsumed}</Text>
             /
             <Text className="text-gray-400">{dailyGoal} ml</Text>
@@ -63,10 +63,10 @@ const WaterCard: React.FC<WaterCardProps> = ({
             className="bg-gray-100 px-4 py-2 rounded-xl flex-row items-center self-start"
             style={{ opacity: waterConsumed >= dailyGoal ? 0.5 : 1 }}
           >
-            <Text className="text-base font-benzinBold text-gray-800">
+            <Text className="text-xl font-interExtraBold text-gray-800">
               Add {increment} ml
             </Text>
-            <Text className="text-2xl font-benzinBold text-gray-800 ml-2">
+            <Text className="text-2xl font-interBlack text-gray-800 ml-2">
               +
             </Text>
           </TouchableOpacity>

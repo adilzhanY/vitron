@@ -98,7 +98,7 @@ export default function SignUpScreen() {
             source={icons.applogo}
             className="z-0 w-[200px] h-[200px] mb-20"
           />
-          <Text className="text-2xl text-black font-benzinSemiBold absolute bottom-5 left-5">
+          <Text className="text-2xl text-black font-interSemiBold absolute bottom-5 left-5">
             Create Your Account
           </Text>
         </View>
@@ -137,7 +137,7 @@ export default function SignUpScreen() {
 
           <Link
             href="/sign-in"
-            className="text-lg text-center text-gray-500 mt-10 font-benzinBold"
+            className="text-lg text-center text-gray-500 mt-10 font-interBold"
           >
             Already have an account? <Text className="text-black">Log In</Text>
           </Link>
@@ -151,10 +151,10 @@ export default function SignUpScreen() {
           }}
         >
           <View className="bg-black px-7 py-9 rounded-2xl min-h-[300px]">
-            <Text className="font-benzinExtraBold text-2xl text-white mb-2">
+            <Text className="font-interExtraBold text-2xl text-white mb-2">
               Verification
             </Text>
-            <Text className="font-benzinSemiBold mb-5 text-white">
+            <Text className="font-interSemiBold mb-5 text-white">
               We've sent a verification code to {form.email}.
             </Text>
             <InputField
@@ -185,8 +185,8 @@ export default function SignUpScreen() {
               source={images.check}
               className="w-[110px] h-[110px] mx-auto my-5"
             />
-            <Text className="text-3xl font-benzinBold text-center">Verified</Text>
-            <Text className="text-base text-gray-400 font-benzin text-center mt-2">
+            <Text className="text-3xl font-interBold text-center">Verified</Text>
+            <Text className="text-base text-gray-400 font-inter text-center mt-2">
               You have successfully verified your account.
             </Text>
             <CustomButton

@@ -23,7 +23,7 @@ const OAuth = () => {
     <View>
       <View className='flex flex-row justify-center items-center mt-4 gap-x-3'>
         <View className='flex-1 h-[1px] bg-black' />
-        <Text className='text-lg  font-benzinBold text-black'>Or</Text>
+        <Text className='text-lg  font-interBold text-black'>Or</Text>
         <View className='flex-1 h-[1px] bg-black' />
       </View>
       <CustomButton

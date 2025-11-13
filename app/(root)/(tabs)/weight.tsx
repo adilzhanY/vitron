@@ -96,7 +96,7 @@ const Weight = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-[#F7F3E9]">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         <PageHeader title="Track Your Weight" actionText="All Entries" onActionPress={() => { /* Navigate to entries screen */ }} />
         <View className="bg-white p-3" style={{

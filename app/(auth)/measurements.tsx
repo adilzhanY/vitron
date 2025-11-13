@@ -363,10 +363,10 @@ const Measurements = () => {
     },
     [],
   ); const slideContainerStyle = "flex-1 items-center justify-center p-5 z-10";
-  const titleStyle = "text-black text-3xl font-benzinBold mx-10 text-center";
+  const titleStyle = "text-black text-3xl font-interBold mx-10 text-center";
   const inputContainerStyle = "flex-row items-center mt-5";
   const textInputStyle =
-    "text-white text-2xl font-benzinBold bg-gray-800 p-3 rounded-lg w-40 text-center";
+    "text-white text-2xl font-interBold bg-gray-800 p-3 rounded-lg w-40 text-center";
   const unitContainerStyle = "flex-row ml-3";
 
   // Helper function to determine if a slide should be rendered
@@ -405,7 +405,7 @@ const Measurements = () => {
                 }
                 className={`p-3 mx-2 rounded-3xl ${userMeasurements.gender === option.toLowerCase() ? "bg-green-300" : "bg-gray-700"}`}
               >
-                <Text className="text-white font-benzin">{option}</Text>
+                <Text className="text-white font-inter">{option}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -423,10 +423,10 @@ const Measurements = () => {
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 className={`p-4 mx-2 my-2 rounded-3xl ${userMeasurements.unitSystem === option.value ? "bg-green-300" : "bg-gray-700"}`}
               >
-                <Text className="text-white font-benzinBold text-lg text-center">
+                <Text className="text-white font-interBold text-lg text-center">
                   {option.label}
                 </Text>
-                <Text className="text-white font-benzin text-sm text-center mt-1">
+                <Text className="text-white font-inter text-sm text-center mt-1">
                   {option.examples}
                 </Text>
               </TouchableOpacity>
@@ -506,7 +506,7 @@ const Measurements = () => {
                 <View style={{ width: 30, alignItems: "center" }}>
                   <FontAwesome5 name={option.icon} size={24} color="white" />
                 </View>
-                <Text className="text-white font-benzinBold text-xl ml-4">
+                <Text className="text-white font-interBold text-xl ml-4">
                   {option.label}
                 </Text>
               </TouchableOpacity>
@@ -535,12 +535,12 @@ const Measurements = () => {
         <View key="calorie-goal-slide" className={slideContainerStyle}>
           <Text className={titleStyle}>Your daily calorie goal</Text>
           {calculatedCalories ? (
-            <Text className="text-gray-600 text-center mt-4 font-benzin px-4">
+            <Text className="text-gray-600 text-center mt-4 font-inter px-4">
               Based on your data, we suggest a goal of {calculatedCalories} kcal
               per day. You can adjust it below.
             </Text>
           ) : (
-            <Text className="text-gray-600 text-center mt-4 font-benzin px-4">
+            <Text className="text-gray-600 text-center mt-4 font-inter px-4">
               We'll calculate a suggestion for you based on your previous
               answers.
             </Text>
@@ -560,7 +560,7 @@ const Measurements = () => {
               }
             />
             <View className={unitContainerStyle}>
-              <Text className="text-black font-benzin p-3">kcal</Text>
+              <Text className="text-black font-inter p-3">kcal</Text>
             </View>
           </View>
         </View>
@@ -585,7 +585,7 @@ const Measurements = () => {
 
       {/* Display validation error */}
       {(weightError || targetWeightError) && (
-        <Text className="text-red-500 font-benzinBold text-center px-4 mb-2">
+        <Text className="text-red-500 font-interBold text-center px-4 mb-2">
           {weightError || targetWeightError}
         </Text>
       )}

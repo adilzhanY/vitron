@@ -12,22 +12,22 @@ const WeightStreaks: React.FC<WeightStreaksProps> = ({ activeStreak, longestStre
     <View className="flex-row gap-2 px-2 mt-4">
       {/* Active Streak */}
       <View className="flex-1 bg-white border border-yellow-400 rounded-2xl p-4 shadow">
-        <Text className="text-yellow-400 text-sm font-benzinExtraBold">Active Streak</Text>
+        <Text className="text-yellow-400 text-sm font-interExtraBold">Active Streak</Text>
         <View className="flex-row items-center">
-          <Text className="text-black text-3xl font-benzinBold mt-2">{activeStreak}</Text>
+          <Text className="text-black text-3xl font-interBold mt-2">{activeStreak}</Text>
           <FontAwesome5 name="fire" size={24} color="#facc15" style={{ marginLeft: 8 }} />
         </View>
-        <Text className="text-gray-300 text-sm mt-1 font-benzinBold">days in a row</Text>
+        <Text className="text-gray-300 text-sm mt-1 font-interBold">days in a row</Text>
       </View>
 
       {/* Longest Streak */}
       <View className="flex-1 bg-white border border-yellow-400 rounded-2xl p-4 shadow">
-        <Text className="text-yellow-400 text-sm font-benzinExtraBold">Longest Streak</Text>
+        <Text className="text-yellow-400 text-sm font-interExtraBold">Longest Streak</Text>
         <View className="flex-row items-center">
-          <Text className="text-black text-3xl font-benzinBold mt-2">{longestStreak}</Text>
+          <Text className="text-black text-3xl font-interBold mt-2">{longestStreak}</Text>
           <FontAwesome5 name="star" size={24} solid color="#fde047" style={{ marginLeft: 8 }} />
         </View>
-        <Text className="text-gray-300 text-sm mt-1 font-benzinBold">best record</Text>
+        <Text className="text-gray-300 text-sm mt-1 font-interBold">best record</Text>
       </View>
     </View>
   );

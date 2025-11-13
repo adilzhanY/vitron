@@ -163,7 +163,7 @@ const AnimatedPickerItem = memo(<T,>({
         style={[
           {
             color: "#9CA3AF",
-            fontFamily: "Benzin-Bold",
+            fontFamily: "Inter-Bold",
             textAlign: "center" as const,
           },
           textStyle,
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     color: "#9CA3AF",
-    fontFamily: "Benzin-Bold",
+    fontFamily: "Inter-Bold",
     textAlign: "center",
   },
   gradientTop: {

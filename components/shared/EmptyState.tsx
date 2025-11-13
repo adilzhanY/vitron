@@ -15,9 +15,9 @@ const EmptyState: React.FC<EmptyStateProps> = ({ title, subtitle, buttonText, on
   return (
     <SafeAreaView className='bg-white flex-1 justify-center items-center p-4'>
       <MaterialCommunityIcons name="weight-lifter" size={64} color="#e5e7eb" />
-      <Text className='text-black text-xl font-benzin text-center mt-4'>{title}</Text>
+      <Text className='text-black text-xl font-inter text-center mt-4'>{title}</Text>
       {subtitle && (
-        <Text className='text-gray-400 text-sm font-benzinMedium text-center mt-2'>{subtitle}</Text>
+        <Text className='text-gray-400 text-sm font-interMedium text-center mt-2'>{subtitle}</Text>
       )}
       <View className='h-6' />
       <CustomButton

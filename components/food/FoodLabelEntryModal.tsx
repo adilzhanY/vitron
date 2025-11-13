@@ -124,7 +124,7 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
     >
       <View className="flex-1 justify-center items-center bg-black/80">
         <View className="w-11/12 max-h-[90%] bg-white rounded-2xl p-6">
-          <Text className="text-black text-2xl font-benzinBold mb-4">
+          <Text className="text-black text-2xl font-interBold mb-4">
             Track your meal (Label)
           </Text>
 
@@ -139,14 +139,14 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
             <View className="h-4" />
 
             {/* Label Information Section */}
-            <Text className="text-gray-700 text-lg font-benzinBold mb-3">
+            <Text className="text-gray-700 text-lg font-interBold mb-3">
               Label Information
             </Text>
 
             {/* Serving Size and Nutrients Per - Two columns */}
             <View className="flex-row justify-between mb-3">
               <View className="flex-1 mr-2">
-                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                <Text className="text-gray-600 text-sm font-interMedium mb-1">
                   Serving Size (g)
                 </Text>
                 <View className="bg-gray-100 rounded-xl px-4 py-3">
@@ -156,13 +156,13 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="100"
                     placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 font-benzinMedium text-base"
+                    className="text-gray-800 font-interMedium text-base"
                   />
                 </View>
               </View>
 
               <View className="flex-1 ml-2">
-                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                <Text className="text-gray-600 text-sm font-interMedium mb-1">
                   Nutrients Per (g)
                 </Text>
                 <View className="bg-gray-100 rounded-xl px-4 py-3">
@@ -172,21 +172,21 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="100"
                     placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 font-benzinMedium text-base"
+                    className="text-gray-800 font-interMedium text-base"
                   />
                 </View>
               </View>
             </View>
 
             {/* Nutrition Facts Section */}
-            <Text className="text-gray-700 text-lg font-benzinBold mb-3 mt-2">
+            <Text className="text-gray-700 text-lg font-interBold mb-3 mt-2">
               Nutrition Facts (per {nutrientsPer}g)
             </Text>
 
             {/* Calories and Protein - Two columns */}
             <View className="flex-row justify-between mb-3">
               <View className="flex-1 mr-2">
-                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                <Text className="text-gray-600 text-sm font-interMedium mb-1">
                   Calories
                 </Text>
                 <View className="bg-gray-100 rounded-xl px-4 py-3">
@@ -196,13 +196,13 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="0"
                     placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 font-benzinMedium text-base"
+                    className="text-gray-800 font-interMedium text-base"
                   />
                 </View>
               </View>
 
               <View className="flex-1 ml-2">
-                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                <Text className="text-gray-600 text-sm font-interMedium mb-1">
                   Protein (g)
                 </Text>
                 <View className="bg-gray-100 rounded-xl px-4 py-3">
@@ -212,7 +212,7 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="0"
                     placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 font-benzinMedium text-base"
+                    className="text-gray-800 font-interMedium text-base"
                   />
                 </View>
               </View>
@@ -221,7 +221,7 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
             {/* Carbs and Fat - Two columns */}
             <View className="flex-row justify-between mb-4">
               <View className="flex-1 mr-2">
-                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                <Text className="text-gray-600 text-sm font-interMedium mb-1">
                   Carbs (g)
                 </Text>
                 <View className="bg-gray-100 rounded-xl px-4 py-3">
@@ -231,13 +231,13 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="0"
                     placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 font-benzinMedium text-base"
+                    className="text-gray-800 font-interMedium text-base"
                   />
                 </View>
               </View>
 
               <View className="flex-1 ml-2">
-                <Text className="text-gray-600 text-sm font-benzinMedium mb-1">
+                <Text className="text-gray-600 text-sm font-interMedium mb-1">
                   Fat (g)
                 </Text>
                 <View className="bg-gray-100 rounded-xl px-4 py-3">
@@ -247,14 +247,14 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="0"
                     placeholderTextColor="#9CA3AF"
-                    className="text-gray-800 font-benzinMedium text-base"
+                    className="text-gray-800 font-interMedium text-base"
                   />
                 </View>
               </View>
             </View>
 
             {/* Number of servings */}
-            <Text className="text-gray-700 text-lg font-benzinBold mb-2">
+            <Text className="text-gray-700 text-lg font-interBold mb-2">
               Number of servings
             </Text>
             <View className="bg-gray-100 rounded-xl px-4 py-3 mb-4">
@@ -264,19 +264,19 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                 keyboardType="numeric"
                 placeholder="1"
                 placeholderTextColor="#9CA3AF"
-                className="text-gray-800 font-benzinMedium text-base"
+                className="text-gray-800 font-interMedium text-base"
               />
             </View>
 
             {/* Meal Type Dropdown */}
-            <Text className="text-gray-700 text-lg font-benzinBold mb-2">
+            <Text className="text-gray-700 text-lg font-interBold mb-2">
               Meal time
             </Text>
             <TouchableOpacity
               onPress={() => setDropdownVisible(!dropdownVisible)}
               className="bg-gray-100 rounded-xl px-4 py-3 mb-2 flex-row justify-between items-center"
             >
-              <Text className="text-gray-800 text-base font-benzinMedium">
+              <Text className="text-gray-800 text-base font-interMedium">
                 {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
               </Text>
               <FontAwesome
@@ -299,7 +299,7 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
                       }`}
                   >
                     <Text
-                      className={`text-base font-benzinMedium ${mealType === type ? "text-green-700" : "text-gray-700"
+                      className={`text-base font-interMedium ${mealType === type ? "text-green-700" : "text-gray-700"
                         }`}
                     >
                       {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -311,24 +311,24 @@ const FoodLabelEntryModal: React.FC<FoodLabelEntryModalProps> = ({
 
             {/* Total macros display */}
             <View className="bg-green-50 rounded-xl p-4 mb-4 border border-green-200">
-              <Text className="text-gray-700 text-base font-benzinBold mb-3">
+              <Text className="text-gray-700 text-base font-interBold mb-3">
                 Total for {numberOfServings} serving{Number(numberOfServings) !== 1 ? 's' : ''}:
               </Text>
               <View className="flex-row justify-between items-center mb-2">
-                <Text className="text-gray-600 font-benzinMedium text-sm">Calories:</Text>
-                <Text className="text-gray-900 font-benzinBold text-lg">{totalCalories}</Text>
+                <Text className="text-gray-600 font-interMedium text-sm">Calories:</Text>
+                <Text className="text-gray-900 font-interBold text-lg">{totalCalories}</Text>
               </View>
               <View className="flex-row justify-between items-center mb-2">
-                <Text className="text-gray-600 font-benzinMedium text-sm">Protein:</Text>
-                <Text className="text-gray-900 font-benzinBold text-lg">{totalProtein}g</Text>
+                <Text className="text-gray-600 font-interMedium text-sm">Protein:</Text>
+                <Text className="text-gray-900 font-interBold text-lg">{totalProtein}g</Text>
               </View>
               <View className="flex-row justify-between items-center mb-2">
-                <Text className="text-gray-600 font-benzinMedium text-sm">Carbs:</Text>
-                <Text className="text-gray-900 font-benzinBold text-lg">{totalCarbs}g</Text>
+                <Text className="text-gray-600 font-interMedium text-sm">Carbs:</Text>
+                <Text className="text-gray-900 font-interBold text-lg">{totalCarbs}g</Text>
               </View>
               <View className="flex-row justify-between items-center">
-                <Text className="text-gray-600 font-benzinMedium text-sm">Fat:</Text>
-                <Text className="text-gray-900 font-benzinBold text-lg">{totalFat}g</Text>
+                <Text className="text-gray-600 font-interMedium text-sm">Fat:</Text>
+                <Text className="text-gray-900 font-interBold text-lg">{totalFat}g</Text>
               </View>
             </View>
 

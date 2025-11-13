@@ -45,7 +45,7 @@ const SetGoalModal: React.FC<SetGoalModalProps> = ({
     >
       <View className="flex-1 justify-center items-center bg-black/80">
         <View className="w-11/12 bg-white rounded-2xl p-6">
-          <Text className="text-black text-2xl font-benzinBold mb-4">Set a New Goal</Text>
+          <Text className="text-black text-2xl font-interBold mb-4">Set a New Goal</Text>
 
           <InputField
             label="New Goal Weight (kg)"

@@ -43,7 +43,7 @@ const LazySlide: React.FC<LazySlideProps> = ({ shouldLoad, children, fallback, s
       fallback || (
         <View className="flex-1 justify-center items-center">
           <LoadingLogo size={80} />
-          <Text className="text-gray-600 font-benzinMedium mt-4">
+          <Text className="text-gray-600 font-interMedium mt-4">
             Loading...
           </Text>
         </View>

@@ -10,11 +10,11 @@ interface WeightEntriesListProps {
 const WeightEntriesList: React.FC<WeightEntriesListProps> = ({ entries }) => {
   return (
     <View className='mt-8 p-4 bg-white'>
-      <Text className='text-black font-benzinExtraBold text-lg mb-2'>All Entries</Text>
+      <Text className='text-black font-interExtraBold text-lg mb-2'>All Entries</Text>
       {entries.map((entry, index) => (
         <View key={index} className='flex-row justify-between py-2 border-b border-gray-100'>
-          <Text className='text-gray-400 font-benzinBold'>{format(parseISO(entry.date), 'eeee, d MMM')}</Text>
-          <Text className='text-black font-benzinBold'>{entry.weight.toFixed(1)} kg</Text>
+          <Text className='text-gray-400 font-interBold'>{format(parseISO(entry.date), 'eeee, d MMM')}</Text>
+          <Text className='text-black font-interBold'>{entry.weight.toFixed(1)} kg</Text>
         </View>
       ))}
     </View>

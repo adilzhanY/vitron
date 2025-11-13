@@ -64,13 +64,13 @@ const SetGoal = () => {
         </TouchableOpacity>
 
         {/* Title */}
-        <Text className="text-white text-xl font-benzinExtraBold">
+        <Text className="text-white text-xl font-interExtraBold">
           Set Your Weight Goal
         </Text>
       </View>
       <View className="flex-1 justify-center items-center bg-black/80">
         <View className="w-11/12 bg-[#1C1C1E] rounded-2xl p-6">
-          <Text className="text-white text-2xl font-benzinBold mb-4">
+          <Text className="text-white text-2xl font-interBold mb-4">
             Set a New Goal
           </Text>
 

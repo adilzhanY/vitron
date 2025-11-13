@@ -117,10 +117,10 @@ const MacroProgressCircle: React.FC<MacroProgressCircleProps> = ({
 
       {/* Label and values */}
       <View className="items-center mt-1">
-        <Text className="text-xl font-benzinBold text-black">
+        <Text className="text-2xl font-interBlack text-black">
           {safeCurrentValue.toFixed(0)}{unit}
         </Text>
-        <Text className="text-xs font-benzinMedium text-gray-400">{label}</Text>
+        <Text className="text-xs font-interBold text-gray-400">{label}</Text>
       </View>
     </View>
   );

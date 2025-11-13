@@ -22,22 +22,22 @@ const WeightGoalDisplay: React.FC<WeightGoalDisplayProps> = ({
       {/* Start Weight */}
       <View>
         <View className="flex-row items-center">
-          <Text className="text-gray-400 text-base font-benzinExtraBold">Start</Text>
+          <Text className="text-gray-400 text-base font-interExtraBold">Start</Text>
           <FontAwesome5 name="rocket" size={16} color={colors.black} style={{marginLeft: 6}} />
         </View>
-        <Text className="text-black text-xl font-benzinExtraBold">{startWeight.toFixed(1)} kg</Text>
-        <Text className="text-gray-400 text-sm font-benzinExtraBold">{startDate}</Text>
+        <Text className="text-black text-xl font-interExtraBold">{startWeight.toFixed(1)} kg</Text>
+        <Text className="text-gray-400 text-sm font-interExtraBold">{startDate}</Text>
       </View>
 
       {/* Goal weight */}
       <View className="items-end">
         <View className="flex-row items-center">
-          <Text className="text-gray-400 text-base font-benzinExtraBold">
+          <Text className="text-gray-400 text-base font-interExtraBold">
             Goal
           </Text>
           <FontAwesome5 name="trophy" size={16} color={colors.black} style={{marginLeft: 6}} />
         </View>
-        <Text className="text-black text-xl font-benzinExtraBold">{goalWeight.toFixed(1)} kg</Text>
+        <Text className="text-black text-xl font-interExtraBold">{goalWeight.toFixed(1)} kg</Text>
         <CustomButton
           title="Set Goal"
           onPress={onSetGoal}

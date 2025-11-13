@@ -20,6 +20,20 @@ module.exports = {
                 benzinExtraBold: ["Benzin-ExtraBold", "sans-serif"],
                 benzinMedium: ["Benzin-Medium", "sans-serif"],
                 benzinSemiBold: ["Benzin-Semibold", "sans-serif"],
+
+                nunito: ["Nunito-Regular", "sans-serif"],
+                nunitoBold: ["Nunito-Bold", "sans-serif"],
+                nunitoExtraBold: ["Nunito-ExtraBold", "sans-serif"],
+                nunitoSemiBold: ["Nunito-SemiBold", "sans-serif"],
+                nunitoMedium: ["Nunito-Medium", "sans-serif"],
+                nunitoBlack: ["Nunito-Black", "sans-serif"],
+
+                inter: ["Inter-Regular", "sans-serif"],
+                interBold: ["Inter-Bold", "sans-serif"],
+                interExtraBold: ["Inter-ExtraBold", "sans-serif"],
+                interSemiBold: ["Inter-SemiBold", "sans-serif"],
+                interMedium: ["Inter-Medium", "sans-serif"],
+                interBlack: ["Inter-Black", "sans-serif"],
             },
           
     },

@@ -214,7 +214,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
           <View className="flex-1 justify-center items-center bg-black/80">
             <View className="bg-white rounded-2xl p-8 items-center">
               <LoadingLogo size={100} />
-              <Text className="text-gray-700 text-lg font-benzinMedium mt-4">
+              <Text className="text-gray-700 text-lg font-interMedium mt-4">
                 Analyzing image...
               </Text>
             </View>
@@ -231,7 +231,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
       >
         <View className="flex-1 justify-center items-center bg-black/80">
           <View className="w-11/12 bg-white rounded-3xl p-6">
-            <Text className="text-black text-2xl font-benzinBold mb-4">
+            <Text className="text-black text-3xl font-interBlack mb-4">
               Track your meal
             </Text>
 
@@ -245,14 +245,14 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
             <View className="h-4" />
 
             {/* Meal Type Dropdown */}
-            <Text className="text-gray-700 text-lg font-benzinBold mb-2">
+            <Text className="text-gray-700 text-lg font-interBold mb-2">
               Meal time
             </Text>
             <TouchableOpacity
               onPress={() => setDropdownVisible(!dropdownVisible)}
               className="bg-gray-100 rounded-xl px-4 py-3 mb-2 flex-row justify-between items-center"
             >
-              <Text className="text-gray-800 text-base font-benzinMedium">
+              <Text className="text-gray-800 text-base font-interMedium">
                 {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
               </Text>
               <FontAwesome
@@ -276,7 +276,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
                       }`}
                   >
                     <Text
-                      className={`text-base font-benzinMedium ${mealType === type ? "text-green-700" : "text-gray-700"
+                      className={`text-base font-interMedium ${mealType === type ? "text-green-700" : "text-gray-700"
                         }`}
                     >
                       {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -286,29 +286,29 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
               </View>
             )}
 
-            {/* Compact macro inputs - 2 columns */}
+            {/* Macro inputs - all styled like Fat */}
             <View className="flex-row justify-between mb-3">
               {/* Calories */}
               <View className="flex-1 mr-2">
-                <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
-                  <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                <View className="flex-row items-center bg-gray-100 rounded-3xl px-4 py-3">
+                  <Text className="text-gray-700 text-lg font-interBlack mr-2">
                     Calories
                   </Text>
                   <TextInput
                     value={calories}
                     onChangeText={setCalories}
                     keyboardType="numeric"
-                    placeholder="0"
+                    placeholder="0g"
                     placeholderTextColor="#9CA3AF"
-                    className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                    className="flex-1 text-right text-gray-800 font-interBlack text-xl"
                   />
                 </View>
               </View>
 
               {/* Protein */}
               <View className="flex-1 ml-2">
-                <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
-                  <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                <View className="flex-row items-center bg-gray-100 rounded-3xl px-4 py-3">
+                  <Text className="text-gray-700 text-lg font-interBlack mr-2">
                     Protein
                   </Text>
                   <TextInput
@@ -317,7 +317,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="0g"
                     placeholderTextColor="#9CA3AF"
-                    className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                    className="flex-1 text-right text-gray-800 font-interBlack text-xl"
                   />
                 </View>
               </View>
@@ -326,8 +326,8 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
             <View className="flex-row justify-between mb-4">
               {/* Carbs */}
               <View className="flex-1 mr-2">
-                <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
-                  <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                <View className="flex-row items-center bg-gray-100 rounded-3xl px-4 py-3">
+                  <Text className="text-gray-700 text-lg font-interBlack mr-2">
                     Carbs
                   </Text>
                   <TextInput
@@ -336,15 +336,15 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="0g"
                     placeholderTextColor="#9CA3AF"
-                    className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                    className="flex-1 text-right text-gray-800 font-interBlack text-xl"
                   />
                 </View>
               </View>
 
               {/* Fat */}
               <View className="flex-1 ml-2">
-                <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
-                  <Text className="text-gray-700 text-sm font-benzinMedium mr-2">
+                <View className="flex-row items-center bg-gray-100 rounded-3xl px-4 py-3">
+                  <Text className="text-gray-700 text-lg font-interBlack mr-2">
                     Fat
                   </Text>
                   <TextInput
@@ -353,7 +353,7 @@ const FoodEntryModal: React.FC<FoodEntryModalProps> = ({
                     keyboardType="numeric"
                     placeholder="0g"
                     placeholderTextColor="#9CA3AF"
-                    className="flex-1 text-right text-gray-800 font-benzinMedium text-base"
+                    className="flex-1 text-right text-gray-800 font-interBlack text-xl"
                   />
                 </View>
               </View>

@@ -27,7 +27,7 @@ const Onboarding = () => {
         }}
         className="w-full flex justify-end items-end p-5 z-10"
       >
-        <Text className="text-white text-md font-benzinBold">Skip</Text>
+        <Text className="text-white text-md font-interBold">Skip</Text>
       </TouchableOpacity>
 
       {/* Swiper */}
@@ -54,11 +54,11 @@ const Onboarding = () => {
                 resizeMode="contain"
               />
               <View className="flex flex-row items-center justify-center w-full mt-10">
-                <Text className="text-black text-3xl font-benzinBold mx-10 text-center">
+                <Text className="text-black text-3xl font-interBold mx-10 text-center">
                   {item.title}
                 </Text>
               </View>
-              <Text className="text-lg text-center font-benzin text-[#858585] mx-10 mt-3">
+              <Text className="text-lg text-center font-inter text-[#858585] mx-10 mt-3">
                 {item.description}
               </Text>
             </View>

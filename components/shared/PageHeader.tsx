@@ -6,13 +6,13 @@ interface PageHeaderProps {
   onActionPress?: () => void;
 }
 
-const PageHeader = ({title, actionText, onActionPress}) => {
+const PageHeader = ({ title, actionText, onActionPress }) => {
   return (
     <View className="flex-row justify-between items-center mb-6">
-      <Text className="text-black text-2xl font-benzinExtraBold">{title}</Text>
+      <Text className="text-black text-2xl font-interExtraBold">{title}</Text>
       {actionText && onActionPress && (
         <TouchableOpacity onPress={onActionPress}>
-          <Text className="text-gray-400 text-base font-benzinExtraBold">
+          <Text className="text-gray-400 text-base font-interExtraBold">
             {actionText}
           </Text>
         </TouchableOpacity>

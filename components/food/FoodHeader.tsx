@@ -76,7 +76,7 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({
               }}
             >
               <Text
-                className="font-benzinBold"
+                className="font-interBold"
                 style={{ color: showCaloriesLeft ? "#6B7280" : "#FFFFFF" }}
               >
                 Taken
@@ -90,7 +90,7 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({
               }}
             >
               <Text
-                className="font-benzinBold"
+                className="font-interBold"
                 style={{ color: showCaloriesLeft ? "#FFFFFF" : "#6B7280" }}
               >
                 Left
@@ -111,12 +111,12 @@ const FoodHeader: React.FC<FoodHeaderProps> = ({
       {/* Calories Display */}
       <View className="flex flex-row w-full justify-center">
         <View className="flex flex-col justify-center items-center bg-white p-5 rounded-3xl">
-          <Text className="text-4xl font-benzinBold text-black">
+          <Text className="text-5xl font-interBlack text-black">
             {showCaloriesLeft
               ? caloriesLeft.toFixed(0)
               : totalCalories.toFixed(0)}
           </Text>
-          <Text className="text-sm font-benzinBold text-gray-400">
+          <Text className="text-sm font-interBold text-gray-400">
             {showCaloriesLeft ? "calories left" : "calories taken"}
           </Text>
         </View>

@@ -85,7 +85,7 @@ export default function SignInPage() {
             source={icons.applogo}
             className="z-0 w-[200px] h-[200px] mb-10"
           />
-          <Text className="text-2xl text-black font-benzinSemiBold absolute bottom-5 left-5">
+          <Text className="text-2xl text-black font-interSemiBold absolute bottom-5 left-5">
             Welcome 👋
           </Text>
         </View>
@@ -117,7 +117,7 @@ export default function SignInPage() {
 
           <Link
             href="/sign-up"
-            className="text-lg text-center text-gray-500 mt-10 font-benzinBold"
+            className="text-lg text-center text-gray-500 mt-10 font-interBold"
           >
             Don't have an account? <Text className="text-black">Sign Up</Text>
           </Link>

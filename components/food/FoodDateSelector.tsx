@@ -33,7 +33,7 @@ const FoodDateSelector: React.FC<FoodDateSelectorProps> = ({ selectedDate, onDat
   return (
     <View className="mb-2 self-start">
       <View style={{borderRadius: 50}} className="flex-row bg-white px-3 py-2">
-        <Text className="text-lg font-benzinBold text-gray-800 mr-2">
+        <Text className="text-lg font-interExtraBold text-gray-800 mr-2">
           {formatDate(selectedDate)}
         </Text>
         <TouchableOpacity onPress={() => setPickerVisible(true)}>

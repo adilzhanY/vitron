@@ -63,7 +63,7 @@ const Profile = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-green-200">
+    <SafeAreaView className="flex-1 bg-[#F7F3E9]">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         {/* User Profile Section */}
         <View className="items-center mb-6">
@@ -73,7 +73,7 @@ const Profile = () => {
             }}
             className="w-24 h-24 rounded-full mb-4"
           />
-          <Text className="text-3xl font-benzinBold text-gray-800">
+          <Text className="text-3xl font-interBold text-gray-800">
             {userData?.name?.split(" ")[0]}
           </Text>
         </View>
@@ -90,17 +90,17 @@ const Profile = () => {
           }}
           className="bg-white p-6 mb-5"
         >
-          <Text className="text-2xl font-benzinBold text-gray-800 mb-4">
+          <Text className="text-2xl font-interBold text-gray-800 mb-4">
             Settings
           </Text>
 
           {/* Unit System */}
           <View className="mb-4">
-            <Text className="text-base font-benzinMedium text-gray-600 mb-2">
+            <Text className="text-base font-interMedium text-gray-600 mb-2">
               Unit System
             </Text>
             <View className="bg-gray-100 rounded-xl px-4 py-3">
-              <Text className="text-base font-benzinBold text-gray-800">
+              <Text className="text-base font-interBold text-gray-800">
                 {userData?.unit_system === "imperial" ? "Imperial" : "Metric"}
               </Text>
             </View>
@@ -108,11 +108,11 @@ const Profile = () => {
 
           {/* Language */}
           <View>
-            <Text className="text-base font-benzinMedium text-gray-600 mb-2">
+            <Text className="text-base font-interMedium text-gray-600 mb-2">
               Language
             </Text>
             <View className="bg-gray-100 rounded-xl px-4 py-3">
-              <Text className="text-base font-benzinBold text-gray-800">
+              <Text className="text-base font-interBold text-gray-800">
                 English (Coming soon)
               </Text>
             </View>
@@ -131,17 +131,17 @@ const Profile = () => {
           }}
           className="bg-white p-6 mb-5"
         >
-          <Text className="text-2xl font-benzinBold text-gray-800 mb-4">
+          <Text className="text-2xl font-interBold text-gray-800 mb-4">
             Personal Details
           </Text>
 
           {/* Email */}
           <View className="mb-4">
-            <Text className="text-base font-benzinMedium text-gray-600 mb-2">
+            <Text className="text-base font-interMedium text-gray-600 mb-2">
               Email
             </Text>
             <View className="bg-gray-100 rounded-xl px-4 py-3">
-              <Text className="text-base font-benzinMedium text-gray-800">
+              <Text className="text-base font-interMedium text-gray-800">
                 {clerkUser?.primaryEmailAddress?.emailAddress || "N/A"}
               </Text>
             </View>
@@ -149,11 +149,11 @@ const Profile = () => {
 
           {/* Height */}
           <View className="mb-4">
-            <Text className="text-base font-benzinMedium text-gray-600 mb-2">
+            <Text className="text-base font-interMedium text-gray-600 mb-2">
               Height
             </Text>
             <View className="bg-gray-100 rounded-xl px-4 py-3">
-              <Text className="text-base font-benzinBold text-gray-800">
+              <Text className="text-base font-interBold text-gray-800">
                 {userData?.height ? `${userData.height} cm` : "Not set"}
               </Text>
             </View>
@@ -164,16 +164,16 @@ const Profile = () => {
             onPress={handleNavigateToTrackWeight}
             className="mb-4"
           >
-            <Text className="text-base font-benzinMedium text-gray-600 mb-2">
+            <Text className="text-base font-interMedium text-gray-600 mb-2">
               Weight
             </Text>
             <View className="bg-gray-100 rounded-xl px-4 py-3 flex-row justify-between items-center">
-              <Text className="text-base font-benzinBold text-gray-800">
+              <Text className="text-base font-interBold text-gray-800">
                 {userData?.initial_weight
                   ? `${userData.initial_weight} kg`
                   : "Not set"}
               </Text>
-              <Text className="text-gray-500 text-sm font-benzinMedium">
+              <Text className="text-gray-500 text-sm font-interMedium">
                 Tap to update →
               </Text>
             </View>
@@ -181,11 +181,11 @@ const Profile = () => {
 
           {/* Activity Level */}
           <View>
-            <Text className="text-base font-benzinMedium text-gray-600 mb-2">
+            <Text className="text-base font-interMedium text-gray-600 mb-2">
               Activity Level
             </Text>
             <View className="bg-gray-100 rounded-xl px-4 py-3">
-              <Text className="text-base font-benzinBold text-gray-800">
+              <Text className="text-base font-interBold text-gray-800">
                 {userData?.activity_level
                   ? userData.activity_level.charAt(0).toUpperCase() +
                   userData.activity_level.slice(1)

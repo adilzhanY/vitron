@@ -144,7 +144,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({
               styles.modeButtonText,
               selectedMode === "scan" && styles.modeButtonTextActive,
             ]}
-            className="font-benzinBold"
+            className="font-interExtraBold"
           >
             Scan Food
           </Text>
@@ -167,7 +167,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({
               styles.modeButtonText,
               selectedMode === "label" && styles.modeButtonTextActive,
             ]}
-            className="font-benzinBold"
+            className="font-interExtraBold"
           >
             Food Label
           </Text>
@@ -178,7 +178,7 @@ const FoodCameraView: React.FC<FoodCameraViewProps> = ({
           style={styles.modeButton}
         >
           <MaterialIcons name="photo-library" size={20} color="#ddd" />
-          <Text className="font-benzinBold" style={styles.modeButtonText}>
+          <Text className="font-interExtraBold" style={styles.modeButtonText}>
             Gallery
           </Text>
         </TouchableOpacity>
