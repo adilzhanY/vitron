@@ -5,7 +5,7 @@ import {
   Text,
   TouchableOpacity,
   Modal,
-  Image
+  Image,
 } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +16,7 @@ import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Page } from "openai/pagination";
+import { useRouter } from "expo-router";
 
 const programs = [
   {
@@ -61,6 +62,7 @@ const programs = [
 const Activities = () => {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
   return (
     <SafeAreaView className="flex-1 bg-[#F7F3E9]">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
@@ -141,7 +143,24 @@ const Activities = () => {
                       </View>
                     </View>
 
-                    <TouchableOpacity className="w-8 h-8 rounded-full bg-blue-100 justify-center items-center">
+                    <TouchableOpacity
+                      className="w-8 h-8 rounded-full bg-blue-100 justify-center items-center"
+                      onPress={() => {
+                        router.push({
+                          pathname: "/exercise-detail",
+                          params: {
+                            name: ex.name,
+                            gifUrl: ex.gifUrl,
+                            targetMuscles: JSON.stringify(ex.targetMuscles),
+                            equipments: JSON.stringify(ex.equipments),
+                            instructions: JSON.stringify(ex.instructions),
+                            secondaryMuscles: JSON.stringify(
+                              ex.secondaryMuscles,
+                            ),
+                          },
+                        });
+                      }}
+                    >
                       <FontAwesome5 name="question" size={16} color="#22C55E" />
                     </TouchableOpacity>
                   </View>
