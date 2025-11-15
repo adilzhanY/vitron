@@ -17,6 +17,9 @@ import EmptyState from "@/components/shared/EmptyState";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Page } from "openai/pagination";
 import { useRouter } from "expo-router";
+import { capitalizeWords } from "@/lib/utils";
+import WorkoutBottomSheet from "@/components/activities/WorkoutBottomSheet";
+import { WorkoutProgram } from "@/types/type";
 
 const programs = [
   {
@@ -60,8 +63,9 @@ const programs = [
 ];
 
 const Activities = () => {
-  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [selectedProgram, setSelectedProgram] = useState<WorkoutProgram | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [workoutSheetVisible, setWorkoutSheetVisible] = useState(false);
   const router = useRouter();
   return (
     <SafeAreaView className="flex-1 bg-[#F7F3E9]">
@@ -69,7 +73,7 @@ const Activities = () => {
         <PageHeader
           title="Activities/Workouts"
           actionText=""
-          onActionPress={() => {}}
+          onActionPress={() => { }}
         />
         <Text className="text-3xl font-interExtraBold">Programs</Text>
         <Text className="text-2xl font-InterBold">
@@ -88,7 +92,7 @@ const Activities = () => {
             >
               <Text className="text-xl font-interBold">{program.name}</Text>
               <Text className="text-gray-700 font-inter">
-                {program.exercises.map((e) => e.name).join(", ")}
+                {program.exercises.map((e) => capitalizeWords(e.name)).join(", ")}
               </Text>
             </TouchableOpacity>
           ))}
@@ -121,7 +125,7 @@ const Activities = () => {
               style={{ maxHeight: 300 }}
               showsVerticalScrollIndicator={false}
             >
-              {selectedProgram?.exercises.map((ex, i) => {
+              {selectedProgram?.exercises.map((ex: any, i: number) => {
                 const imageUrl = ex.gifUrl;
                 return (
                   <View
@@ -135,10 +139,10 @@ const Activities = () => {
                       />
                       <View className="ml-3 flex-1">
                         <Text className="text-lg font-interBold">
-                          3 × {ex.name}
+                          3 × {capitalizeWords(ex.name)}
                         </Text>
                         <Text className="text-gray-600 text-sm">
-                          {ex.targetMuscles[0]}
+                          {capitalizeWords(ex.targetMuscles[0])}
                         </Text>
                       </View>
                     </View>
@@ -168,7 +172,13 @@ const Activities = () => {
               })}
             </ScrollView>
 
-            <TouchableOpacity className="bg-green-400 p-4 rounded-2xl mt-4">
+            <TouchableOpacity
+              className="bg-green-400 p-4 rounded-2xl mt-4"
+              onPress={() => {
+                setModalVisible(false);
+                setWorkoutSheetVisible(true);
+              }}
+            >
               <Text className="text-center text-white text-lg font-interExtraBold">
                 Start Workout
               </Text>
@@ -176,6 +186,13 @@ const Activities = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Workout Bottom Sheet */}
+      <WorkoutBottomSheet
+        isVisible={workoutSheetVisible}
+        program={selectedProgram}
+        onClose={() => setWorkoutSheetVisible(false)}
+      />
     </SafeAreaView>
   );
 };

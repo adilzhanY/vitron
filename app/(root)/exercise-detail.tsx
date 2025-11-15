@@ -2,7 +2,7 @@ import { View, ScrollView, Text, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
-
+import { capitalizeWords } from "@/lib/utils";
 export default function ExerciseDetail() {
   const params = useLocalSearchParams();
   const router = useRouter();
@@ -47,18 +47,18 @@ export default function ExerciseDetail() {
         {/* Exercise Info */}
         <View className="p-4">
           <Text className="text-2xl font-interExtraBold mb-2">
-            {exercise.name}
+            {capitalizeWords(exercise.name)}
           </Text>
 
           <View className="flex-row flex-wrap gap-2 mb-4">
             <View className="bg-green-100 px-3 py-1 rounded-full">
               <Text className="text-green-700 font-interBold">
-                {exercise.targetMuscles[0]}
+                {capitalizeWords(exercise.targetMuscles[0])}
               </Text>
             </View>
             <View className="bg-blue-100 px-3 py-1 rounded-full">
               <Text className="text-blue-700 font-interBold">
-                {exercise.equipments[0]}
+                {capitalizeWords(exercise.equipments[0])}
               </Text>
             </View>
           </View>
@@ -80,7 +80,7 @@ export default function ExerciseDetail() {
                 Secondary Muscles
               </Text>
               <Text className="text-base font-inter text-gray-700">
-                {exercise.secondaryMuscles.join(", ")}
+                {capitalizeWords(exercise.secondaryMuscles.join(", "))}
               </Text>
             </View>
           )}

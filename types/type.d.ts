@@ -68,10 +68,10 @@ export interface FoodStatsProps {
   entries: FoodEntry[];
 }
 
-type MealType = 
-  'breakfast' | 
-  'lunch' | 
-  'dinner' | 
+type MealType =
+  'breakfast' |
+  'lunch' |
+  'dinner' |
   'snack';
 
 interface FoodTotals {
@@ -87,5 +87,49 @@ interface FoodUserGoals {
   carbs: number;
   fat: number;
 }
+
+// Workout tracking types
+export interface WorkoutSet {
+  id: string;
+  setNumber: number;
+  previousKg?: number;
+  previousReps?: number;
+  kg: number;
+  reps: number;
+  isCompleted: boolean;
+  restTimerEndTime?: number; // timestamp when rest timer should end
+}
+
+export interface WorkoutExercise {
+  exerciseId: string;
+  name: string;
+  gifUrl: string;
+  targetMuscles: string[];
+  equipments: string[];
+  sets: WorkoutSet[];
+}
+
+export interface WorkoutProgram {
+  name: string;
+  exercises: {
+    exerciseId: string;
+    name: string;
+    gifUrl: string;
+    targetMuscles: string[];
+    bodyParts: string[];
+    equipments: string[];
+    secondaryMuscles: string[];
+    instructions: string[];
+  }[];
+}
+
+export interface WorkoutSummary {
+  totalTime: number; // in seconds
+  totalReps: number;
+  totalExercises: number;
+  totalKgs: number; // sum of (kg × reps)
+  totalSets: number;
+}
+
 
 
