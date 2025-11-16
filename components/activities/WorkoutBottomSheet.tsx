@@ -409,16 +409,22 @@ const WorkoutBottomSheet: React.FC<WorkoutBottomSheetProps> = ({
                 </View>
 
                 {/* Sets Table */}
-                <View className="overflow-hidden w-full">
+                <View className="mt-2">
                   {/* Table Header */}
-                  <View className="flex-row w-full">
-                    <Text className="flex-1 text-center py-2 font-interBold text-lg">Set</Text>
-                    <Text className="flex-1 text-center py-2 font-interBold text-lg">
-                      Previous
-                    </Text>
-                    <Text className="flex-1 text-center py-2 font-interBold text-lg">kg</Text>
-                    <Text className="flex-1 text-center py-2 font-interBold text-lg">Reps</Text>
-                    <View className="w-10" />
+                  <View className="flex-row items-center mb-2">
+                    <View style={{ width: 60 }} className="items-center">
+                      <Text className="font-interBold text-base text-gray-700">Set</Text>
+                    </View>
+                    <View style={{ width: 100 }} className="items-center">
+                      <Text className="font-interBold text-base text-gray-700">Previous</Text>
+                    </View>
+                    <View style={{ width: 100 }} className="items-center">
+                      <Text className="font-interBold text-base text-gray-700">kg</Text>
+                    </View>
+                    <View style={{ width: 100 }} className="items-center">
+                      <Text className="font-interBold text-base text-gray-700">Reps</Text>
+                    </View>
+                    <View style={{ width: 60 }} />
                   </View>
 
                   {/* Table Rows */}
@@ -430,28 +436,30 @@ const WorkoutBottomSheet: React.FC<WorkoutBottomSheetProps> = ({
                     return (
                       <View key={set.id}>
                         <View
-                          className={`flex-row w-full border-b border-gray-100 pr-5 ${set.isCompleted ? "bg-green-300" : "bg-white"
+                          className={`flex-row items-center py-3 border-b border-gray-100 ${set.isCompleted ? "bg-green-100" : "bg-white"
                             }`}
                         >
                           {/* Set Number */}
-                          <View className="flex-1 justify-center items-center py-3">
-                            <Text className="font-interBold bg-gray-100 rounded-xl px-3 py-2 min-w-[20px]">{set.setNumber}</Text>
+                          <View style={{ width: 60 }} className="items-center">
+                            <View className="bg-gray-100 rounded-full w-8 h-8 items-center justify-center">
+                              <Text className="font-interBold text-base">{set.setNumber}</Text>
+                            </View>
                           </View>
 
                           {/* Previous */}
-                          <View className="flex-1 justify-center items-center py-3">
-                            <Text className="text-gray-500 text-sm">—</Text>
+                          <View style={{ width: 100 }} className="items-center">
+                            <Text className="text-gray-400 font-inter text-base">—</Text>
                           </View>
 
                           {/* KG Input */}
-                          <View className="flex-1 justify-center items-center py-3">
+                          <View style={{ width: 100 }} className="items-center">
                             <TouchableOpacity
                               onPress={() => {
                                 if (!set.isCompleted) {
                                   setActiveInputs({ ...activeInputs, [inputKeyKg]: "kg" });
                                 }
                               }}
-                              className="bg-gray-100 rounded-2xl px-3 py-2 min-w-[80px]"
+                              className="bg-gray-100 rounded-xl px-4 py-2 min-w-[90px]"
                             >
                               {activeInputs[inputKeyKg] === "kg" && !set.isCompleted ? (
                                 <TextInput
@@ -466,26 +474,27 @@ const WorkoutBottomSheet: React.FC<WorkoutBottomSheetProps> = ({
                                     delete newInputs[inputKeyKg];
                                     setActiveInputs(newInputs);
                                   }}
-                                  className="text-center font-interBold"
-                                  placeholder="0"
+                                  className="text-center font-interBold text-base"
+                                  placeholder="100"
+                                  placeholderTextColor="#9CA3AF"
                                 />
                               ) : (
-                                <Text className="text-center font-interBold">
-                                  {set.kg > 0 ? set.kg : "0"}
+                                <Text className="text-center font-interBold text-base">
+                                  {set.kg > 0 ? set.kg : "100"}
                                 </Text>
                               )}
                             </TouchableOpacity>
                           </View>
 
                           {/* Reps Input */}
-                          <View className="flex-1 justify-center items-center py-3">
+                          <View style={{ width: 100 }} className="items-center">
                             <TouchableOpacity
                               onPress={() => {
                                 if (!set.isCompleted) {
                                   setActiveInputs({ ...activeInputs, [inputKeyReps]: "reps" });
                                 }
                               }}
-                              className="bg-gray-100 rounded-2xl px-3 py-2 min-w-[80px]"
+                              className=" bg-gray-100 rounded-xl px-4 py-2 min-w-[90px]"
                             >
                               {activeInputs[inputKeyReps] === "reps" && !set.isCompleted ? (
                                 <TextInput
@@ -500,29 +509,30 @@ const WorkoutBottomSheet: React.FC<WorkoutBottomSheetProps> = ({
                                     delete newInputs[inputKeyReps];
                                     setActiveInputs(newInputs);
                                   }}
-                                  className="text-center font-interBold"
-                                  placeholder="0"
+                                  className="text-center font-interBold text-base"
+                                  placeholder="1"
+                                  placeholderTextColor="#9CA3AF"
                                 />
                               ) : (
-                                <Text className="text-center font-interBold">
-                                  {set.reps > 0 ? set.reps : "0"}
+                                <Text className="text-center font-interBold text-base">
+                                  {set.reps > 0 ? set.reps : "1"}
                                 </Text>
                               )}
                             </TouchableOpacity>
                           </View>
 
                           {/* Done Button */}
-                          <View className="w-10 justify-center items-center">
+                          <View style={{ width: 40 }} className="items-center">
                             <TouchableOpacity
                               onPress={() => handleSetComplete(exercise.exerciseId, set.id)}
                               disabled={set.isCompleted}
-                              className={`rounded-lg px-3 py-2 ${set.isCompleted ? "bg-green-500" : "bg-gray-100"
+                              className={`rounded-lg p-2 ${set.isCompleted ? "bg-transparent" : "bg-transparent"
                                 }`}
                             >
-                              <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                              <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <Path
                                   d="M20 6L9 17L4 12"
-                                  stroke={set.isCompleted ? "#FFFFFF" : "#9CA3AF"}
+                                  stroke={set.isCompleted ? "#22C55E" : "#D1D5DB"}
                                   strokeWidth="2.5"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -548,10 +558,11 @@ const WorkoutBottomSheet: React.FC<WorkoutBottomSheetProps> = ({
                 {/* Add Set Button */}
                 <TouchableOpacity
                   onPress={() => handleAddSet(exercise.exerciseId)}
-                  className="bg-gray-100 py-3 rounded-xl mt-2"
+                  className="bg-gray-100 py-3 rounded-xl mt-3 mx-4"
                 >
                   <Text className="text-center text-gray-700 font-interBold">+ Add Set</Text>
                 </TouchableOpacity>
+
               </View>
             ))}
 
